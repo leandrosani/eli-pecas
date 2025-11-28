@@ -19,13 +19,18 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   // Variáveis de Ambiente
-  runtimeConfig: {
-    sessionSecret: '',     
-    googleClientId: '',    
-    googleClientSecret: '',
-    resendApiKey: '',      
+runtimeConfig: {
+    // VARIÁVEIS NOVAS
+    sessionSecret: '',
+    appPassword: '', // <-- CHAVE SECRETA DO LOGIN
+
+    // VARIÁVEIS ANTIGAS REMOVIDAS
+    // googleClientId: '',
+    // googleClientSecret: '',
+    // resendApiKey: '',
+
     public: {
-      baseUrl: ''          
+      baseUrl: ''
     }
   }
 })

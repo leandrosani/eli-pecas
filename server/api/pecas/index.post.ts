@@ -2,7 +2,7 @@
 import { PrismaClient } from '@prisma/client'
 import { getUserSession } from '../../utils/session'
 
-const prisma = new PrismaClient()
+import { prisma } from '../../utils/prisma'
 
 export default defineEventHandler(async (event) => {
   // 1. Proteção: Só quem está logado pode criar peças

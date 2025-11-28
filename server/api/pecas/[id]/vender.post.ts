@@ -2,7 +2,7 @@
 import { PrismaClient } from '@prisma/client'
 import { getUserSession } from '../../../utils/session' // Note que subimos 3 níveis agora (../)
 
-const prisma = new PrismaClient()
+import { prisma } from '../../../utils/prisma'
 
 export default defineEventHandler(async (event) => {
   // 1. Segurança

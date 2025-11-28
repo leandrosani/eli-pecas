@@ -1,34 +1,40 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50">
-    <UCard class="w-full max-w-md shadow-xl">
+  <div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <UCard class="w-full max-w-md shadow-2xl rounded-xl">
       <template #header>
         <div class="text-center">
-          <h1 class="text-3xl font-bold text-gray-900 mb-2">Eli Peças</h1>
-          <p class="text-gray-500">Sistema de Controle de Estoque</p>
+          <h1 class="text-3xl font-bold text-gray-900 mb-2 tracking-tight">Eli Peças</h1>
+          <p class="text-gray-500">Acesso por Chave Secreta</p>
         </div>
       </template>
 
-      <div class="flex flex-col gap-4 py-4">
-        <p class="text-center text-sm text-gray-600 mb-4">
-          Para acessar, entre com sua conta do Google.
-        </p>
+      <div class="flex flex-col gap-5 py-4">
+        
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-gray-700">Seu E-mail</label>
+          <UInput v-model="state.email" size="xl" placeholder="admin@elipecas.com" type="email" autocomplete="username" />
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-gray-700">Chave Secreta</label>
+          <UInput v-model="state.password" size="xl" placeholder="Sua senha secreta..." type="password" autocomplete="current-password" />
+        </div>
 
         <UButton
-          icon="i-logos-google-icon"
-          color="primary"
-          variant="solid"
+          color="black"
           size="xl"
           block
-          class="font-medium shadow-sm hover:bg-gray-50 border border-gray-200 text-gray-700"
-          @click="loginComGoogle"
+          :loading="loading"
+          class="font-medium shadow-md mt-4"
+          @click="login"
         >
-          Entrar com Google
+          Entrar no Sistema
         </UButton>
       </div>
 
       <template #footer>
         <p class="text-center text-xs text-gray-400">
-          Acesso restrito para funcionários autorizados.
+          Este sistema usa uma chave mestra para acesso.
         </p>
       </template>
     </UCard>
@@ -36,13 +42,32 @@
 </template>
 
 <script setup lang="ts">
-// Define que esta página não usa o layout padrão (ela é tela cheia)
-definePageMeta({
-  layout: 'empty'
+definePageMeta({ layout: 'empty' })
+const router = useRouter()
+const { fetch: refreshSession } = useUserSession()
+
+const loading = ref(false)
+const state = reactive({
+  email: 'admin@elipecas.com',
+  password: ''
 })
 
-// Função que leva o usuário para a rota que criamos no Backend
-function loginComGoogle() {
-  window.location.href = '/api/auth/google'
+async function login() {
+  loading.value = true
+  try {
+    await $fetch('/api/auth/login', {
+      method: 'POST',
+      body: state
+    })
+
+    // Sucesso! O problema de redirecionamento é resolvido.
+    await refreshSession() 
+    router.push('/dashboard')
+
+  } catch (error) {
+    alert('Erro de login: Chave Secreta ou Email inválidos.')
+  } finally {
+    loading.value = false
+  }
 }
 </script>
