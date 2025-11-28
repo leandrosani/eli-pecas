@@ -1,3 +1,11 @@
 @import "tailwindcss";
 
-/* Aqui colocaremos customizações futuras se precisar */
+/* Padding interno do input (afeta texto digitado e placeholder) */
+.u-input :deep(input) {
+    @apply px-4 py-2;
+}
+
+/* Estilo do placeholder */
+.u-input :deep(input)::placeholder {
+    @apply text-gray-500 italic;
+}

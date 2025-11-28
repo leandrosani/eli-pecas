@@ -11,7 +11,7 @@
         </div>
         
         <UButton to="/estoque/criar" icon="i-heroicons-plus" color="black" size="lg" class="md:hidden shadow-lg rounded-full w-12 h-12 flex items-center justify-center p-0" />
-        <UButton to="/estoque/criar" icon="i-heroicons-plus" color="black" size="lg" class="hidden md:flex shadow-lg hover:bg-gray-800 transition-all">
+        <UButton to="/estoque/criar" icon="i-heroicons-plus" color="black" size="lg" class="cursor-pointer border border-gray-200 p-3 hidden md:flex shadow-lg hover:bg-gray-300 transition-all">
           Adicionar Peça
         </UButton>
       </div>
@@ -21,7 +21,12 @@
         icon="i-heroicons-magnifying-glass" 
         placeholder="Buscar..." 
         size="lg"
-        class="w-full bg-white shadow-sm rounded-lg"
+        color="primary"
+        variant="outline"
+        class="pl-8 w-full shadow-md py-3 rounded-xl border border-gray-300"
+        :ui="{ 
+          base: 'ml-6 w-[95%] placeholder:text-gray-400 placeholder:font-normal focus:ring-2 focus:ring-blue-400 focus:border-transparent focus:p-2 transition-all duration-200'
+        }"
       >
         <template #trailing v-if="busca">
           <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark" :padded="false" @click="busca = ''" />
@@ -33,9 +38,9 @@
       <table class="w-full text-left border-collapse">
         <thead class="bg-gray-50/80">
           <tr>
-            <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-4/12">Peça / Procedência</th>
+            <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-4/12">Peça / Estado</th>
             <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-3/12">Aplicação</th>
-            <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-2/12">Estado</th>
+            <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-2/12">Endereço</th>
             <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-1/12 text-center">Qtd.</th>
             <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-2/12 text-right">Preço</th>
             <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-2/12 text-center">Ações</th>
@@ -50,7 +55,7 @@
                 <div>
                   <div class="font-bold text-gray-900 text-sm">{{ row.nome }}</div>
                   <div class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 w-fit mt-1">{{ row.marca }}</div>
-                  <div v-if="row.detalhes" class="text-xs text-blue-600 mt-1 truncate max-w-[200px]">{{ row.detalhes }}</div>
+                  <div v-if="row.estado" class="text-xs font-bold text-blue-600 mt-1 truncate max-w-[200px]">{{ row.estado }}</div>
                 </div>
               </div>
             </td>
@@ -64,7 +69,7 @@
 
             <td class="py-4 px-6 align-middle">
               <span :class="getClasseEstado(row)" class="px-2 py-1 rounded-md text-[10px] font-bold border inline-block">
-                {{ row.estado }}
+                {{ row.detalhes }}
               </span>
             </td>
 

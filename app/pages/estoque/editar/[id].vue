@@ -1,10 +1,10 @@
 <template>
   <div class="max-w-4xl mx-auto pb-20">
     <div class="flex items-center gap-4 mb-8">
-      <UButton to="/estoque" color="white" icon="i-heroicons-arrow-left" class="shadow-sm ring-1 ring-gray-200 hover:bg-gray-50" />
+      <UButton to="/estoque" color="white" icon="i-heroicons-arrow-left" square size="lg" class="shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 w-10 h-10 hover:bg-gray-300 transition-all"/>
       <div>
-        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Editar Peça</h1>
-        <p class="text-gray-500 text-sm">Altere as informações.</p>
+        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Nova Peça</h1>
+        <p class="text-gray-500 text-sm">Preencha os detalhes do produto.</p>
       </div>
     </div>
 
@@ -18,18 +18,21 @@
           <h2 class="font-semibold text-gray-900">Identificação</h2>
         </div>
         <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="space-y-2">
+          <div class="space-y-2 flex flex-col">
             <label class="text-sm font-medium text-gray-700">Nome da Peça</label>
-            <UInput v-model="form.nome" size="xl" />
+            <UInput v-model="form.nome" size="xl" 
+            class="border border-gray-300 rounded-xl p-[9px]"
+            :ui="{base: 'focus:ring-0 focus:outline-none'}"
+            />
           </div>
           
-          <div class="space-y-2">
+          <div class="space-y-2 flex flex-col">
             <label class="text-sm font-medium text-gray-700">Procedência</label>
             <div class="relative">
               <select v-model="form.marca" class="w-full appearance-none bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5 h-[44px]">
-                <option value="ORIGINAL">ORIGINAL</option>
-                <option value="PARALELA">PARALELA</option>
-                <option value="IMPORTADA">IMPORTADA</option>
+                <option value="NOVA">NOVA</option>
+                <option value="SEM-DETALHE">SEM DETALHE</option>
+                <option value="COM-DETALHE">COM DETALHE</option>
               </select>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"><UIcon name="i-heroicons-chevron-down" class="w-4 h-4" /></div>
             </div>
@@ -43,22 +46,30 @@
           <h2 class="font-semibold text-gray-900">Detalhes</h2>
         </div>
         <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="space-y-2">
+          <div class="space-y-2 flex flex-col">
             <label class="text-sm font-medium text-gray-700">Modelo</label>
-            <UInput v-model="form.modelo" size="xl" />
+            <UInput v-model="form.modelo" size="xl" 
+            class="border border-gray-300 rounded-xl p-[9px]"
+            :ui="{base: 'focus:ring-0 focus:outline-none'}"
+            />
           </div>
-          <div class="space-y-2">
+          <div class="space-y-2 flex flex-col">
             <label class="text-sm font-medium text-gray-700">Ano</label>
-            <UInput v-model="form.ano" size="xl" type="number" />
+            <UInput v-model="form.ano" size="xl" type="number" 
+            class="border border-gray-300 rounded-xl p-[9px]"
+            :ui="{base: 'focus:ring-0 focus:outline-none'}"
+            />
           </div>
-          <div class="space-y-2">
+          <div class="space-y-2 flex flex-col">
             <label class="text-sm font-medium text-gray-700">Condição</label>
             <div class="relative">
               <select v-model="form.estado" class="w-full appearance-none bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5 h-[44px]">
-                <option value="SEM DETALHE">SEM DETALHE</option>
-                <option value="RECUPERADA">RECUPERADA</option>
-                <option value="COM AVARIA">COM AVARIA</option>
-                <option value="NOVA NA CAIXA">NOVA NA CAIXA</option>
+                <option value="SEM-DETALHE">SEM DETALHE</option>
+                <option value="RECUPERADA">1 GARRA RECUPERADA</option>
+                <option value="NOVA-NA-CAIXA">DETALHE NA LENTE</option>
+                <option value="COM-AVARIA">2 GARRAS RECUPERADAS</option>
+                <option value="COM-AVARIA">3 GARRAS RECUPERADAS</option>
+                <option value="COM-AVARIA">TODAS GARRAS RECUPERADAS</option>
               </select>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"><UIcon name="i-heroicons-chevron-down" class="w-4 h-4" /></div>
             </div>
@@ -79,19 +90,27 @@
         </div>
         <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-2">
-            <label class="text-sm font-medium text-gray-700">Preço (R$)</label>
-            <UInput v-model="form.preco" size="xl" type="number" step="0.01" />
+            <label class="mr-3 text-sm font-medium text-gray-700">Preço (R$)</label>
+            <UInput v-model="form.preco" size="xl" type="number" step="0.01" 
+            class="border border-gray-300 rounded-xl p-2"
+            :ui="{base: 'focus:ring-0 focus:outline-none pl-5'}"
+            />
           </div>
           <div class="space-y-2">
             <label class="text-sm font-medium text-gray-700">Quantidade</label>
-            <UInput v-model="form.quantidade" size="xl" type="number" />
+            <UInput v-model="form.quantidade" size="xl" type="number" 
+            class="m-3 border w-22 border-gray-300 rounded-xl p-2"
+            :ui="{base: 'focus:ring-0 focus:outline-none'}"
+            />
           </div>
         </div>
       </div>
 
       <div class="flex items-center justify-end gap-4 pt-4">
-        <UButton to="/estoque" variant="ghost" color="gray" size="lg">Cancelar</UButton>
-        <UButton type="submit" color="black" size="lg" :loading="saving">Salvar Alterações</UButton>
+        <UButton to="/estoque" variant="ghost" color="gray" size="lg" class="hover:text-red-400">Cancelar</UButton>
+        <UButton type="submit" color="black" size="lg" :loading="saving"
+        class="cursor-pointer border border-gray-200 p-3 hidden md:flex shadow-lg hover:bg-gray-300 transition-all"
+        >Salvar Alterações</UButton>
       </div>
     </form>
   </div>

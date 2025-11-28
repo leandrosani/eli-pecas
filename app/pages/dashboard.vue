@@ -6,7 +6,7 @@
         <p class="text-gray-500 text-sm">Acompanhe o desempenho financeiro.</p>
       </div>
 
-      <div class="flex items-center gap-2 bg-white p-1 rounded-xl border border-gray-200 shadow-sm w-full md:w-auto justify-between md:justify-start">
+      <div class="flex items-center gap-2 bg-white p-1 rounded-xl border border-gray-200 shadow-sm w-full md:w-36 justify-between md:justify-start">
         <UButton 
           icon="i-heroicons-chevron-left" 
           color="gray" 
