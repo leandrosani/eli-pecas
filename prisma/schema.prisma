@@ -1,0 +1,98 @@
+// Arquivo: prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- USUÁRIOS E AUTH ---
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  avatarUrl String?
+  provider  String   @default("email")
+  createdAt DateTime @default(now())
+  
+  movimentacoes HistoricoMovimentacao[]
+}
+
+model AuthCode {
+  id        String   @id @default(uuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// --- LOCALIZAÇÃO DO ESTOQUE ---
+
+model Sala {
+  id          Int          @id @default(autoincrement())
+  nome        String
+  prateleiras Prateleira[]
+}
+
+model Prateleira {
+  id     Int     @id @default(autoincrement())
+  nome   String
+  salaId Int
+  sala   Sala    @relation(fields: [salaId], references: [id])
+  caixas Caixa[]
+}
+
+model Caixa {
+  id           Int        @id @default(autoincrement())
+  nome         String
+  prateleiraId Int
+  prateleira   Prateleira @relation(fields: [prateleiraId], references: [id])
+  pecas        Peca[]
+}
+
+// --- PEÇAS (Com o campo 'ativo') ---
+
+model Peca {
+  id          String   @id @default(uuid())
+  nome        String
+  marca       String
+  modelo      String?  
+  ano         Int?     
+  estado      String   
+  detalhes    String?  @db.Text
+  preco       Decimal  @db.Decimal(10, 2)
+  quantidade  Int      @default(1)
+  fotoUrl     String?
+  
+  // O CAMPO NOVO ESTÁ AQUI:
+  ativo       Boolean  @default(true) 
+
+  caixaId     Int?
+  caixa       Caixa?   @relation(fields: [caixaId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  movimentacoes HistoricoMovimentacao[]
+}
+
+// --- HISTÓRICO ---
+
+model HistoricoMovimentacao {
+  id         String   @id @default(uuid())
+  tipo       String   // "ENTRADA", "SAIDA"
+  quantidade Int
+  observacao String?
+  
+  pecaId     String
+  peca       Peca     @relation(fields: [pecaId], references: [id])
+  
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+
+  createdAt  DateTime @default(now())
+}
