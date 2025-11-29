@@ -55,7 +55,7 @@
                 <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 shrink-0"><UIcon name="i-heroicons-cube" class="w-5 h-5" /></div>
                 <div>
                   <div class="font-bold text-gray-900 text-sm">{{ row.nome }}</div>
-                  <div class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 w-fit mt-1">{{ row.marca }}</div>
+                  <div class="mb-1 text-[12px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-gray-100 text-gray-900 w-fit mt-1">{{ row.marca }}</div>
                   <div v-if="row.estado" :class="getClasseEstado(row)">{{ row.estado }}</div>
                 </div>
               </div>
@@ -134,7 +134,7 @@
 
         <!-- Tags: Marca + Estado -->
         <div class="flex flex-wrap items-center gap-1.5 mb-2">
-          <span class="px-1.5 py-0.5 bg-gray-100 text-gray-700 text-[10px] font-bold uppercase tracking-wide rounded border border-gray-200">
+          <span class="px-1.5 py-0.5 bg-gray-100 text-gray-700 text-[12px] font-bold uppercase tracking-wide rounded border border-gray-200">
             {{ item.marca }}
           </span>
 

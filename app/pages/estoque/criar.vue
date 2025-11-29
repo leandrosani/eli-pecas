@@ -21,14 +21,14 @@
         
         <div class="p-6 space-y-5">
           
-          <!-- Linha 1: Nome e Procedência -->
+          <!-- Linha 1: Nome e Lado -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div class="space-y-2">
               <label class="text-sm font-medium text-gray-700">Nome da Peça <span class="text-red-500">*</span></label>
               <UInput 
                 v-model="form.nome" 
                 size="lg" 
-                placeholder="Ex: FAROL GOL LE" 
+                placeholder="Ex: FAROL GOL" 
                 autofocus 
                 class="w-full"
                 :ui="{ 
@@ -38,12 +38,12 @@
             </div>
 
             <div class="space-y-2">
-              <label class="text-sm font-medium text-gray-700">Procedência <span class="text-red-500">*</span></label>
+              <label class="text-sm font-medium text-gray-700">Lado <span class="text-red-500">*</span></label>
               <select 
                 v-model="form.marca" 
                 class="w-full h-11 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 px-3"
               >
-                <option v-for="opt in listaProcedencia" :key="opt" :value="opt">
+                <option v-for="opt in listaLados" :key="opt" :value="opt">
                   {{ opt }}
                 </option>
               </select>
@@ -57,7 +57,7 @@
               <UInput 
                 v-model="form.modelo" 
                 size="lg" 
-                placeholder="Ex: GOL"
+                placeholder="Ex: VOLKSWAGEN"
                 class="w-full"
                 :ui="{ 
                   base: 'h-11 focus:ring-2 focus:ring-blue-400 border border-gray-300 rounded-lg'
@@ -171,10 +171,9 @@ const router = useRouter()
 const loading = ref(false)
 
 /* ✔ LISTAS DOS SELECTS */
-const listaProcedencia = [
-  "NOVA",
-  "SEM-DETALHE",
-  "COM-DETALHE"
+const listaLados = [
+  "LADO DIREITO",
+  "LADO ESQUERDO",
 ]
 
 const listaCondicao = [
