@@ -10,142 +10,153 @@
 
     <form @submit.prevent="salvar" class="space-y-6">
       
-      <!-- IDENTIFICAÇÃO -->
+      <!-- SEÇÃO ÚNICA -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-3">
-          <div class="bg-blue-100 p-2 rounded-lg text-blue-600"><UIcon name="i-heroicons-tag" class="w-5 h-5" /></div>
-          <h2 class="font-semibold text-gray-900">Identificação da Peça</h2>
+        <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-blue-600 to-blue-700 flex items-center gap-3">
+          <div class="bg-white/20 p-2 rounded-lg text-white">
+            <UIcon name="i-heroicons-cube" class="w-5 h-5" />
+          </div>
+          <h2 class="font-semibold text-white">Identificação da Peça</h2>
         </div>
         
-        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Nome da Peça -->
-          <div class="space-y-2 flex flex-col">
-            <label class="text-sm font-medium text-gray-700">Nome da Peça <span class="text-red-500">*</span></label>
-            <UInput v-model="form.nome" size="xl" placeholder="Ex: FAROL GOL LE" autofocus class="border border-gray-300 rounded-xl p-[9px]"
-            :ui="{ base: 'focus:ring-0 focus:outline-none' }"
-            />
-          </div>
+        <div class="p-6 space-y-5">
+          
+          <!-- Linha 1: Nome e Procedência -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700">Nome da Peça <span class="text-red-500">*</span></label>
+              <UInput 
+                v-model="form.nome" 
+                size="lg" 
+                placeholder="Ex: FAROL GOL LE" 
+                autofocus 
+                class="w-full"
+                :ui="{ 
+                  base: 'h-11 focus:ring-2 focus:ring-blue-400 border border-gray-300 rounded-lg'
+                }"
+              />
+            </div>
 
-          <!-- Procedência (via lista) -->
-          <div class="space-y-2 flex flex-col">
-            <label class="text-sm font-medium text-gray-700">Procedência <span class="text-red-500">*</span></label>
-            <div class="relative">
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700">Procedência <span class="text-red-500">*</span></label>
               <select 
                 v-model="form.marca" 
-                class="w-full appearance-none bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5 h-[44px]"
+                class="w-full h-11 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 px-3"
               >
-                <option 
-                  v-for="opt in listaProcedencia" 
-                  :key="opt" 
-                  :value="opt"
-                >
+                <option v-for="opt in listaProcedencia" :key="opt" :value="opt">
                   {{ opt }}
                 </option>
               </select>
-
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <UIcon name="i-heroicons-chevron-down" class="w-4 h-4" />
-              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- DETALHES TÉCNICOS -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-3">
-          <div class="bg-orange-100 p-2 rounded-lg text-orange-600"><UIcon name="i-heroicons-wrench" class="w-5 h-5" /></div>
-          <h2 class="font-semibold text-gray-900">Detalhes Técnicos</h2>
-        </div>
-        
-        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Modelo -->
-          <div class="space-y-2 flex flex-col">
-            <label class="text-sm font-medium text-gray-700">Modelo do Carro</label>
-            <UInput v-model="form.modelo" size="xl" icon="i-heroicons-truck" placeholder="Ex: CHEVROLET VOLKSWAGEM"
-            class=" border border-gray-300 rounded-xl p-2"
-            :ui="{base: 'focus:ring-0 focus:outline-none pl-5'}"
-            />
-          </div>
+          <!-- Linha 2: Modelo, Ano, Condição -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700">Modelo do Carro</label>
+              <UInput 
+                v-model="form.modelo" 
+                size="lg" 
+                placeholder="Ex: GOL"
+                class="w-full"
+                :ui="{ 
+                  base: 'h-11 focus:ring-2 focus:ring-blue-400 border border-gray-300 rounded-lg'
+                }"
+              />
+            </div>
 
-          <!-- Ano -->
-          <div class="space-y-2 flex flex-col">
-            <label class="text-sm font-medium text-gray-700">Ano</label>
-            <UInput v-model="form.ano" size="xl" type="number" icon="i-heroicons-calendar" 
-            class="border border-gray-300 rounded-xl p-2"
-            :ui="{base: 'focus:ring-0 focus:outline-none pl-5'}"
-            />
-          </div>
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700">Ano</label>
+              <UInput 
+                v-model="form.ano" 
+                size="lg" 
+                type="number" 
+                placeholder="2020"
+                class="w-full"
+                :ui="{ 
+                  base: 'h-11 focus:ring-2 focus:ring-blue-400 border border-gray-300 rounded-lg'
+                }"
+              />
+            </div>
 
-          <!-- Condição (via lista) -->
-          <div class="space-y-2 flex flex-col">
-            <label class="text-sm font-medium text-gray-700">Condição</label>
-            <div class="relative">
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700">Condição</label>
               <select 
                 v-model="form.estado" 
-                class="w-full appearance-none bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5 h-[44px]"
+                class="w-full h-11 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 px-3"
               >
-                <option 
-                  v-for="item in listaCondicao"
-                  :key="item"
-                  :value="item"
-                >
+                <option v-for="item in listaCondicao" :key="item" :value="item">
                   {{ item }}
                 </option>
               </select>
-              
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <UIcon name="i-heroicons-chevron-down" class="w-4 h-4" />
-              </div>
             </div>
           </div>
-        </div>
 
-        <div class="p-6 pt-0">
+          <!-- Linha 3: Preço e Quantidade -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700">Preço de Venda (R$) <span class="text-red-500">*</span></label>
+              <UInput 
+                v-model="form.preco" 
+                size="lg" 
+                type="number" 
+                step="0.01" 
+                placeholder="0.00"
+                class="w-full"
+                :ui="{ 
+                  base: 'h-11 focus:ring-2 focus:ring-blue-400 border border-gray-300 rounded-lg'
+                }"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700">Quantidade</label>
+              <UInput 
+                v-model="form.quantidade" 
+                size="lg" 
+                type="number"
+                placeholder="1"
+                class="w-full"
+                :ui="{ 
+                  base: 'h-11 focus:ring-2 focus:ring-blue-400 border border-gray-300 rounded-lg'
+                }"
+              />
+            </div>
+          </div>
+
+          <!-- Linha 4: Observações (linha completa) -->
           <div class="space-y-2">
-            <label class="text-sm font-medium text-gray-700">Observações / Descrição</label>
+            <label class="text-sm font-medium text-gray-700">Observações / Endereço</label>
             <textarea 
               v-model="form.detalhes" 
-              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-black focus:border-black" 
+              class="block p-3 w-full text-sm text-gray-900 bg-white rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 resize-none" 
               rows="3" 
-              placeholder="Descreva detalhes: Ex: Pequeno risco na lente, suportes recuperados..."
+              placeholder="Descreva detalhes: Ex: Pequeno risco na lente, localização no estoque..."
             ></textarea>
           </div>
-        </div>
-      </div>
 
-      <!-- ESTOQUE E PREÇO -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-3">
-          <div class="bg-green-100 p-2 rounded-lg text-green-600"><UIcon name="i-heroicons-banknotes" class="w-5 h-5" /></div>
-          <h2 class="font-semibold text-gray-900">Estoque e Preço</h2>
-        </div>
-        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-          <div class="space-y-2">
-            <label class="mr-3 text-sm font-medium text-gray-700">Preço de Venda (R$)*</label>
-            <UInput v-model="form.preco" size="xl" type="number" step="0.01" icon="i-heroicons-currency-dollar" placeholder="0.00" 
-            class="border border-gray-300 rounded-xl p-2"
-            :ui="{base: 'focus:ring-0 focus:outline-none pl-5'}"
-            />
-          </div>
-
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-gray-700">Quantidade</label>
-            <UInput v-model="form.quantidade" size="xl" type="number" 
-            class="m-3 border w-22 border-gray-300 rounded-xl p-2"
-            :ui="{base: 'focus:ring-0 focus:outline-none'}"
-            />
-          </div>
         </div>
       </div>
 
       <!-- BOTÕES -->
       <div class="flex items-center justify-end gap-4 pt-4">
-        <UButton to="/estoque" variant="ghost" color="gray" size="lg" class="hover:text-red-400">Cancelar</UButton>
+        <UButton 
+          to="/estoque" 
+          variant="ghost" 
+          color="gray" 
+          size="lg" 
+          class="hover:text-red-400 transition-colors"
+        >
+          Cancelar
+        </UButton>
 
-        <!-- Agora aparece no mobile também -->
-        <UButton type="submit" color="black" size="lg" :loading="loading" 
-          class="cursor-pointer border border-gray-200 p-3 shadow-lg hover:bg-gray-300 transition-all"
+        <UButton 
+          type="submit" 
+          color="black" 
+          size="lg" 
+          :loading="loading" 
+          icon="i-heroicons-check-circle"
+          class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white shadow-lg transition-all"
         >
           Salvar Produto
         </UButton>

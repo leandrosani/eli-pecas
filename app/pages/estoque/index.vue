@@ -1,17 +1,17 @@
 <template>
   <div class="pb-20 relative">
     
-    <div class="flex flex-col gap-4 mb-6">
+    <div class="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Estoque</h1>
-          <p class="text-sm text-gray-500 mt-1">
+          <h1 class="text-xl md:text-3xl font-bold text-gray-900 tracking-tight">Estoque</h1>
+          <p class="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">
             Total de itens: <strong>{{ linhasFiltradas.length }}</strong>
           </p>
         </div>
         
-        <UButton to="/estoque/criar" icon="i-heroicons-plus" color="black" size="sm" class="md:hidden shadow-lg rounded-full w-9 h-9 flex items-center justify-center p-0" />
-        <UButton to="/estoque/criar" icon="i-heroicons-plus" color="black" size="lg" class="cursor-pointer border border-gray-200 p-3 hidden md:flex shadow-lg hover:bg-gray-300 transition-all">
+        <UButton to="/estoque/criar" icon="i-heroicons-plus" color="black" size="md" class="md:hidden shadow-lg rounded-full w-10 h-10 flex items-center justify-center p-0 bg-blue-600 text-white" />
+        <UButton to="/estoque/criar" icon="i-heroicons-plus" color="black" size="lg" class="cursor-pointer border bg-blue-600 text-white border-gray-200 p-3 hidden md:flex shadow-lg hover:bg-blue-800 hover:border-blue-500 transition-all">
           Adicionar Peça
         </UButton>
       </div>
@@ -23,9 +23,9 @@
         size="lg"
         color="primary"
         variant="outline"
-        class="pl-4 md:pl-8 w-full shadow-md py-1.5 md:py-3 rounded-lg md:rounded-xl border border-gray-300"
+        class="pl-6 md:pl-8 w-full shadow-md py-2 md:py-3 rounded-lg md:rounded-xl border border-gray-300"
         :ui="{ 
-          base: 'ml-3 md:ml-6 w-[95%] placeholder:text-gray-400 placeholder:font-normal focus:ring-2 focus:ring-blue-400 focus:border-transparent md:focus:p-2 transition-all duration-200'
+          base: 'ml-4 md:ml-6 w-[95%] placeholder:text-gray-400 placeholder:font-normal focus:ring-border-transparent focus:ring-blue-400 focus:border-transparent md:focus:p-2 transition-all duration-200'
         }"
       >
         <template #trailing v-if="busca">
@@ -34,16 +34,17 @@
       </UInput>
     </div>
 
+    <!-- Desktop Table -->
     <div class="hidden md:block bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
       <table class="w-full text-left border-collapse">
-        <thead class="bg-gray-50/80">
+        <thead class="bg-blue-800">
           <tr>
-            <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-4/12">Peça / Estado</th>
-            <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-3/12">Aplicação</th>
-            <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-2/12">Endereço</th>
-            <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-1/12 text-center">Qtd.</th>
-            <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-2/12 text-right">Preço</th>
-            <th class="py-4 px-6 text-xs uppercase font-bold text-gray-500 w-2/12 text-center">Ações</th>
+            <th class="py-4 px-6 text-xs uppercase font-bold text-amber-50 w-4/12">Peça / Estado</th>
+            <th class="py-4 px-6 text-xs uppercase font-bold text-amber-50 w-3/12">Aplicação</th>
+            <th class="py-4 px-6 text-xs uppercase font-bold text-amber-50 w-2/12">Endereço</th>
+            <th class="py-4 px-6 text-xs uppercase font-bold text-amber-50 w-1/12 text-center">Qtd.</th>
+            <th class="py-4 px-6 text-xs uppercase font-bold text-amber-50 w-2/12 text-right">Preço</th>
+            <th class="py-4 px-6 text-xs uppercase font-bold text-amber-50 w-2/12 text-center">Ações</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
@@ -102,78 +103,71 @@
       </div>
     </div>
 
-    <div class="md:hidden space-y-2">
-      <div v-if="status === 'pending'" class="text-center py-4">
-        <UIcon name="i-heroicons-arrow-path" class="w-6 h-6 animate-spin mx-auto text-gray-400" />
+    <!-- Mobile Cards -->
+    <div class="md:hidden space-y-2.5">
+      <div v-if="status === 'pending'" class="text-center py-6">
+        <UIcon name="i-heroicons-arrow-path" class="w-7 h-7 animate-spin mx-auto text-gray-400" />
       </div>
 
       <div
         v-for="item in linhasFiltradas"
         :key="item.id"
-        class="bg-white p-2.5 rounded-lg border border-gray-200 shadow-sm relative"
+        class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm relative"
       >
-        <!-- Ícones de ação -->
-        <div class="absolute top-1.5 right-1.5 flex gap-0.5">
-          <UButton :to="`/estoque/editar/${item.id}`" color="gray" variant="ghost" icon="i-heroicons-pencil-square" size="2xs" class="w-6 h-6 p-0"/>
-          <UButton color="red" variant="ghost" icon="i-heroicons-trash" size="2xs" class="w-6 h-6 p-0" @click="excluir(item.id)" />
+        <!-- Botões de ação compactos -->
+        <div class="absolute top-2 right-2 flex gap-1">
+          <UButton :to="`/estoque/editar/${item.id}`" color="gray" variant="ghost" icon="i-heroicons-pencil-square" size="xs" class="w-7 h-7 p-0"/>
+          <UButton color="red" variant="ghost" icon="i-heroicons-trash" size="xs" class="w-7 h-7 p-0" @click="excluir(item.id)" />
         </div>
 
-        <!-- Linha: MODELO -->
-        <div class="flex justify-between items-center mb-0.5 pr-14">
-          <span class="text-[9px] font-bold uppercase tracking-wider text-gray-600">
+        <!-- Modelo -->
+        <div class="mb-1 pr-16">
+          <span class="text-[11px] font-bold uppercase tracking-wide text-gray-500">
             {{ item.modelo }}
           </span>
         </div>
 
-        <!-- Nome da peça / ano -->
-        <div class="flex items-center gap-1.5">
-          <h3 class="font-bold text-gray-900 text-sm leading-tight">
-            {{ item.nome }}
-          </h3>
-          <span class="text-xs font-bold uppercase tracking-wider text-gray-900">
-            - {{ item.ano }}
-          </span>
-        </div>
+        <!-- Nome da peça -->
+        <h3 class="font-bold text-gray-900 text-base leading-tight mb-1">
+          {{ item.nome }} <span class="text-sm text-gray-700">{{ item.ano }}</span>
+        </h3>
 
-        <!-- COM-DETALHE / ESTADO -->
-        <div class="flex flex-wrap items-center gap-1 mt-1 mb-1.5">
-          <span
-            class="px-1 py-0.5 bg-gray-100 text-gray-700 text-[8px] font-bold uppercase tracking-wide rounded border border-gray-200"
-          >
-            {{ item.detalhe || 'COM-DETALHE' }}
+        <!-- Tags: Marca + Estado -->
+        <div class="flex flex-wrap items-center gap-1.5 mb-2">
+          <span class="px-1.5 py-0.5 bg-gray-100 text-gray-700 text-[10px] font-bold uppercase tracking-wide rounded border border-gray-200">
+            {{ item.marca }}
           </span>
 
           <span
             v-if="item.estado"
-            :class="getClasseEstado(item)"
-            class="px-1 py-0.5 text-[8px] font-bold uppercase tracking-wide rounded border"
+            class="px-1.5 py-0.5 bg-red-50 text-red-700 border-red-100 text-[10px] font-bold uppercase tracking-wide rounded border"
           >
             {{ item.estado }}
           </span>
         </div>
 
-        <!-- OBSERVAÇÃO -->
-        <div v-if="item.detalhes" class="mb-1.5 p-1.5 bg-blue-50 rounded-md border border-blue-100">
-          <p class="text-[8px] font-bold text-blue-400 uppercase tracking-wider mb-0.5 flex items-center gap-0.5">
-            <UIcon name="i-heroicons-information-circle" class="w-2.5 h-2.5" />
-            Observação
+        <!-- Observação (se houver) -->
+        <div v-if="item.detalhes" class="mb-2 p-2 bg-blue-50 rounded border border-blue-100">
+          <p class="text-[9px] font-bold text-blue-500 uppercase tracking-wide mb-0.5 flex items-center gap-1">
+            <UIcon name="i-heroicons-information-circle" class="w-3 h-3" />
+            Endereço
           </p>
-          <p class="text-[10px] text-blue-900 leading-snug">{{ item.detalhes }}</p>
+          <p class="text-xs text-blue-900 leading-tight">{{ item.detalhes }}</p>
         </div>
 
-        <!-- Quantidade + Vender -->
-        <div class="flex justify-between items-center pt-1 border-t border-gray-100 mt-1">
-          <span class="text-sm text-gray-700 font-medium">
-            Qtd:
-            <strong class="text-gray-900">{{ item.quantidade }}</strong>
-          </span>
+        <!-- Footer: Quantidade + Botão Vender -->
+        <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+          <div class="flex items-baseline gap-1">
+            <span class="text-xs text-gray-600 font-medium">Qtd:</span>
+            <span class="text-lg font-bold text-gray-900">{{ item.quantidade }}</span>
+          </div>
 
           <UButton
             v-if="item.quantidade > 0"
             color="success"
-            size="xs"
+            size="sm"
             icon="i-heroicons-currency-dollar"
-            class="px-2 py-1 border border-green-600 bg-green-800 text-gray-50 text-[10px]"
+            class="px-3 py-1.5 border border-green-600 bg-green-700 text-white shadow-sm"
             @click="abrirVenda(item)"
           >
             Vender
@@ -181,7 +175,7 @@
 
           <span
             v-else
-            class="text-[9px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded border border-red-100"
+            class="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-1 rounded border border-red-100"
           >
             ESGOTADO
           </span>
@@ -189,6 +183,7 @@
       </div>
     </div>
 
+    <!-- Modal de Venda -->
     <div v-if="modalVendaAberto" class="fixed inset-0 z-[100] bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4" @click.self="modalVendaAberto = false">
       <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden p-6">
         <div class="flex justify-between items-center mb-6">
