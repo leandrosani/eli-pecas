@@ -73,8 +73,8 @@
             :class="rota === '/estoque' ? 'bg-blue-100 shadow-lg scale-110' : 'bg-transparent'"
           >
             <UIcon name="i-heroicons-archive-box" class="w-7 h-7" />
-            <!-- Badge exemplo (estoque baixo) -->
-            <span v-if="rota !== '/estoque'" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">5</span>
+            <!-- Badge exemplo (estoque baixo) 
+            <span v-if="rota !== '/estoque'" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">5</span>-->
           </div>
           <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/estoque' ? 'text-blue-600' : 'text-gray-400'">
             Estoque
@@ -174,7 +174,7 @@ const menuStructure = computed(() => [
     label: 'Estoque e Vendas', // ← Renomeado
     links: [
       { label: 'Análise e Vendas', icon: 'i-heroicons-chart-bar', to: '/analise' },
-      { label: 'Estoque Geral', icon: 'i-heroicons-archive-box', to: '/estoque', badge: '5' },
+      { label: 'Estoque Geral', icon: 'i-heroicons-archive-box', to: '/estoque', badge: '' },
       { label: 'Adicionar Peça', icon: 'i-heroicons-plus-circle', to: '/estoque/criar' },
     ]
   },
