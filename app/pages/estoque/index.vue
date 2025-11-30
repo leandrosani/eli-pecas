@@ -40,7 +40,6 @@
             base: 'placeholder:text-gray-400 focus:ring-2 focus:ring-blue-400/20'
           }"
         >
-
           <template #trailing v-if="busca">
             <UButton 
               color="gray" 
@@ -65,7 +64,7 @@
             <th class="py-4 px-6 text-xs uppercase font-bold text-amber-50 w-2/12">Endereço</th>
             <th class="py-4 px-6 text-xs uppercase font-bold text-amber-50 w-1/12 text-center">Qtd.</th>
             <th class="py-4 px-6 text-xs uppercase font-bold text-amber-50 w-2/12 text-right">Preço</th>
-            <th class="py-4 px-6 text-xs uppercase font-bold text-amber-50 w-2/12 text-center">Ações</th>
+            <th class="py-4 px-6 text-xs uppercase font-bold text-amber-50 w-32 text-center">Ações</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-400">
@@ -114,34 +113,40 @@
               <div class="font-mono font-bold text-gray-900 text-sm">{{ formatarPreco(row) }}</div>
             </td>
 
-            <td class="py-4 px-6 align-middle text-center">
-              <div class="flex items-center justify-center gap-1.5">
+            <td class="py-4 px-6 align-middle">
+              <div class="flex flex-col items-center gap-1.5">
                 <UButton 
                   v-if="row.quantidade > 0" 
-                  color="green" 
-                  size="sm"
+                  color="success" 
+                  size="xs"
                   icon="i-heroicons-currency-dollar" 
                   @click="abrirVenda(row)"
-                  class="cursor-pointer px-3 py-2 bg-gradient-to-br from-green-600 to-green-700 text-white shadow-sm hover:shadow-md hover:from-green-800 transition-all active:scale-95 rounded-lg font-bold"
+                  class="cursor-pointer w-full px-3 py-1.5 bg-gradient-to-br from-green-600 to-green-700 text-white shadow-sm hover:shadow-md hover:from-green-700 hover:to-green-800 transition-all active:scale-95 rounded-lg font-semibold text-[11px]"
                 >
                   Vender
                 </UButton>
+                
                 <UButton 
                   :to="`/estoque/editar/${row.id}`" 
-                  color="gray" 
-                  variant="ghost" 
+                  color="primary"
+                  variant="soft"
                   icon="i-heroicons-pencil-square" 
                   size="xs"
-                  class="hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                />
+                  class="w-full px-3 py-1.5 text-[11px] font-semibold rounded-lg hover:bg-blue-100 transition-all"
+                >
+                  Editar
+                </UButton>
+                
                 <UButton 
-                  color="red" 
-                  variant="ghost" 
+                  color="error" 
+                  variant="soft"
                   icon="i-heroicons-trash" 
                   size="xs" 
                   @click="excluir(row.id)"
-                  class="hover:bg-red-50 hover:text-red-600 transition-colors"
-                />
+                  class="w-full px-3 py-1.5 text-[11px] font-semibold rounded-lg hover:bg-red-100 transition-all"
+                >
+                  Excluir
+                </UButton>
               </div>
             </td>
 
@@ -159,7 +164,7 @@
     </div>
 
     <!-- Mobile Cards -->
-    <div class="md:hidden space-y-3">
+    <div class="md:hidden space-y-2.5">
       <div v-if="status === 'pending'" class="text-center py-12">
         <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin mx-auto text-blue-500" />
         <p class="text-gray-500 text-sm mt-2">Carregando...</p>
@@ -168,93 +173,100 @@
       <div
         v-for="item in linhasFiltradas"
         :key="item.id"
-        class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative hover:shadow-md transition-all"
+        class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all"
       >
-        <!-- Botões de ação -->
-        <div class="absolute top-3 right-3 flex gap-1.5">
-          <UButton 
-            :to="`/estoque/editar/${item.id}`" 
-            color="gray" 
-            variant="soft" 
-            icon="i-heroicons-pencil-square" 
-            size="xs" 
-            class="w-8 h-8 p-0 rounded-lg"
-          />
-          <UButton 
-            color="red" 
-            variant="soft" 
-            icon="i-heroicons-trash" 
-            size="xs" 
-            class="w-8 h-8 p-0 rounded-lg" 
-            @click="excluir(item.id)" 
-          />
-        </div>
-
-        <!-- Modelo -->
-        <div class="mb-1.5 pr-20">
-          <span class="text-[11px] font-bold uppercase tracking-wide text-gray-500">
+        <!-- Header: Modelo + Quantidade -->
+        <div class="flex justify-between items-start mb-1.5">
+          <span class="text-[10px] font-bold uppercase tracking-wide text-gray-500">
             {{ item.modelo || 'Universal' }}
           </span>
+          
+          <!-- Quantidade movida para cá -->
+          <div class="flex items-center gap-1 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+            <UIcon name="i-heroicons-cube" class="w-3 h-3 text-blue-600" />
+            <span class="text-xs font-bold text-blue-900">{{ item.quantidade }}</span>
+          </div>
         </div>
 
         <!-- Nome da peça -->
-        <h3 class="font-bold text-gray-900 text-base leading-tight mb-2">
+        <h3 class="font-bold text-gray-900 text-sm leading-tight mb-1.5">
           {{ item.nome }} 
-          <span v-if="item.ano" class="text-sm text-gray-600 font-normal">• {{ item.ano }}</span>
+          <span v-if="item.ano" class="text-xs text-gray-600 font-normal">• {{ item.ano }}</span>
         </h3>
 
         <!-- Tags: Marca + Estado -->
-        <div class="flex flex-wrap items-center gap-2 mb-3">
-          <span class="px-2 py-1 bg-gray-100 text-gray-700 text-[11px] font-bold uppercase tracking-wide rounded-lg border border-gray-200">
+        <div class="flex flex-wrap items-center gap-1.5 mb-2">
+          <span class="px-1.5 py-0.5 bg-gray-100 text-gray-700 text-[10px] font-bold uppercase tracking-wide rounded-md border border-gray-200">
             {{ item.marca }}
           </span>
 
           <span
             v-if="item.estado && item.estado !== 'SEM DETALHE'"
-            class="px-2 py-1 bg-red-50 text-red-700 border-red-200 text-[10px] font-bold uppercase tracking-wide rounded-lg border"
+            class="px-1.5 py-0.5 bg-red-50 text-red-700 border-red-200 text-[9px] font-bold uppercase tracking-wide rounded-md border"
           >
             {{ item.estado }}
           </span>
         </div>
 
         <!-- Endereço -->
-        <div v-if="item.detalhes" class="mb-3 p-2.5 bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-lg border border-blue-200">
-          <p class="text-[9px] font-bold text-blue-600 uppercase tracking-wide mb-1 flex items-center gap-1">
-            <UIcon name="i-heroicons-map-pin" class="w-3 h-3" />
+        <div v-if="item.detalhes" class="mb-2 p-2 bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-md border border-blue-200">
+          <p class="text-[8px] font-bold text-blue-600 uppercase tracking-wide mb-0.5 flex items-center gap-1">
+            <UIcon name="i-heroicons-map-pin" class="w-2.5 h-2.5" />
             Localização
           </p>
-          <p class="text-xs text-blue-900 leading-tight font-medium">{{ item.detalhes }}</p>
+          <p class="text-[11px] text-blue-900 leading-tight font-medium">{{ item.detalhes }}</p>
         </div>
 
-        <!-- Footer: Preço + Quantidade + Botão -->
-        <div class="flex justify-between items-center pt-3 border-t border-gray-100">
-          <div class="flex flex-col">
-            <span class="text-[10px] text-gray-500 font-medium uppercase tracking-wide">Valor</span>
-            <span class="text-base font-bold text-gray-900">{{ formatarPreco(item) }}</span>
-          </div>
+        <!-- Preço (compacto) -->
+        <div class="mb-2 flex items-center justify-between p-2 bg-gray-50 rounded-md border border-gray-200">
+          <span class="text-[9px] text-gray-500 font-medium uppercase tracking-wide">Valor</span>
+          <span class="text-base font-bold text-gray-900">{{ formatarPreco(item) }}</span>
+        </div>
 
-          <div class="flex items-center gap-3">
-            <div class="text-right">
-              <span class="text-[10px] text-gray-500 font-medium uppercase tracking-wide block">Qtd</span>
-              <span class="text-lg font-bold text-gray-900">{{ item.quantidade }}</span>
-            </div>
+        <!-- Botões de Ação (compactos) -->
+        <div class="flex flex-col gap-1.5">
+          <!-- Botão Vender -->
+          <UButton
+            v-if="item.quantidade > 0"
+            size="sm"
+            icon="i-heroicons-currency-dollar"
+            block
+            class="px-3 py-2 bg-gradient-to-br from-green-600 to-green-700 text-white shadow-sm hover:shadow-md hover:from-green-700 hover:to-green-800 transition-all active:scale-[0.98] rounded-lg font-bold text-xs"
+            @click="abrirVenda(item)"
+          >
+            Vender
+          </UButton>
 
-            <UButton
-              v-if="item.quantidade > 0"
+          <span
+            v-else
+            class="text-center text-[10px] font-bold text-red-600 bg-red-50 px-3 py-2 rounded-lg border-2 border-red-200"
+          >
+            ESGOTADO
+          </span>
+
+          <!-- Botões Editar e Excluir -->
+          <div class="grid grid-cols-2 gap-1.5">
+            <UButton 
+              :to="`/estoque/editar/${item.id}`" 
+              color="primary"
+              variant="soft"
+              icon="i-heroicons-pencil-square" 
               size="sm"
-              icon="i-heroicons-currency-dollar"
-              class="px-3 py-2 bg-gradient-to-br from-green-600 to-green-700 text-white shadow-sm hover:shadow-md transition-all active:scale-95 rounded-lg font-bold"
-              @click="abrirVenda(item)"
+              class="px-2 py-1.5 rounded-lg font-semibold text-[11px] hover:bg-blue-100 transition-all"
             >
-              Vender
+              Editar
             </UButton>
 
-            <span
-              v-else
-              class="text-[10px] font-bold text-red-600 bg-red-50 px-3 py-2 rounded-lg border border-red-200"
+            <UButton 
+              color="error" 
+              variant="soft"
+              icon="i-heroicons-trash" 
+              size="sm" 
+              @click="excluir(item.id)"
+              class="px-2 py-1.5 rounded-lg font-semibold text-[11px] hover:bg-red-100 transition-all"
             >
-              ESGOTADO
-            </span>
+              Excluir
+            </UButton>
           </div>
         </div>
       </div>
