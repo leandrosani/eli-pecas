@@ -57,7 +57,7 @@
           <p class="text-[10px] md:text-xs font-bold text-purple-900 uppercase tracking-wide">Novo Item</p>
         </NuxtLink>
 
-        <!-- Card 4: Relatórios (Exemplo adicional) -->
+        <!-- Card 4: Relatórios (Exemplo adicional) 
         <NuxtLink 
           to="/relatorios" 
           class="group block bg-gradient-to-br from-orange-50 to-orange-100/50 hover:from-orange-100 hover:to-orange-200/50 rounded-lg md:rounded-xl border border-orange-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
@@ -66,9 +66,9 @@
             <UIcon name="i-heroicons-chart-bar" class="w-6 h-6 md:w-7 md:h-7 text-orange-600 transition-transform group-hover:scale-110" />
           </div>
           <p class="text-[10px] md:text-xs font-bold text-orange-900 uppercase tracking-wide">Relatórios</p>
-        </NuxtLink>
+        </NuxtLink>-->
 
-        <!-- Card 5: Configurações -->
+        <!-- Card 5: Configurações 
         <NuxtLink 
           to="/configuracoes" 
           class="group block bg-gradient-to-br from-gray-50 to-gray-100/50 hover:from-gray-100 hover:to-gray-200/50 rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
@@ -77,9 +77,9 @@
             <UIcon name="i-heroicons-cog-6-tooth" class="w-6 h-6 md:w-7 md:h-7 text-gray-600 transition-transform group-hover:scale-110" />
           </div>
           <p class="text-[10px] md:text-xs font-bold text-gray-900 uppercase tracking-wide">Configurações</p>
-        </NuxtLink>
+        </NuxtLink>-->
 
-        <!-- Card 6: Suporte -->
+        <!-- Card 6: Suporte 
         <NuxtLink 
           to="/suporte" 
           class="group block bg-gradient-to-br from-red-50 to-red-100/50 hover:from-red-100 hover:to-red-200/50 rounded-lg md:rounded-xl border border-red-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
@@ -88,7 +88,7 @@
             <UIcon name="i-heroicons-lifebuoy" class="w-6 h-6 md:w-7 md:h-7 text-red-600 transition-transform group-hover:scale-110" />
           </div>
           <p class="text-[10px] md:text-xs font-bold text-red-900 uppercase tracking-wide">Suporte</p>
-        </NuxtLink>
+        </NuxtLink>-->
         
       </div>
     </div>

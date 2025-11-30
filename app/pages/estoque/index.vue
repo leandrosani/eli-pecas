@@ -33,15 +33,14 @@
       <div class="relative">
         <UInput 
           v-model="busca" 
-          icon="i-heroicons-magnifying-glass" 
           placeholder="Buscar por nome, marca ou modelo..." 
           size="lg"
-          class="w-full shadow-sm rounded-xl border-2 border-gray-200 focus-within:border-blue-400 transition-all"
+          class="w-full shadow-sm rounded-xl border-2 border-gray-200 focus-within:border-blue-400 transition-all [&_input]:pl-11"
           :ui="{ 
-            icon: { leading: { padding: { lg: 'ps-11' } } },
             base: 'placeholder:text-gray-400 focus:ring-2 focus:ring-blue-400/20'
           }"
         >
+
           <template #trailing v-if="busca">
             <UButton 
               color="gray" 
@@ -69,7 +68,7 @@
             <th class="py-4 px-6 text-xs uppercase font-bold text-amber-50 w-2/12 text-center">Ações</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
+        <tbody class="divide-y divide-gray-400">
           <tr v-for="row in linhasFiltradas" :key="row.id" class="hover:bg-blue-50/30 transition-all group">
             
             <td class="py-4 px-6 align-middle">
@@ -123,7 +122,7 @@
                   size="sm"
                   icon="i-heroicons-currency-dollar" 
                   @click="abrirVenda(row)"
-                  class="px-3 py-2 bg-gradient-to-br from-green-600 to-green-700 text-white shadow-sm hover:shadow-md transition-all active:scale-95 rounded-lg font-bold"
+                  class="cursor-pointer px-3 py-2 bg-gradient-to-br from-green-600 to-green-700 text-white shadow-sm hover:shadow-md hover:from-green-800 transition-all active:scale-95 rounded-lg font-bold"
                 >
                   Vender
                 </UButton>

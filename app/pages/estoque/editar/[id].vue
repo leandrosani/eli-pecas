@@ -55,11 +55,12 @@
               </label>
               <UInput 
                 v-model="form.nome" 
+                @input="form.nome = form.nome.toUpperCase()"
                 size="lg" 
                 placeholder="Ex: FAROL GOL" 
                 class="w-full"
                 :ui="{ 
-                  base: 'h-12 focus:ring-2 focus:ring-blue-500 border-2 border-gray-300 rounded-xl font-medium text-gray-900 placeholder:text-gray-400'
+                  base: 'h-12 focus:ring-2 focus:ring-blue-500 border-2 border-gray-300 rounded-xl font-medium text-gray-900 placeholder:text-gray-400 uppercase'
                 }"
               />
             </div>
@@ -72,7 +73,7 @@
               </label>
               <select 
                 v-model="form.marca" 
-                class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 transition-all hover:border-gray-400 cursor-pointer"
+                class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 transition-all hover:border-gray-400 cursor-pointer uppercase"
               >
                 <option value="LADO DIREITO">LADO DIREITO</option>
                 <option value="LADO ESQUERDO">LADO ESQUERDO</option>
@@ -89,11 +90,12 @@
               </label>
               <UInput 
                 v-model="form.modelo" 
+                @input="form.modelo = form.modelo.toUpperCase()"
                 size="lg" 
-                placeholder="Ex: GOL"
+                placeholder="Ex: VOLKSWAGEN"
                 class="w-full"
                 :ui="{ 
-                  base: 'h-12 focus:ring-2 focus:ring-blue-500 border-2 border-gray-300 rounded-xl font-medium text-gray-900 placeholder:text-gray-400'
+                  base: 'h-12 focus:ring-2 focus:ring-blue-500 border-2 border-gray-300 rounded-xl font-medium text-gray-900 placeholder:text-gray-400 uppercase'
                 }"
               />
             </div>
@@ -106,13 +108,18 @@
               <UInput 
                 v-model="form.ano" 
                 size="lg" 
-                type="number" 
-                placeholder="2020"
+                type="text"
+                placeholder="2020 ou 2015/2018"
+                maxlength="9"
                 class="w-full"
                 :ui="{ 
                   base: 'h-12 focus:ring-2 focus:ring-blue-500 border-2 border-gray-300 rounded-xl font-medium text-gray-900 placeholder:text-gray-400'
                 }"
               />
+              <p class="text-[10px] text-gray-500 mt-1 flex items-center gap-1">
+                <UIcon name="i-heroicons-information-circle" class="w-3 h-3" />
+                Use "/" para range: 2015/2018
+              </p>
             </div>
 
             <div class="space-y-2">
@@ -122,7 +129,7 @@
               </label>
               <select 
                 v-model="form.estado" 
-                class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 transition-all hover:border-gray-400 cursor-pointer"
+                class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 transition-all hover:border-gray-400 cursor-pointer uppercase"
               >
                 <option value="SEM-DETALHE">SEM-DETALHE</option>
                 <option value="1 GARRA RECUPERADA">1 GARRA RECUPERADA</option>
@@ -185,9 +192,10 @@
             <div class="relative">
               <textarea 
                 v-model="form.detalhes" 
-                class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none transition-all hover:border-gray-400 font-medium" 
+                @input="form.detalhes = form.detalhes.toUpperCase()"
+                class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none transition-all hover:border-gray-400 font-medium uppercase" 
                 rows="4" 
-                placeholder="Ex: Pequeno risco na lente direita, prateleira B3, caixa azul..."
+                placeholder="Ex: PEQUENO RISCO NA LENTE DIREITA, PRATELEIRA B3, CAIXA AZUL..."
               ></textarea>
               <div class="absolute bottom-3 right-3 text-xs text-gray-400 font-medium">
                 {{ form.detalhes?.length || 0 }}/500
@@ -198,7 +206,7 @@
         </div>
       </div>
 
-      <!-- CARD DE DICA (adaptado para edição) -->
+      <!-- CARD DE DICA -->
       <div class="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl md:rounded-2xl p-4 md:p-5 border-2 border-blue-200">
         <div class="flex items-start gap-3">
           <div class="bg-blue-600 p-2 rounded-lg">
@@ -254,7 +262,7 @@ const form = reactive({
   nome: '', 
   marca: '', 
   modelo: '', 
-  ano: undefined, 
+  ano: '', 
   preco: undefined, 
   quantidade: 1, 
   estado: '', 
@@ -269,7 +277,7 @@ watchEffect(() => {
     form.nome = p.nome || ''
     form.marca = p.marca || 'LADO DIREITO'
     form.modelo = p.modelo || ''
-    form.ano = p.ano
+    form.ano = p.ano || ''
     form.preco = p.preco
     form.quantidade = p.quantidade || 1
     form.estado = p.estado || 'SEM-DETALHE'
@@ -283,9 +291,23 @@ async function salvar() {
     return
   }
 
+  // Validação do formato de ano (aceita: 2020 OU 2015/2018)
+  if (form.ano && !/^\d{4}(\/\d{4})?$/.test(form.ano)) {
+    alert('⚠️ Formato de ano inválido. Use: 2020 ou 2015/2018')
+    return
+  }
+
   saving.value = true
   try {
-    await $fetch(`/api/pecas/${id}`, { method: 'PATCH', body: form })
+    // Garante que tudo salva em maiúscula
+    const payload = {
+      ...form,
+      nome: form.nome.toUpperCase(),
+      modelo: form.modelo.toUpperCase(),
+      detalhes: form.detalhes.toUpperCase()
+    }
+
+    await $fetch(`/api/pecas/${id}`, { method: 'PATCH', body: payload })
     alert('✅ Peça atualizada com sucesso!')
     router.push('/estoque')
   } catch (e) { 
