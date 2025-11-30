@@ -3,14 +3,14 @@
     
     <!-- Header Mobile com Breadcrumb -->
     <header class="md:hidden fixed top-0 left-0 right-0 h-16 bg-gradient-to-r from-blue-600 to-blue-700 border-b border-blue-800 z-40 flex items-center px-4 shadow-lg">
-      <!-- Botão Voltar (aparece quando NÃO está na home) -->
+      <!-- Botão Voltar (aparece quando NÃO está na home) 
       <button 
         v-if="!isHome"
         @click="voltarParaHome" 
         class="p-2 text-white hover:bg-blue-500/30 rounded-lg active:scale-95 transition-all mr-2"
       >
         <UIcon name="i-heroicons-arrow-left" class="w-6 h-6" />
-      </button>
+      </button>-->
       
       <!-- Logo + Título da Página -->
       <div class="flex items-center gap-2 flex-1">

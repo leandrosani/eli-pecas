@@ -185,7 +185,7 @@
                 @input="form.detalhes = form.detalhes.toUpperCase()"
                 class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none transition-all hover:border-gray-400 font-medium uppercase" 
                 rows="4" 
-                placeholder="Ex: A-1A-001"
+                placeholder="Ex: A-1-001"
               ></textarea>
               <div class="absolute bottom-3 right-3 text-xs text-gray-400 font-medium">
                 {{ form.detalhes.length }}/500
