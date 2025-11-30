@@ -12,7 +12,7 @@
         </div>
 
         <!-- FILTRO DE MÊS -->
-        <div class="flex items-center gap-2 bg-white p-1.5 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all">
+        <div class="flex items-center gap-2 bg-white p-1.5 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all h-14">
           <UButton 
             icon="i-heroicons-chevron-left" 
             color="gray" 

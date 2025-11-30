@@ -46,38 +46,36 @@
           </span>
         </NuxtLink>
 
-        <!-- HOME (destaque central) -->
+        <!-- ESTOQUE (destaque central) -->
         <NuxtLink 
-          to="/dashboard" 
+          to="/estoque" 
           class="flex flex-col items-center justify-center gap-1 -mt-6 transition-all active:scale-95"
         >
           <div 
             class="flex items-center justify-center w-16 h-16 rounded-2xl shadow-2xl transition-all"
-            :class="rota === '/dashboard' ? 'bg-gradient-to-br from-blue-600 to-blue-700 scale-110' : 'bg-gradient-to-br from-gray-400 to-gray-500'"
+            :class="rota === '/estoque' ? 'bg-gradient-to-br from-blue-600 to-blue-700 scale-110' : 'bg-gradient-to-br from-gray-400 to-gray-500'"
           >
-            <UIcon name="i-heroicons-home" class="w-8 h-8 text-white" />
+            <UIcon name="i-heroicons-archive-box" class="w-8 h-8 text-white" />
           </div>
-          <span class="text-[10px] font-bold uppercase tracking-wide mt-1" :class="rota === '/dashboard' ? 'text-blue-600' : 'text-gray-400'">
-            Home
+          <span class="text-[10px] font-bold uppercase tracking-wide mt-1" :class="rota === '/estoque' ? 'text-blue-600' : 'text-gray-400'">
+            Estoque
           </span>
         </NuxtLink>
 
-        <!-- Estoque Geral -->
+        <!-- Adicionar Peça -->
         <NuxtLink 
-          to="/estoque" 
+          to="/estoque/criar" 
           class="flex flex-col items-center justify-center gap-1 py-2 px-4 rounded-xl transition-all active:scale-95"
-          :class="rota === '/estoque' ? 'text-blue-600' : 'text-gray-500'"
+          :class="rota === '/estoque/criar' ? 'text-blue-600' : 'text-gray-500'"
         >
           <div 
             class="relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all"
-            :class="rota === '/estoque' ? 'bg-blue-100 shadow-lg scale-110' : 'bg-transparent'"
+            :class="rota === '/estoque/criar' ? 'bg-blue-100 shadow-lg scale-110' : 'bg-transparent'"
           >
-            <UIcon name="i-heroicons-archive-box" class="w-7 h-7" />
-            <!-- Badge exemplo (estoque baixo) 
-            <span v-if="rota !== '/estoque'" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">5</span>-->
+            <UIcon name="i-heroicons-plus-circle" class="w-7 h-7" />
           </div>
-          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/estoque' ? 'text-blue-600' : 'text-gray-400'">
-            Estoque
+          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/estoque/criar' ? 'text-blue-600' : 'text-gray-400'">
+            Adicionar
           </span>
         </NuxtLink>
 
@@ -153,6 +151,7 @@ const isHome = computed(() => route.path === '/dashboard')
 
 // Detecta a rota atual para o bottom nav
 const rota = computed(() => {
+  if (route.path.startsWith('/estoque/criar')) return '/estoque/criar'
   if (route.path.startsWith('/estoque')) return '/estoque'
   if (route.path.startsWith('/analise')) return '/analise'
   return route.path

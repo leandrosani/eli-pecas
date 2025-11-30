@@ -12,5 +12,5 @@
 // Se não estiver logado, o middleware o chuta para o /login.
 
 // Redirecionamos para o /dashboard, que é o destino final.
-await navigateTo('/dashboard'); 
+await navigateTo('/analise'); 
 </script>
