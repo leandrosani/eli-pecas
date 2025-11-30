@@ -32,6 +32,7 @@ export default defineEventHandler(async (event) => {
         preco: parseFloat(body.preco), // Garante que é número decimal
         quantidade: parseInt(body.quantidade) || 1,
         fotoUrl: body.fotoUrl || null,
+        localizacao: body.localizacao || null,
         
         // Vamos registrar que houve uma entrada no histórico automaticamente
         movimentacoes: {

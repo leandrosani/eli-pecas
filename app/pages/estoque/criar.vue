@@ -129,7 +129,7 @@
           </div>
 
           <!-- Linha 3: Preço e Quantidade -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
                 <UIcon name="i-heroicons-currency-dollar" class="w-4 h-4 text-green-600" />
@@ -164,26 +164,47 @@
                 placeholder="1"
                 class="w-full"
                 :ui="{ 
-                  base: 'h-12 focus:ring-2 focus:ring-orange-500 border-2 border-gray-300 rounded-xl font-bold text-gray-900 placeholder:text-gray-400'
+                  base: 'h-12 focus:ring-2 border-2 border-gray-300 rounded-xl font-bold text-gray-900 placeholder:text-gray-400'
                 }"
               />
             </div>
+
+            <!--ENDEREÇO-->
+            <div class="flex flex-col">
+              <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2 flex items-center gap-1.5">
+                <UIcon name="i-heroicons-map-pin" class="w-4 h-4 text-orange-600" />
+                Localização (Ex: A-01-04-06)
+              </label>
+              <div class="relative">
+                <UInput
+                  v-model="form.localizacao"
+                  @input="formatarCodigo"
+                  size="lg" 
+                  placeholder="A-01-04-06"
+                  class="w-full"
+                  :ui="{ 
+                    base: 'h-12 focus:ring-2 border-2 focus:ring-orange-500 border-gray-300 rounded-xl font-bold text-gray-900 placeholder:text-gray-400'
+                  }" 
+                />
+              </div>
+            </div>
           </div>
 
-          <!-- Linha 4: Observações e Botões (Desktop) -->
+          <!-- Linha 4: Observações e Botões (Desktop) Localização no Estoque-->
           <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 md:gap-5">
-            <div class="space-y-2">
-              <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-map-pin" class="w-4 h-4 text-orange-600" />
-                Observações / Localização no Estoque
+            <div class="space-y-2 flex gap-8">
+            <!--OBS-->
+            <div class="flex flex-col flex-2">
+              <label class="mb-2 text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                <UIcon name="i-heroicons-chat-bubble-left" class="w-4 h-4" />
+                Observações:
               </label>
               <div class="relative">
                 <textarea 
                   v-model="form.detalhes" 
-                  @input="formatarCodigo"
-                  class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none transition-all hover:border-gray-400 font-medium uppercase" 
+                  class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border-2 border-gray-300 focus:ring-2 resize-none transition-all hover:border-gray-400 font-medium uppercase" 
                   rows="3" 
-                  placeholder="Ex: A-1-001"
+                  placeholder="Detalhe bem superficial"
                   maxlength="500"
                 ></textarea>
                 <div class="absolute bottom-3 right-3 text-xs text-gray-400 font-medium">
@@ -191,6 +212,7 @@
                 </div>
               </div>
             </div>
+          </div>
 
             <!-- BOTÕES DESKTOP (um em baixo do outro) -->
             <div class="hidden md:flex flex-col gap-3 justify-end">
@@ -319,6 +341,7 @@ const form = reactive({
   preco: undefined,
   quantidade: 1,
   estado: 'SEM DETALHE',
+  localizacao: '' as string,
   detalhes: ''
 })
 
@@ -337,34 +360,41 @@ function formatarAno(event: Event) {
 
 // Formatar código (A1001 -> A-1-001)
 function formatarCodigo(event: Event) {
-  const textarea = event.target as HTMLTextAreaElement
-  let valor = textarea.value.toUpperCase()
+  const target = event.target as HTMLInputElement
   
-  // Aplicar formatação apenas aos primeiros 7 caracteres
-  if (valor.length <= 7) {
-    // Remove hífens existentes para reformatar
-    valor = valor.replace(/-/g, '')
-    
-    // Se tem pelo menos 2 caracteres (letra + número)
-    if (valor.length >= 2) {
-      let formatado = valor[0] // Primeira letra
-      
-      if (valor.length >= 2) {
-        formatado += '-' + valor[1] // Adiciona hífen e segundo caractere
-      }
-      
-      if (valor.length >= 3) {
-        formatado += '-' + valor.slice(2) // Adiciona hífen e resto
-      }
-      
-      form.detalhes = formatado
-    } else {
-      form.detalhes = valor
+  let valor2 = target.value.toUpperCase()
+
+  valor2 = valor2.replace(/[^A-Z0-9]/g, '')
+
+  let formatado = '';
+  // Posição 1: Letra do Setor
+  if (valor2.length >= 1) {
+        formatado += valor2.substring(0, 1);
     }
-  } else {
-    // Após 7 caracteres, permite escrever livremente
-    form.detalhes = valor
+
+  // Posição 2: Estante (2 dígitos)
+  if (valor2.length >= 2) {
+      formatado += '-' + valor2.substring(1, 3);
   }
+
+  // Posição 3: Andar (2 dígitos)
+  if (valor2.length >= 4) {
+      formatado += '-' + valor2.substring(3, 5);
+  }
+
+  // Posição 4: Posição da Peça (2 dígitos)
+  if (valor2.length >= 6) {
+      formatado += '-' + valor2.substring(5, 7);
+  }
+
+  // 3. Atualizar o modelo de dados
+  form.localizacao = formatado;
+
+  // 4. Manter o cursor no final (Importante para UX)
+  nextTick(() => {
+      target.value = formatado;
+      target.setSelectionRange(formatado.length, formatado.length);
+  });
 }
 
 async function salvar() {

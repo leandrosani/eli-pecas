@@ -1,63 +1,71 @@
 <template>
   <div class="pb-20 relative">
-    
-    <!-- CABEÇALHO -->
-    <div class="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
-      <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">📦 </span>Despesas</h1>
 
-      <h1 class="hidden md:block text-3xl font-bold text-gray-900 tracking-tight"><span class="text-4xl">💸 </span>Despesas</h1>
-      <div class= "mb-3 mt-3 border border-gray-200 shadow-sm w-[100%]"></div>
+    <!-- CABEÇALHO EM CARD -->
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 mb-6 flex flex-col gap-4">
 
+      <!-- TÍTULO -->
+      <h1
+        class="font-bold text-gray-900 flex items-center gap-2 whitespace-nowrap
+               text-xl md:text-3xl"
+      >
+        <span class="text-2xl md:text-4xl">💸</span>
+        Despesas
+      </h1>
+
+      <!-- Linha divisória -->
+      <div class="border-t border-gray-200"></div>
+
+      <!-- TOTAL + BOTÕES -->
       <div class="flex justify-between items-center">
-        <div>
-          <h2 class="text-[md] md:text-xl text-gray-800 mt-0.5 md:mt-1 font-bold">
-            Total de itens: <strong class="text-gray-600">{{ linhasFiltradas.length }}</strong>
-          </h2>
-        </div>
-        
+
+        <h2 class="text-lg md:text-xl font-bold text-gray-700 whitespace-nowrap">
+          Total de itens:
+          <strong class="text-gray-900">{{ linhasFiltradas.length }}</strong>
+        </h2>
+
         <!-- Botão Mobile -->
         <UButton 
-          to="/despesas/criar" 
-          icon="i-heroicons-plus" 
-          size="text-4xl"
-          class="md:hidden shadow-lg rounded-full p-2 flex items-center justify-center bg-red-600 font-bold text-white" 
-        >
-        </UButton>
-        
+          to="/despesas/criar"
+          icon="i-heroicons-plus"
+          class="md:hidden bg-red-600 text-white rounded-full p-2 shadow-lg"
+        />
+
         <!-- Botão Desktop -->
         <UButton 
-          to="/despesas/criar" 
-          icon="i-heroicons-plus" 
-          size="lg" 
-          class="cursor-pointer border bg-gradient-to-br from-gray-600 to-gray-700 text-white border-gray-600 px-4 py-3 hidden md:flex shadow-lg hover:from-gray-700 hover:to-gray-800 hover:shadow-xl transition-all active:scale-[0.98] rounded-xl font-bold"
+          to="/despesas/criar"
+          icon="i-heroicons-plus"
+          size="lg"
+          class="hidden md:flex px-4 py-3 bg-gray-700 text-white border border-gray-600
+                 rounded-xl shadow hover:bg-gray-800 active:scale-95 font-bold"
         >
           Nova Despesa
         </UButton>
       </div>
 
-      <!-- Input de Busca -->
+      <!-- CAMPO DE BUSCA -->
       <div class="relative">
         <UInput 
-          v-model="busca" 
-          placeholder="Buscar por descrição, categoria ou valor..." 
+          v-model="busca"
+          placeholder="Buscar por descrição, categoria ou valor..."
           size="lg"
-          class="w-full shadow-sm rounded-xl border-2 border-gray-200 focus-within:border-red-400 transition-all [&_input]:pl-11"
+          class="w-full rounded-xl border-2 border-gray-200 shadow-sm
+                 focus-within:border-red-400 transition-all [&_input]:pl-11"
           :ui="{ 
             base: 'placeholder:text-gray-400 bg-white focus:ring-2 focus:ring-red-400/20'
           }"
         >
           <template #trailing v-if="busca">
             <UButton 
-              color="gray" 
-              variant="ghost" 
-              icon="i-heroicons-x-mark" 
-              :padded="false" 
-              @click="busca = ''" 
-              class="hover:bg-gray-100 rounded-full transition-colors"
+              icon="i-heroicons-x-mark"
+              variant="ghost"
+              @click="busca = ''"
+              class="rounded-full hover:bg-gray-100"
             />
           </template>
         </UInput>
       </div>
+
     </div>
 
     <!-- ============================================== -->

@@ -1,67 +1,68 @@
 <template>
   <div class="pb-20 relative">
-    
-    <div class="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
-      <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">📦 </span>Estoque Total</h1>
 
-      <h1 class="hidden md:block text-3xl font-bold text-gray-900 tracking-tight"><span class="text-4xl">📦 </span>Estoque Total</h1>
-      <div class= "mb-3 mt-3 border border-gray-200 shadow-sm w-[100%]"></div>
+    <!-- HEADER + AÇÕES -->
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 mb-6 flex flex-col gap-4">
 
+      <!-- Título -->
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-2">
+        📦 <span>Estoque Total</span>
+      </h1>
+
+      <!-- Linha divisória -->
+      <div class="border-t border-gray-200"></div>
+
+      <!-- Total + Botão -->
       <div class="flex justify-between items-center">
-        <div>
-          <h2 class="text-[md] md:text-xl text-gray-800 mt-0.5 md:mt-1 font-bold">
-            Total de itens: <strong class="text-gray-600">{{ linhasFiltradas.length }}</strong>
-          </h2>
-        </div>
-        
+        <h2 class="text-lg md:text-xl font-bold text-gray-700">
+          Total de itens:
+          <strong class="text-gray-900">{{ linhasFiltradas.length }}</strong>
+        </h2>
+
         <!-- Botão Mobile -->
-        <UButton 
-          to="/estoque/criar" 
-          icon="i-heroicons-plus" 
-          size="text-4xl"
-          class="md:hidden shadow-lg rounded-full p-2 flex items-center justify-center bg-blue-600 font-bold text-white" 
-        >
-        </UButton>
-        
+        <UButton
+          to="/estoque/criar"
+          icon="i-heroicons-plus"
+          class="md:hidden bg-blue-600 text-white rounded-full p-2 shadow-lg"
+        />
+
         <!-- Botão Desktop -->
-         <UButton 
-          to="/estoque/criar" 
-          icon="i-heroicons-plus" 
-          size="lg" 
-          class="cursor-pointer border bg-gradient-to-br from-gray-600 to-gray-700 text-white border-gray-600 px-4 py-3 hidden md:flex shadow-lg hover:from-gray-700 hover:to-gray-800 hover:shadow-xl transition-all active:scale-[0.98] rounded-xl font-bold"
+        <UButton
+          to="/estoque/criar"
+          icon="i-heroicons-plus"
+          size="lg"
+          class="hidden md:flex px-4 py-3 bg-gray-700 text-white rounded-xl shadow hover:bg-gray-800 active:scale-95 font-bold"
         >
           Adicionar Peça
         </UButton>
       </div>
 
-      <!-- Input de Busca -->
+      <!-- Busca -->
       <div class="relative">
-        <UInput 
-          v-model="busca" 
-          placeholder="Buscar por nome, marca ou modelo..." 
+        <UInput
+          v-model="busca"
+          placeholder="Buscar por nome, marca ou modelo..."
           size="lg"
-          class="w-full shadow-sm rounded-xl border-2 border-gray-200 focus-within:border-orange-400 transition-all [&_input]:pl-11"
-          :ui="{ 
-            base: 'placeholder:text-gray-400 bg-white focus:ring-2 focus:ring-orange-400/20'
-          }"
+          class="w-full rounded-xl border-2 border-gray-200 shadow-sm focus-within:border-orange-400 transition-all [&_input]:pl-11"
+          :ui="{ base: 'placeholder:text-gray-400 bg-white focus:ring-2 focus:ring-orange-400/20' }"
         >
           <template #trailing v-if="busca">
-            <UButton 
-              color="gray" 
-              variant="ghost" 
-              icon="i-heroicons-x-mark" 
-              :padded="false" 
-              @click="busca = ''" 
-              class="hover:bg-gray-100 rounded-full transition-colors"
+            <UButton
+              icon="i-heroicons-x-mark"
+              @click="busca = ''"
+              variant="ghost"
+              class="rounded-full hover:bg-gray-100"
             />
           </template>
         </UInput>
       </div>
+
     </div>
 
-    <!-- Desktop Table -->
+    <!-- TABELA DESKTOP -->
     <div class="hidden md:block bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
       <table class="w-full text-left border-collapse">
+
         <thead class="bg-gray-600">
           <tr>
             <th class="py-4 px-6 text-xs uppercase font-bold text-white w-4/12">Peça / Marca</th>
@@ -71,105 +72,110 @@
             <th class="py-4 px-6 text-xs uppercase font-bold text-white w-1/12 text-center">Ações</th>
           </tr>
         </thead>
+
         <tbody class="divide-y divide-gray-200">
-          <tr v-for="row in linhasFiltradas" :key="row.id" class="hover:bg-gray-50 transition-all group">
-            
-            <!-- Peça / Marca -->
-            <td class="py-4 px-6 align-middle">
+
+          <tr
+            v-for="row in linhasFiltradas"
+            :key="row.id"
+            class="hover:bg-gray-50 transition-all"
+          >
+
+            <!-- NOME + MARCA -->
+            <td class="py-4 px-6">
               <div class="flex items-center gap-3">
-                <!-- Badge de Quantidade no lugar do ícone -->
-                <div class="w-12 h-12 rounded-xl bg-gray-200 flex flex-col items-center justify-center shrink-0 shadow-sm border border-gray-300">
+
+                <!-- Quantidade -->
+                <div class="w-12 h-12 rounded-xl bg-gray-200 flex flex-col items-center justify-center shadow-sm border border-gray-300">
                   <span class="text-2xl font-bold text-gray-800 leading-none">{{ row.quantidade }}</span>
                   <span class="text-[8px] font-bold text-gray-600 uppercase tracking-wide">un.</span>
                 </div>
-                
+
+                <!-- Texto -->
                 <div>
                   <div class="font-bold text-gray-900 text-sm mb-1">{{ row.nome }}</div>
-                  <div class="flex flex-col items-start gap-1.5">
-                    <span class="text-[12px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-gray-100 text-orange-800 border border-0">
+
+                  <div class="flex gap-1.5 flex-wrap">
+                    <span class="text-[12px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-gray-100 text-orange-800">
                       • {{ row.marca }}
                     </span>
-                    <span v-if="row.estado" class="text-[12px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-orange-100 text-black border border-0">
+
+                    <span
+                      v-if="row.estado"
+                      class="text-[12px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-orange-100 text-black"
+                    >
                       • {{ row.estado }}
                     </span>
                   </div>
                 </div>
+
               </div>
             </td>
 
-            <!-- Aplicação -->
-            <td class="py-4 px-6 align-middle">
+            <!-- APLICAÇÃO -->
+            <td class="py-4 px-6">
               <div class="flex flex-col">
-                <span class="text-xs font-bold uppercase tracking-wide text-gray-500">{{ row.modelo || 'Universal' }}</span>
-                <span v-if="row.ano" class="text-sm font-bold text-gray-900 mt-0.5">{{ row.ano }}</span>
+                <span class="text-xs font-bold uppercase text-gray-500">{{ row.modelo || 'Universal' }}</span>
+                <span v-if="row.ano" class="text-sm font-bold mt-0.5 text-gray-900">{{ row.ano }}</span>
               </div>
             </td>
 
-            <!-- Localização -->
-            <td class="py-4 px-6 align-middle">
-              <div class="flex items-center gap-1.5 bg-orange-50 border border-orange-100 px-2.5 py-1.5 rounded-lg w-fit">
-                <UIcon name="i-heroicons-map-pin" class="w-3.5 h-3.5 text-orange-800" />
-                <span class="text-[12px] font-bold text-orange-800">{{ row.detalhes }}</span>
+            <!-- LOCALIZAÇÃO -->
+            <td class="py-4 px-6">
+              <div class="flex">
+
+                <div
+                  v-if="row.localizacao"
+                  class="flex items-center flex-nowrap gap-1.5 bg-purple-200/20 px-3 py-1 rounded-md shadow-sm w-fit border border-purple-200 whitespace-nowrap"
+                >
+                  <UIcon name="i-heroicons-map-pin" class="w-4 h-4 text-purple-800" />
+                  <span class="text-sm font-bold text-purple-800 whitespace-nowrap">{{ row.localizacao }}</span>
+                </div>
+
               </div>
             </td>
 
-            <!-- Quantidade (agora vazia ou pode remover essa coluna) -->
-            <td class="md:hidden py-4 px-6 align-middle text-center">
-              <div class="flex items-center justify-center gap-1 bg-orange-50 px-2.5 py-1 rounded-md border border-orange-200 w-fit mx-auto">
-                <UIcon name="i-heroicons-cube" class="w-3.5 h-3.5 text-orange-600" />
-                <span v-if="row.quantidade > 0" class="text-xs font-bold text-orange-900">{{ row.quantidade }}</span>
-                <span v-else class="text-xs font-bold text-red-600">0</span>
-              </div>
-            </td>
 
-            <!-- Preço -->
-            <td class="py-4 px-6 align-middle text-right">
+            <!-- PREÇO -->
+            <td class="py-4 px-6 text-right">
               <div class="font-bold text-gray-800 text-base">{{ formatarPreco(row) }}</div>
             </td>
 
-            <!-- Ações -->
-            <td class="py-4 px-6 align-middle">
+            <!-- AÇÕES -->
+            <td class="py-4 px-6">
               <div class="flex flex-col items-center justify-center gap-2">
-                <UButton 
-                  v-if="row.quantidade > 0" 
+
+                <UButton
+                  v-if="row.quantidade > 0"
+                  icon="i-heroicons-currency-dollar"
                   size="xs"
-                  icon="i-heroicons-currency-dollar" 
                   @click="abrirVenda(row)"
-                  class="w-23 cursor-pointer transition-all active:scale-95 rounded-lg font-semibold text-[12px] bg-green-800 text-white shadow-sm hover:bg-green-600 hover:shadow-md px-2.5 py-1.5 text-center"
-                  title="Vender"
-                > 
-                Vender
-                </UButton>
+                  class="flex items-center justify-center w-24 bg-green-700 hover:bg-green-600 text-white rounded-lg px-2.5 py-1.5 text-[12px] font-semibold shadow-sm"
+                >Vender</UButton>
 
                 <span
                   v-else
-                  class="w-23 cursor-pointer transition-all active:scale-95 rounded-lg font-semibold text-[12px] bg-red-50 text-red-600 shadow-sm px-2.5 py-1.5 text-center border-2 border-red-200"
+                  class="w-24 text-center px-2.5 py-1.5 bg-red-50 text-red-600 border border-red-200 rounded-lg text-[12px] font-semibold"
                 >
                   ESGOTADO
                 </span>
-  
-                <UButton 
-                  :to="`/estoque/editar/${row.id}`" 
-                  icon="i-heroicons-pencil-square" 
+
+                <UButton
+                  :to="`/estoque/editar/${row.id}`"
+                  icon="i-heroicons-pencil-square"
                   size="xs"
-                  class="w-24 text-center cursor-pointer px-2.5 py-1.5 bg-orange-500/80 text-white shadow-sm hover:bg-orange-400/90 hover:shadow-md transition-all active:scale-95 rounded-lg font-semibold text-[12px]"
-                  title="Editar"
-                >
-                Editar
-                </UButton>
-                
-                <UButton 
-                  icon="i-heroicons-trash" 
-                  size="xs" 
+                  class="flex items-center justify-center w-24 bg-orange-500/80 hover:bg-orange-400/90 text-white rounded-lg px-2.5 py-1.5 text-[12px] font-semibold shadow-sm"
+                >Editar</UButton>
+
+                <UButton
+                  icon="i-heroicons-trash"
+                  size="xs"
                   @click="excluir(row.id)"
-                  class="w-24 text-center cursor-pointer px-2.5 py-1.5 bg-red-800 text-white shadow-sm hover:bg-red-600 hover:shadow-md transition-all active:scale-95 rounded-lg font-semibold text-[12px]"
-                  title="Excluir"
-                >
-                Excluir
-                </UButton>
+                  class="flex items-center justify-center w-24 bg-red-700 hover:bg-red-600 text-white rounded-lg px-2.5 py-1.5 text-[12px] font-semibold shadow-sm"
+                >Excluir</UButton>
+
               </div>
             </td>
-
           </tr>
         </tbody>
       </table>
@@ -229,16 +235,12 @@
         </div>
 
         <!-- Endereço -->
-        <div v-if="item.detalhes" class=" ">
+        <div v-if="item.localizacao" class=" ">
           <div class="flex justify-between items-center">
-            
-            <div>  
-              <p class="text-[10px] font-bold text-orange-700 uppercase tracking-wide mb-0.5 flex items-center gap-1">
-              <UIcon name="i-heroicons-map-pin" class="w-2.5 h-2.5" />
-              Localização
-              </p>
-              <p class="ml-1 text-[14px] font-semibold text-orange-700 leading-tight font-medium">
-                {{ item.detalhes }}
+            <div class="flex justify-center items-center bg-purple-200/20 p-1 rounded-md border border-purple-200">  
+              <UIcon name="i-heroicons-map-pin" class="w-3 h-3 text-purple-800" />
+              <p class="ml-1 text-[14px] font-semibold text-purple-800 leading-tight font-medium">
+                {{ item.localizacao }}
               </p>
             </div>
 
@@ -411,7 +413,7 @@ const linhasFiltradas = computed(() => {
     nome: p.nome || '', 
     quantidade: p.quantidade || 0, 
     preco: p.preco || 0,
-    estado: p.estado || 'SEM-DETALHE', 
+    estado: p.estado || 'SEM DETALHE', 
     detalhes: p.detalhes || ''
   }))
 

@@ -68,6 +68,7 @@ model Peca {
   preco       Decimal  @db.Decimal(10, 2)
   quantidade  Int      @default(1)
   fotoUrl     String?
+  localizacao String?
   ativo       Boolean  @default(true)
   caixaId     Int?
   caixa       Caixa?   @relation(fields: [caixaId], references: [id])

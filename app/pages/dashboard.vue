@@ -6,14 +6,19 @@
     <!-- =================================================== -->
 
     <!-- MOBILE -->
-    <div class="md:hidden flex justify-between items-center gap-2">
-      <div class="flex flex-2 gap-2 flex-col justify-between items-start">
-        <h1 class="md:hidden font-semibold text-xl text-black">
-          <span class="text-2xl">📊 </span> Visão Geral
+    <div class="md:hidden flex justify-between items-center gap-3">
+
+      <!-- Título + Seleção de Mês -->
+      <div class="flex flex-col gap-2 flex-1">
+
+        <!-- Título -->
+        <h1 class="font-semibold text-xl text-black whitespace-nowrap flex items-center gap-1">
+          <span class="text-2xl">📊</span> Visão Geral
         </h1>
 
+        <!-- Card de Mês -->
         <div
-          class="flex items-center gap-2 bg-white p-1.5 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all h-12 md:h-14 w-full md:w-auto"
+          class="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all h-12 whitespace-nowrap"
         >
           <UButton
             icon="i-heroicons-chevron-left"
@@ -24,7 +29,7 @@
           />
 
           <span
-            class="font-bold text-gray-900 text-sm md:text-sm flex-1 w-24 text-center select-none capitalize"
+            class="font-bold text-gray-900 text-sm flex-1 text-center select-none capitalize whitespace-nowrap"
           >
             {{ nomeMesAtual }}
           </span>
@@ -40,42 +45,49 @@
         </div>
       </div>
 
+      <!-- Logo -->
       <div
-        class="w-22 h-22 rounded-2xl flex items-center justify-center bg-black shadow-md overflow-hidden border-3 border-white"
+        class="w-20 h-20 rounded-2xl flex items-center justify-center bg-black shadow-md overflow-hidden border-2 border-white shrink-0"
       >
         <img
           src="/logo.jpg"
           alt="Logo Eli Peças"
-          class="max-w-full max-h-full object-contain"
+          class="w-full h-full object-cover"
         />
       </div>
     </div>
 
+
+
     <!-- DESKTOP -->
-    <div class="flex flex-col gap-3 md:gap-4 mb-3 md:mb-6">
+    <div class="hidden md:flex flex-col gap-4 mb-6">
+
       <div class="flex justify-between items-start">
-        <div class="hidden md:block">
-          <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
-            <span class="text-4xl">📊 </span> Análise Financeira
+
+        <!-- Título -->
+        <div class="whitespace-nowrap">
+          <h1 class="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-2 whitespace-nowrap">
+            <span class="text-4xl">📊</span> Análise Financeira
           </h1>
-          <p class="text-sm text-gray-500 mt-1">
+          <p class="text-sm text-gray-500 mt-1 whitespace-nowrap">
             Acompanhe o desempenho e extrato por período.
           </p>
         </div>
 
+        <!-- Card de Mês -->
         <div
-          class="hidden md:flex items-center gap-2 bg-white p-1.5 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all h-12 md:h-14"
+          class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all h-14 whitespace-nowrap"
         >
           <UButton
             icon="i-heroicons-chevron-left"
             color="gray"
             variant="ghost"
-            size="3xs"
+            size="xs"
             @click="mudarMes(-1)"
           />
 
           <span
-            class="font-bold text-gray-900 text-sm md:text-sm flex-1 md:w-32 text-center select-none capitalize"
+            class="font-bold text-gray-900 text-sm w-32 text-center select-none capitalize whitespace-nowrap"
           >
             {{ nomeMesAtual }}
           </span>
@@ -84,15 +96,18 @@
             icon="i-heroicons-chevron-right"
             color="gray"
             variant="ghost"
-            size="3xs"
+            size="xs"
             @click="mudarMes(1)"
             :disabled="ehMesFuturo"
           />
         </div>
+
       </div>
     </div>
 
-    <div class="mb-3 mt-3 border border-gray-200 shadow-sm w-[100%]"></div>
+    <!-- Linha divisória -->
+    <div class="border border-gray-200 shadow-sm my-3 w-full"></div>
+
 
     <!-- LOADING -->
     <div v-if="pending" class="text-center py-20">
