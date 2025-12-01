@@ -30,7 +30,9 @@ export default defineNuxtConfig({
   // CSS Global
   css: ['~/assets/css/main.css'],
 
- 
+  nitro: {
+    preset: 'cloudflare_pages' // ou 'cloudflare' / 'cloudflare_workers' dependendo da versão
+  },
 
 
   // Variáveis de Ambiente
