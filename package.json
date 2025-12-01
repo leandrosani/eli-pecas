@@ -3,11 +3,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "nuxi build",
-    "dev": "nuxi dev",
+    "build": "nuxt build",
+    "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "start": "node .output/server/index.mjs",
     "postinstall": "prisma generate"
   },
   "dependencies": {
