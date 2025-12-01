@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   nitro: {
-    preset: 'cloudflare-pages',
+    preset: 'cloudflare',
     compatibilityDate: '2024-04-03',
     serveStatic: true,
     prerender: {
