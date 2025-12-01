@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-50 text-gray-900 font-sans">
     
     <!-- Header Mobile com Breadcrumb -->
-    <header class="md:hidden fixed top-0 left-0 right-0 h-16 bg-orange-700/60 border-b border-orange-100 z-40 flex items-center px-4 shadow-lg">
+    <header class="md:hidden fixed top-0 left-0 right-0 h-16 bg-orange-700 border-b border-orange-100 z-40 flex items-center px-4 shadow-lg">
       <!-- Botão Voltar (aparece quando NÃO está na home) 
       <button 
         v-if="!isHome"
