@@ -15,11 +15,23 @@ export default defineNuxtConfig({
     preference: 'light'
   },
 
+  app: {
+    head: {
+      // 1. Link para carregar a fonte Inter do Google Fonts
+      link: [
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap'
+        }
+      ]
+    }
+  },
+
   // CSS Global
   css: ['~/assets/css/main.css'],
 
   // Variáveis de Ambiente
-runtimeConfig: {
+  runtimeConfig: {
     // VARIÁVEIS NOVAS
     sessionSecret: '',
     appPassword: '', // <-- CHAVE SECRETA DO LOGIN

@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-50 text-gray-900 font-sans">
     
     <!-- Header Mobile com Breadcrumb -->
-    <header class="md:hidden fixed top-0 left-0 right-0 h-16 bg-gradient-to-r from-blue-600 to-blue-700 border-b border-blue-800 z-40 flex items-center px-4 shadow-lg">
+    <header class="md:hidden fixed top-0 left-0 right-0 h-16 bg-orange-700/60 border-b border-orange-100 z-40 flex items-center px-4 shadow-lg">
       <!-- Botão Voltar (aparece quando NÃO está na home) 
       <button 
         v-if="!isHome"
@@ -33,15 +33,15 @@
         <NuxtLink 
           to="/analise" 
           class="flex flex-col items-center justify-center gap-1 py-2 px-4 rounded-xl transition-all active:scale-95"
-          :class="rota === '/analise' ? 'text-blue-600' : 'text-gray-500'"
+          :class="rota === '/analise' ? 'text-orange-600' : 'text-gray-500'"
         >
           <div 
             class="relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all"
-            :class="rota === '/analise' ? 'bg-blue-100 shadow-lg scale-110' : 'bg-transparent'"
+            :class="rota === '/analise' ? 'bg-orange-100 shadow-lg scale-110' : 'bg-transparent'"
           >
             <UIcon name="i-heroicons-chart-bar" class="w-7 h-7" />
           </div>
-          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/analise' ? 'text-blue-600' : 'text-gray-400'">
+          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/analise' ? 'text-orange-600' : 'text-gray-400'">
             Análise
           </span>
         </NuxtLink>
@@ -49,20 +49,21 @@
         <!-- ESTOQUE (destaque central) -->
         <NuxtLink 
           to="/estoque" 
-          class="flex flex-col items-center justify-center gap-1 -mt-6 transition-all active:scale-95"
+          class="flex flex-col items-center justify-center gap-1 py-2 px-4 rounded-xl transition-all active:scale-95"
+          :class="rota === '/estoque' ? 'text-orange-600' : 'text-gray-500'"
         >
           <div 
-            class="flex items-center justify-center w-16 h-16 rounded-2xl shadow-2xl transition-all"
-            :class="rota === '/estoque' ? 'bg-gradient-to-br from-blue-600 to-blue-700 scale-110' : 'bg-gradient-to-br from-gray-400 to-gray-500'"
+            class="relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all"
+            :class="rota === '/estoque' ? 'bg-orange-100 shadow-lg scale-110' : 'bg-transparent'"
           >
-            <UIcon name="i-heroicons-archive-box" class="w-8 h-8 text-white" />
+            <UIcon name="i-heroicons-archive-box" class="w-7 h-7" />
           </div>
-          <span class="text-[10px] font-bold uppercase tracking-wide mt-1" :class="rota === '/estoque' ? 'text-blue-600' : 'text-gray-400'">
+          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/estoque' ? 'text-orange-600' : 'text-gray-400'">
             Estoque
           </span>
         </NuxtLink>
 
-        <!-- Adicionar Peça -->
+        <!-- Adicionar Peça 
         <NuxtLink 
           to="/estoque/criar" 
           class="flex flex-col items-center justify-center gap-1 py-2 px-4 rounded-xl transition-all active:scale-95"
@@ -77,58 +78,57 @@
           <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/estoque/criar' ? 'text-blue-600' : 'text-gray-400'">
             Adicionar
           </span>
-        </NuxtLink>
+        </NuxtLink>-->
 
       </div>
     </nav>
 
-    <!-- Sidebar Desktop (mantém como estava, mas otimizada) -->
-<!-- Sidebar Desktop -->
-<aside class="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 bg-white border-r border-gray-200 z-30 shadow-sm">
-  <!-- Logo clicável = Home -->
-  <NuxtLink 
-    to="/dashboard"
-    class="h-20 flex items-center px-6 border-b border-gray-100 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-all cursor-pointer group"
-  >
-    <div class="flex items-center gap-3">
-      <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-blue-700 shadow-md group-hover:scale-110 transition-transform">
-        <UIcon name="i-heroicons-wrench-screwdriver" class="w-4 h-4" />
-      </div>
-      <div>
-        <h1 class="font-bold text-lg leading-tight text-white">Eli Peças</h1>
-        <p class="text-[10px] uppercase font-bold text-blue-200 tracking-wider">Gestão</p>
-      </div>
-    </div>
-  </NuxtLink>
-
-  <!-- Links Desktop (SEM HOME) -->
-  <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-    <div v-for="(group, index) in menuStructure" :key="index">
-      <p v-if="group.label" class="px-3 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 mt-4">
-        {{ group.label }}
-      </p>
+    <!-- Sidebar Desktop -->
+    <aside class="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 bg-white border-r border-gray-200 z-30 shadow-sm">
+      <!-- Logo clicável = Home -->
       <NuxtLink 
-        v-for="link in group.links"
-        :key="link.to"
-        :to="link.to" 
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 hover:bg-gray-50 hover:text-gray-900 relative group"
-        :class="{ '!bg-blue-50 !text-blue-700 !font-bold shadow-sm ring-1 ring-blue-100': $route.path === link.to }"
+        to="/analise"
+        class="h-20 flex items-center px-6 border-b border-orange-100 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 transition-all cursor-pointer group"
       >
-        <UIcon :name="link.icon" class="w-5 h-5" />
-        {{ link.label }}
-        <UBadge 
-          v-if="link.badge" 
-          :label="link.badge" 
-          color="red" 
-          size="xs" 
-          class="ml-auto"
-        />
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-orange-700 shadow-md group-hover:scale-110 transition-transform">
+            <UIcon name="i-heroicons-wrench-screwdriver" class="w-4 h-4" />
+          </div>
+          <div>
+            <h1 class="font-bold text-lg leading-tight text-white">Eli Peças</h1>
+            <p class="text-[10px] uppercase font-bold text-orange-200 tracking-wider">Gestão</p>
+          </div>
+        </div>
       </NuxtLink>
-    </div>
-  </nav>
 
-  <!-- User Info... (mantém igual) -->
-</aside>
+      <!-- Links Desktop -->
+      <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+        <div v-for="(group, index) in menuStructure" :key="index">
+          <p v-if="group.label" class="px-3 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 mt-4">
+            {{ group.label }}
+          </p>
+          <NuxtLink 
+            v-for="link in group.links"
+            :key="link.to"
+            :to="link.to" 
+            class="mb-2 flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 hover:bg-orange-50 hover:text-orange-700 relative group"
+            :class="{ '!bg-orange-100 !text-orange-700 !font-bold shadow-lg ring-1 ring-orange-200 scale-105': $route.path === link.to }"
+          >
+            <UIcon :name="link.icon" class="w-5 h-5" />
+            {{ link.label }}
+            <UBadge 
+              v-if="link.badge" 
+              :label="link.badge" 
+              color="red" 
+              size="xs" 
+              class="ml-auto"
+            />
+          </NuxtLink>
+        </div>
+      </nav>
+
+      <!-- User Info... (mantém igual) -->
+    </aside>
 
 
     <!-- Main Content -->
@@ -173,8 +173,8 @@ const menuStructure = computed(() => [
     label: 'Estoque e Vendas', // ← Renomeado
     links: [
       { label: 'Análise e Vendas', icon: 'i-heroicons-chart-bar', to: '/analise' },
-      { label: 'Estoque Geral', icon: 'i-heroicons-archive-box', to: '/estoque', badge: '' },
-      { label: 'Adicionar Peça', icon: 'i-heroicons-plus-circle', to: '/estoque/criar' },
+      { label: 'Estoque Geral', icon: 'i-heroicons-archive-box', to: '/estoque', badge: '' },/*
+      { label: 'Adicionar Peça', icon: 'i-heroicons-plus-circle', to: '/estoque/criar' },*/
     ]
   },
 ])

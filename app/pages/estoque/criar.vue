@@ -6,13 +6,13 @@
       <div class="bg-white rounded-xl md:rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
         
         <!-- HEADER DO CARD -->
-        <div class="px-4 md:px-6 py-4 md:py-5 border-b-2 border-blue-200 bg-gradient-to-r from-blue-600 via-blue-600 to-blue-700 flex items-center gap-3">
+        <div class="px-4 md:px-6 py-4 md:py-5 border-b-2 border-orange-200 bg-gradient-to-r from-orange-600 via-orange-600 to-orange-700 flex items-center gap-3">
           <div class="bg-white/25 backdrop-blur-sm p-2 md:p-2.5 rounded-xl border border-white/30">
             <UIcon name="i-heroicons-cube" class="w-5 h-5 md:w-6 md:h-6 text-white" />
           </div>
           <div>
             <h2 class="font-bold text-base md:text-lg text-white">Identificação da Peça</h2>
-            <p class="text-xs text-blue-100 mt-0.5">Informações essenciais do produto</p>
+            <p class="text-xs text-orange-100 mt-0.5">Informações essenciais do produto</p>
           </div>
         </div>
         
@@ -23,7 +23,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-tag" class="w-4 h-4 text-blue-600" />
+                <UIcon name="i-heroicons-tag" class="w-4 h-4 text-orange-600" />
                 Nome da Peça 
                 <span class="text-red-500">*</span>
               </label>
@@ -35,20 +35,20 @@
                 autofocus 
                 class="w-full"
                 :ui="{ 
-                  base: 'h-12 focus:ring-2 focus:ring-blue-500 border-2 border-gray-300 rounded-xl font-medium text-gray-900 placeholder:text-gray-400 uppercase'
+                  base: 'h-12 focus:ring-2 focus:ring-orange-500 border-2 border-gray-300 rounded-xl font-medium text-gray-900 placeholder:text-gray-400 uppercase'
                 }"
               />
             </div>
 
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-arrows-right-left" class="w-4 h-4 text-blue-600" />
+                <UIcon name="i-heroicons-arrows-right-left" class="w-4 h-4 text-orange-600" />
                 Lado 
                 <span class="text-red-500">*</span>
               </label>
               <select 
                 v-model="form.marca" 
-                class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 transition-all hover:border-gray-400 cursor-pointer uppercase"
+                class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 px-4 transition-all hover:border-gray-400 cursor-pointer uppercase"
               >
                 <option v-for="opt in listaLados" :key="opt" :value="opt">
                   {{ opt }}
@@ -61,12 +61,12 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-truck" class="w-4 h-4 text-blue-600" />
+                <UIcon name="i-heroicons-truck" class="w-4 h-4 text-orange-600" />
                 Montadora
               </label>
               <select 
                 v-model="form.modelo" 
-                class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 transition-all hover:border-gray-400 cursor-pointer uppercase"
+                class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 px-4 transition-all hover:border-gray-400 cursor-pointer uppercase"
               >
                 <option value="">SELECIONE</option>
                 <option v-for="montadora in listaMontadoras" :key="montadora" :value="montadora">
@@ -77,7 +77,7 @@
 
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-calendar" class="w-4 h-4 text-blue-600" />
+                <UIcon name="i-heroicons-calendar" class="w-4 h-4 text-orange-600" />
                 Ano
               </label>
               <UInput 
@@ -89,19 +89,19 @@
                 maxlength="9"
                 class="w-full"
                 :ui="{ 
-                  base: 'h-12 focus:ring-2 focus:ring-blue-500 border-2 border-gray-300 rounded-xl font-medium text-gray-900 placeholder:text-gray-400'
+                  base: 'h-12 focus:ring-2 focus:ring-orange-500 border-2 border-gray-300 rounded-xl font-medium text-gray-900 placeholder:text-gray-400'
                 }"
               />
             </div>
 
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-shield-check" class="w-4 h-4 text-blue-600" />
+                <UIcon name="i-heroicons-shield-check" class="w-4 h-4 text-orange-600" />
                 Condição
               </label>
               <select 
                 v-model="form.estado" 
-                class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 transition-all hover:border-gray-400 cursor-pointer uppercase"
+                class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 px-4 transition-all hover:border-gray-400 cursor-pointer uppercase"
               >
                 <option v-for="item in listaCondicao" :key="item" :value="item">
                   {{ item }}
@@ -156,14 +156,14 @@
           <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 md:gap-5">
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-map-pin" class="w-4 h-4 text-purple-600" />
+                <UIcon name="i-heroicons-map-pin" class="w-4 h-4 text-orange-600" />
                 Observações / Localização no Estoque
               </label>
               <div class="relative">
                 <textarea 
                   v-model="form.detalhes" 
                   @input="formatarCodigo"
-                  class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none transition-all hover:border-gray-400 font-medium uppercase" 
+                  class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none transition-all hover:border-gray-400 font-medium uppercase" 
                   rows="3" 
                   placeholder="Ex: A-1-001"
                   maxlength="500"
@@ -181,7 +181,7 @@
                 size="lg" 
                 :loading="loading" 
                 :disabled="loading"
-                class="cursor-pointer bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
+                class="cursor-pointer bg-gradient-to-br from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
               >
                 <UIcon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
                 {{ loading ? 'Salvando...' : 'Salvar' }}
@@ -221,7 +221,7 @@
           size="lg" 
           :loading="loading" 
           :disabled="loading"
-          class="w-full cursor-pointer bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
+          class="w-full cursor-pointer bg-gradient-to-br from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
         >
           <UIcon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
           {{ loading ? 'Salvando...' : 'Salvar Produto' }}
