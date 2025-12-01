@@ -30,6 +30,15 @@ export default defineNuxtConfig({
   // CSS Global
   css: ['~/assets/css/main.css'],
 
+  nitro: {
+    // Diz ao Nuxt para compilar o código para rodar como Worker no Cloudflare
+    preset: 'cloudflare-pages', 
+    // É crucial para o Prisma funcionar. Não altere!
+    experimental: {
+        wasm: true
+    }
+  },
+
   // Variáveis de Ambiente
   runtimeConfig: {
     // VARIÁVEIS NOVAS
