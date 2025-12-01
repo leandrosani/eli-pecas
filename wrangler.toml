@@ -1,8 +1,4 @@
-name = "elipecas"
-compatibility_date = "2024-04-03"
+name = "eli-pecas"
 compatibility_flags = ["nodejs_compat"]
-
-main = ".output/server/index.mjs"
-
-# Necessário para Pages Functions
+compatibility_date = "2024-11-01"
 pages_build_output_dir = ".output/public"
