@@ -32,7 +32,7 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: 'cloudflare_pages' // ou 'cloudflare' / 'cloudflare_workers' dependendo da versão
-  }
+  },
 
 
   // Variáveis de Ambiente
