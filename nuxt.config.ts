@@ -4,20 +4,16 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
 
-  // Habilita as ferramentas de dev
   devtools: { enabled: true },
 
-  // Módulo de UI
   modules: ['@nuxt/ui'],
 
-  // Configuração de Cores e Ícones
   colorMode: {
     preference: 'light'
   },
 
   app: {
     head: {
-      // 1. Link para carregar a fonte Inter do Google Fonts
       link: [
         {
           rel: 'stylesheet',
@@ -27,24 +23,23 @@ export default defineNuxtConfig({
     }
   },
 
-  // CSS Global
   css: ['~/assets/css/main.css'],
 
   nitro: {
-    preset: 'cloudflare_pages' // ou 'cloudflare' / 'cloudflare_workers' dependendo da versão
+    preset: 'cloudflare-pages',        // ← CORRIGIDO AQUI
+    compatibilityDate: '2024-04-03',
+    cloudflare: {
+      nodeCompat: true
+    },
+    prerender: {
+      routes: ['/'],
+      crawlLinks: true
+    }
   },
 
-
-  // Variáveis de Ambiente
   runtimeConfig: {
-    // VARIÁVEIS NOVAS
     sessionSecret: '',
-    appPassword: '', // <-- CHAVE SECRETA DO LOGIN
-
-    // VARIÁVEIS ANTIGAS REMOVIDAS
-    // googleClientId: '',
-    // googleClientSecret: '',
-    // resendApiKey: '',
+    appPassword: '',
 
     public: {
       baseUrl: ''
