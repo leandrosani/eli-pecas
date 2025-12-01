@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
         nome: body.nome,
         marca: body.marca,
         modelo: body.modelo || '',
-        ano: body.ano ? parseInt(body.ano) : null, // Converte texto para número
+        ano: body.ano || null, // ✅ CORRIGIDO - salva como string
         estado: body.estado,
         detalhes: body.detalhes,
         preco: parseFloat(body.preco), // Garante que é número decimal

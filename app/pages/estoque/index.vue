@@ -2,12 +2,12 @@
   <div class="pb-20 relative">
     
     <div class="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
-      <div class="flex justify-between items-start">
+      <div class="flex justify-between items-center">
         <div>
-          <h1 class="text-xl md:text-3xl font-bold text-gray-900 tracking-tight">Estoque</h1>
-          <p class="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">
+          <!--<h1 class="text-xl md:text-3xl font-bold text-gray-900 tracking-tight">Estoque</h1>-->
+          <h2 class="text-md md:text-sm text-gray-800 mt-0.5 md:mt-1 font-bold">
             Total de itens: <strong class="text-blue-600">{{ linhasFiltradas.length }}</strong>
-          </p>
+          </h2>
         </div>
         
         <!-- Botão Mobile -->
@@ -80,8 +80,8 @@
                   <div class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-gray-100 text-gray-700 w-fit border border-gray-200">
                     {{ row.marca }}
                   </div>
-                  <div v-if="row.estado && row.estado !== 'SEM DETALHE'" class="mt-1 text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-red-50 text-red-700 border border-red-100 w-fit">
-                    {{ row.estado }}
+                  <div v-if="row.estado" class="mt-1 text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-red-50 text-red-700 border border-red-100 w-fit">
+                  {{ row.estado }}
                   </div>
                 </div>
               </div>
@@ -121,7 +121,7 @@
                   size="xs"
                   icon="i-heroicons-currency-dollar" 
                   @click="abrirVenda(row)"
-                  class="cursor-pointer w-full px-3 py-1.5 bg-gradient-to-br from-green-600 to-green-700 text-white shadow-sm hover:shadow-md hover:from-green-700 hover:to-green-800 transition-all active:scale-95 rounded-lg font-semibold text-[11px]"
+                  class="cursor-pointer w-full px-3 py-1.5 transition-all active:scale-95 rounded-lg font-semibold text-[11px] bg-gradient-to-br from-green-600 to-green-700 text-white shadow-sm hover:shadow-md hover:from-green-800 hover:to-green-800 "
                 >
                   Vender
                 </UButton>
@@ -132,7 +132,7 @@
                   variant="soft"
                   icon="i-heroicons-pencil-square" 
                   size="xs"
-                  class="w-full px-3 py-1.5 text-[11px] font-semibold rounded-lg hover:bg-blue-100 transition-all"
+                  class="cursor-pointer w-full px-3 py-1.5 bg-gradient-to-br from-orange-200 to-orange-700 text-white shadow-sm hover:shadow-md hover:from-orange-500 hover:to-orange-500 transition-all active:scale-95 rounded-lg font-semibold text-[11px]"
                 >
                   Editar
                 </UButton>
@@ -143,7 +143,7 @@
                   icon="i-heroicons-trash" 
                   size="xs" 
                   @click="excluir(row.id)"
-                  class="w-full px-3 py-1.5 text-[11px] font-semibold rounded-lg hover:bg-red-100 transition-all"
+                  class="cursor-pointer w-full px-3 py-1.5 bg-gradient-to-br from-red-300 to-red-700 text-white shadow-sm hover:shadow-md hover:from-red-700 hover:to-red-800 transition-all active:scale-95 rounded-lg font-semibold text-[11px]"
                 >
                   Excluir
                 </UButton>
@@ -201,7 +201,7 @@
           </span>
 
           <span
-            v-if="item.estado && item.estado !== 'SEM DETALHE'"
+            v-if="item.estado"
             class="px-1.5 py-0.5 bg-red-50 text-red-700 border-red-200 text-[9px] font-bold uppercase tracking-wide rounded-md border"
           >
             {{ item.estado }}
@@ -231,7 +231,7 @@
             size="sm"
             icon="i-heroicons-currency-dollar"
             block
-            class="px-3 py-2 bg-gradient-to-br from-green-600 to-green-700 text-white shadow-sm hover:shadow-md hover:from-green-700 hover:to-green-800 transition-all active:scale-[0.98] rounded-lg font-bold text-xs"
+            class="text-center text-xs font-bold text-green-50 bg-green-700 px-3 py-2 rounded-lg border-2 border-green-300"
             @click="abrirVenda(item)"
           >
             Vender
@@ -252,7 +252,7 @@
               variant="soft"
               icon="i-heroicons-pencil-square" 
               size="sm"
-              class="px-2 py-1.5 rounded-lg font-semibold text-[11px] hover:bg-blue-100 transition-all"
+              class="text-center text-[10px] font-bold text-orange-600 bg-orange-50 px-3 py-2 rounded-lg border-2 border-orange-200 justify-center"
             >
               Editar
             </UButton>
@@ -263,7 +263,7 @@
               icon="i-heroicons-trash" 
               size="sm" 
               @click="excluir(item.id)"
-              class="px-2 py-1.5 rounded-lg font-semibold text-[11px] hover:bg-red-100 transition-all"
+              class="text-center text-[10px] font-bold text-red-50 bg-red-400 px-3 py-2 rounded-lg border-2 border-red-300 justify-center"
             >
               Excluir
             </UButton>
@@ -379,7 +379,7 @@ const linhasFiltradas = computed(() => {
     nome: p.nome || '', 
     quantidade: p.quantidade || 0, 
     preco: p.preco || 0,
-    estado: p.estado || 'SEM DETALHE', 
+    estado: p.estado || 'SEM-DETALHE', 
     detalhes: p.detalhes || ''
   }))
 

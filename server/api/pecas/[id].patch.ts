@@ -20,13 +20,11 @@ export default defineEventHandler(async (event) => {
         nome: body.nome,
         marca: body.marca,
         modelo: body.modelo,
-        ano: body.ano ? parseInt(body.ano) : null,
+        ano: body.ano || null, // ✅ CORRIGIDO - salva como string
         preco: parseFloat(body.preco),
         quantidade: parseInt(body.quantidade),
         estado: body.estado,
-        // --- AQUI ESTAVA FALTANDO ---
         detalhes: body.detalhes 
-        // ---------------------------
       }
     })
     return { success: true, peca: atualizado }

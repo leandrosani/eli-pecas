@@ -1,22 +1,5 @@
 <template>
   <div class="max-w-4xl mx-auto pb-20 px-4">
-    
-    <!-- CABEÇALHO -->
-    <div class="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
-      <UButton 
-        to="/estoque" 
-        color="white" 
-        icon="i-heroicons-arrow-left" 
-        square 
-        size="lg" 
-        class="shadow-md ring-2 ring-gray-200 hover:ring-blue-400 hover:bg-blue-50 w-10 h-10 md:w-12 md:h-12 transition-all active:scale-95 rounded-xl"
-      />
-      <div>
-        <h1 class="text-xl md:text-3xl font-bold text-gray-900 tracking-tight">Nova Peça</h1>
-        <p class="text-xs md:text-sm text-gray-500 mt-0.5">Preencha os detalhes do produto para adicionar ao estoque.</p>
-      </div>
-    </div>
-
     <form @submit.prevent="salvar" class="space-y-5 md:space-y-6">
       
       <!-- CARD PRINCIPAL -->
@@ -79,18 +62,17 @@
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
                 <UIcon name="i-heroicons-truck" class="w-4 h-4 text-blue-600" />
-                Modelo do Carro
+                Montadora
               </label>
-              <UInput 
+              <select 
                 v-model="form.modelo" 
-                @input="form.modelo = form.modelo.toUpperCase()"
-                size="lg" 
-                placeholder="Ex: VOLKSWAGEN"
-                class="w-full"
-                :ui="{ 
-                  base: 'h-12 focus:ring-2 focus:ring-blue-500 border-2 border-gray-300 rounded-xl font-medium text-gray-900 placeholder:text-gray-400 uppercase'
-                }"
-              />
+                class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 transition-all hover:border-gray-400 cursor-pointer uppercase"
+              >
+                <option value="">SELECIONE</option>
+                <option v-for="montadora in listaMontadoras" :key="montadora" :value="montadora">
+                  {{ montadora }}
+                </option>
+              </select>
             </div>
 
             <div class="space-y-2">
@@ -99,7 +81,8 @@
                 Ano
               </label>
               <UInput 
-                v-model="form.ano" 
+                :model-value="form.ano"
+                @input="formatarAno"
                 size="lg" 
                 type="text"
                 placeholder="2020 ou 2015/2018"
@@ -109,10 +92,6 @@
                   base: 'h-12 focus:ring-2 focus:ring-blue-500 border-2 border-gray-300 rounded-xl font-medium text-gray-900 placeholder:text-gray-400'
                 }"
               />
-              <p class="text-[10px] text-gray-500 mt-1 flex items-center gap-1">
-                <UIcon name="i-heroicons-information-circle" class="w-3 h-3" />
-                Use "/" para range: 2015/2018
-              </p>
             </div>
 
             <div class="space-y-2">
@@ -173,53 +152,65 @@
             </div>
           </div>
 
-          <!-- Linha 4: Observações -->
-          <div class="space-y-2">
-            <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-              <UIcon name="i-heroicons-map-pin" class="w-4 h-4 text-purple-600" />
-              Observações / Localização no Estoque
-            </label>
-            <div class="relative">
-              <textarea 
-                v-model="form.detalhes" 
-                @input="form.detalhes = form.detalhes.toUpperCase()"
-                class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none transition-all hover:border-gray-400 font-medium uppercase" 
-                rows="4" 
-                placeholder="Ex: A-1-001"
-              ></textarea>
-              <div class="absolute bottom-3 right-3 text-xs text-gray-400 font-medium">
-                {{ form.detalhes.length }}/500
+          <!-- Linha 4: Observações e Botões (Desktop) -->
+          <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 md:gap-5">
+            <div class="space-y-2">
+              <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                <UIcon name="i-heroicons-map-pin" class="w-4 h-4 text-purple-600" />
+                Observações / Localização no Estoque
+              </label>
+              <div class="relative">
+                <textarea 
+                  v-model="form.detalhes" 
+                  @input="formatarCodigo"
+                  class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none transition-all hover:border-gray-400 font-medium uppercase" 
+                  rows="3" 
+                  placeholder="Ex: A-1-001"
+                  maxlength="500"
+                ></textarea>
+                <div class="absolute bottom-3 right-3 text-xs text-gray-400 font-medium">
+                  {{ form.detalhes.length }}/500
+                </div>
               </div>
+            </div>
+
+            <!-- BOTÕES DESKTOP (um em baixo do outro) -->
+            <div class="hidden md:flex flex-col gap-3 justify-end">
+              <UButton 
+                type="submit" 
+                size="lg" 
+                :loading="loading" 
+                :disabled="loading"
+                class="cursor-pointer bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
+              >
+                <UIcon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
+                {{ loading ? 'Salvando...' : 'Salvar' }}
+              </UButton>
+
+              <UButton 
+                to="/estoque" 
+                variant="ghost" 
+                color="gray" 
+                size="lg" 
+                class="hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-transparent hover:border-red-200 justify-center"
+              >
+                <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
+                Cancelar
+              </UButton>
             </div>
           </div>
 
         </div>
       </div>
 
-      <!-- CARD DE RESUMO -->
-      <div class="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl md:rounded-2xl p-4 md:p-5 border-2 border-blue-200">
-        <div class="flex items-start gap-3">
-          <div class="bg-blue-600 p-2 rounded-lg">
-            <UIcon name="i-heroicons-information-circle" class="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h3 class="font-bold text-sm text-blue-900 mb-1">Dica de Cadastro</h3>
-            <p class="text-xs text-blue-700 leading-relaxed">
-              Preencha o máximo de informações possível para facilitar a busca e identificação da peça no estoque. 
-              O campo de observações é ideal para anotar a localização física.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- BOTÕES DE AÇÃO -->
-      <div class="flex flex-col-reverse md:flex-row items-stretch md:items-center justify-end gap-3 md:gap-4 pt-2">
+      <!-- BOTÕES MOBILE (lado a lado, embaixo) -->
+      <div class="flex md:hidden flex-col-reverse items-stretch gap-3 pt-2">
         <UButton 
           to="/estoque" 
           variant="ghost" 
           color="gray" 
           size="lg" 
-          class="w-full md:w-auto hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-transparent hover:border-red-200"
+          class="w-full hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-transparent hover:border-red-200 justify-center"
         >
           <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
           Cancelar
@@ -230,7 +221,7 @@
           size="lg" 
           :loading="loading" 
           :disabled="loading"
-          class="w-full md:w-auto cursor-pointer bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50"
+          class="w-full cursor-pointer bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
         >
           <UIcon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
           {{ loading ? 'Salvando...' : 'Salvar Produto' }}
@@ -260,6 +251,43 @@ const listaCondicao = [
   "TODAS GARRAS RECUPERADAS"
 ]
 
+const listaMontadoras = [
+  "CHEVROLET",
+  "VOLKSWAGEN",
+  "FIAT",
+  "FORD",
+  "RENAULT",
+  "HYUNDAI",
+  "TOYOTA",
+  "HONDA",
+  "NISSAN",
+  "JEEP",
+  "PEUGEOT",
+  "CITROËN",
+  "MITSUBISHI",
+  "CAOA CHERY",
+  "JAC MOTORS",
+  "BYD",
+  "VOLVO",
+  "BMW",
+  "MERCEDES-BENZ",
+  "AUDI",
+  "LAND ROVER",
+  "PORSCHE",
+  "KIA",
+  "SUBARU",
+  "SUZUKI",
+  "RAM",
+  "MINI",
+  "LIFAN",
+  "EFFA",
+  "IVECO",
+  "TROLLER",
+  "DODGE",
+  "CHRYSLER",
+  "SSANGYONG"
+]
+
 const form = reactive({
   nome: '',
   marca: 'LADO DIREITO',
@@ -270,6 +298,51 @@ const form = reactive({
   estado: 'SEM-DETALHE',
   detalhes: ''
 })
+
+// Formatar ano automaticamente (20182020 -> 2018/2020)
+function formatarAno(event: Event) {
+  const input = event.target as HTMLInputElement
+  let valor = input.value.replace(/\D/g, '') // Remove tudo que não é número
+  
+  if (valor.length > 4) {
+    // Adiciona a barra após os 4 primeiros dígitos
+    valor = valor.slice(0, 4) + '/' + valor.slice(4, 8)
+  }
+  
+  form.ano = valor
+}
+
+// Formatar código (A1001 -> A-1-001)
+function formatarCodigo(event: Event) {
+  const textarea = event.target as HTMLTextAreaElement
+  let valor = textarea.value.toUpperCase()
+  
+  // Aplicar formatação apenas aos primeiros 7 caracteres
+  if (valor.length <= 7) {
+    // Remove hífens existentes para reformatar
+    valor = valor.replace(/-/g, '')
+    
+    // Se tem pelo menos 2 caracteres (letra + número)
+    if (valor.length >= 2) {
+      let formatado = valor[0] // Primeira letra
+      
+      if (valor.length >= 2) {
+        formatado += '-' + valor[1] // Adiciona hífen e segundo caractere
+      }
+      
+      if (valor.length >= 3) {
+        formatado += '-' + valor.slice(2) // Adiciona hífen e resto
+      }
+      
+      form.detalhes = formatado
+    } else {
+      form.detalhes = valor
+    }
+  } else {
+    // Após 7 caracteres, permite escrever livremente
+    form.detalhes = valor
+  }
+}
 
 async function salvar() {
   if (!form.nome || !form.preco) {

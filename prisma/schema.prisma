@@ -61,7 +61,7 @@ model Peca {
   nome        String
   marca       String
   modelo      String?  
-  ano         Int?     
+  ano         String?     
   estado      String   
   detalhes    String?  @db.Text
   preco       Decimal  @db.Decimal(10, 2)
