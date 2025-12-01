@@ -1,5 +1,13 @@
 name = "elipecas"
+main = ".output/server/index.mjs"
 compatibility_date = "2024-04-03"
 compatibility_flags = ["nodejs_compat"]
 
-pages_build_output_dir = "dist"
+assets = { directory = ".output/public" }
+
+# IMPORTANTÍSSIMO
+[vars]
+DATABASE_URL = "postgresql://neondb_owner:npg_bSY92dosHKrc@ep-dark-butterfly-adxgvyag-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require"
+NUXT_SESSION_SECRET = "segredo-eli-pecas-2024-muito-seguro"
+NUXT_APP_PASSWORD = "S@ntosC@rmo"
+NUXT_PUBLIC_BASE_URL = "https://elipecas.leandrocs-sani.workers.dev"
