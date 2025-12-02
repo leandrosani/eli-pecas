@@ -3,6 +3,19 @@
     <form @submit.prevent="salvar" class="space-y-5 md:space-y-6">
       
       <!-- CARD PRINCIPAL -->
+      <div class="flex items-center justify-between">
+        <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">📦 </span>Adicionar Peça</h1>
+        <UButton 
+          to="/estoque" 
+          variant="ghost" 
+          color="gray" 
+          size="md"
+          class="hover:bg-gray-100 transition-all font-semibold rounded-xl border-2 border-gray-300 hover:border-gray-400"
+        >
+          <UIcon name="i-heroicons-arrow-left" class="w-5 h-5" />
+          <span class="hidden sm:inline">Voltar</span>
+        </UButton>
+      </div>
       <div class="bg-white rounded-xl md:rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
         
         <!-- HEADER DO CARD -->

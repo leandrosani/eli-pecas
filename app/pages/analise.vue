@@ -3,6 +3,7 @@
     
     <!-- CABEÇALHO COM FILTRO DE MÊS -->
     <div class="flex flex-col gap-3 md:gap-4 mb-3 md:mb-6">
+      <h1 class="md:hidden font-semibold text-xl text-black"><span class="text-2xl">📊 </span>Analise Financeira</h1>
       <div class="flex justify-between items-start">
         <!-- Desktop: Título completo -->
         <div class="hidden md:block">

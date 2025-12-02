@@ -2,6 +2,7 @@
   <div class="pb-20 relative">
     
     <div class="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
+      <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">📦 </span>Estoque Total</h1>
       <div class="flex justify-between items-center">
         <div>
           <h2 class="text-[md] md:text-xl text-gray-800 mt-0.5 md:mt-1 font-bold">

@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen bg-gray-50 text-gray-900 font-sans">
     
-    <!-- Header Mobile com Breadcrumb -->
-    <header class="md:hidden fixed top-0 left-0 right-0 h-16 bg-gray-800 border-b border-black z-40 flex items-center px-4 shadow-lg">
+    <!-- Header Mobile com Breadcrumb 
+    <header class="md:hidden fixed top-0 left-0 right-0 h-16 bg-gray-800 border-b border-black z-40 flex items-center px-4 shadow-lg">-->
       <!-- Botão Voltar (aparece quando NÃO está na home) 
       <button 
         v-if="!isHome"
@@ -12,18 +12,18 @@
         <UIcon name="i-heroicons-arrow-left" class="w-6 h-6" />
       </button>-->
       
-      <!-- Logo + Título da Página -->
+      <!-- Logo + Título da Página 
       <div class="flex items-center gap-2 flex-1">
         <div v-if="isHome" class="bg-white text-blue-700 p-1 rounded font-bold text-xs">EP</div>
         <span class="font-bold text-lg text-white truncate">{{ paginaAtual }}</span>
-      </div>
+      </div>-->
 
       <!-- Badge de notificação (exemplo) 
       <div class="relative">
         <UIcon name="i-heroicons-bell" class="w-6 h-6 text-white" />
         <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
-      </div>-->
-    </header>
+      </div>
+    </header>-->
 
     <!-- Bottom Navigation Mobile -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 h-15 bg-gray-800 border-t border-black z-50 shadow-2xl">
@@ -132,7 +132,7 @@
 
 
     <!-- Main Content -->
-    <main class="pt-20 pb-24 md:pt-0 md:pb-0 md:pl-64 min-h-screen transition-all">
+    <main class="pt-2 pb-24 md:pt-0 md:pb-0 md:pl-64 min-h-screen transition-all">
       <div class="p-4 md:p-8 max-w-7xl mx-auto">
         <slot />
       </div>
