@@ -51,7 +51,7 @@
       
       <div class="flex flex-col md:flex-row gap-2">
         <!-- Card 1: Vendas -->
-        <div class="w-full flex-2 bg-gradient-to-br from-green-600 via-green-600 to-emerald-600 rounded-lg md:rounded-2xl p-3 md:p-6 text-white shadow-lg hover:shadow-xl relative overflow-hidden transition-all hover:scale-[1.02]">
+        <div class="w-full flex-2 bg-gradient-to-br from-gray-600 via-green-600 to-emerald-600 rounded-lg md:rounded-2xl p-3 text-white shadow-lg hover:shadow-xl relative overflow-hidden transition-all hover:scale-[1.02] h-42">
           <div class="absolute top-0 right-0 p-2 md:p-4 opacity-10">
             <UIcon name="i-heroicons-currency-dollar" class="w-16 h-16 md:w-28 md:h-28" />
           </div>
@@ -64,7 +64,7 @@
                 Vendas em {{ nomeMesAtual.split(' ')[0] }}
               </p>
             </div>
-            <div class="text-xl md:text-4xl font-bold mb-2 md:mb-4">
+            <div class="text-xl md:text-2xl font-bold mb-2 md:mb-4">
               {{ formatarDinheiro(stats?.faturamentoMes) }}
             </div>
             <div class="flex items-center gap-1.5 md:gap-2 text-[10px] md:text-sm bg-white/25 backdrop-blur-sm w-fit px-2 md:px-3 py-1 md:py-1.5 rounded-full border border-white/30">
@@ -77,7 +77,7 @@
         <!-- DESKTOP -->
         <!-- Card 2: Patrimônio -->
         <div class="hidden md:flex gap-2">
-          <div class="flex-2 bg-gradient-to-br from-blue-50 to-blue-100/80 rounded-lg md:rounded-2xl p-3 md:p-6 border-2 border-blue-200 shadow-sm hover:shadow-md transition-all hover:scale-[1.02]">
+          <div class="flex-2 bg-gradient-to-br from-blue-50 to-blue-100/80 rounded-lg md:rounded-2xl p-3 border-2 border-blue-200 shadow-sm hover:shadow-md transition-all hover:scale-[1.02] h-42">
             <div class="flex items-center gap-1.5 md:gap-3 mb-2 md:mb-4">
               <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-1.5 md:p-2.5 rounded-lg md:rounded-xl shadow-sm">
                 <UIcon name="i-heroicons-banknotes" class="w-4 h-4 md:w-6 md:h-6" />
@@ -86,7 +86,7 @@
                 Patrimônio Ativo
               </span>
             </div>
-            <div class="text-xl md:text-4xl font-bold text-blue-900 mb-1 md:mb-2">
+            <div class="text-xl md:text-2xl font-bold text-blue-900 mb-1 md:mb-2">
               {{ formatarDinheiro(stats?.valorEstoque) }}
             </div>
             <p class="text-[10px] md:text-sm text-blue-700 font-medium">
@@ -95,7 +95,7 @@
           </div>
 
           <!-- Card 3: Volume -->
-          <div class="flex-1 bg-gradient-to-br from-orange-50 to-orange-100/80 rounded-lg md:rounded-2xl p-3 md:p-6 border-2 border-orange-200 shadow-sm hover:shadow-md transition-all hover:scale-[1.02]">
+          <div class="flex-1 bg-gradient-to-br from-orange-50 to-orange-100/80 rounded-lg md:rounded-2xl p-3 border-2 border-orange-200 shadow-sm hover:shadow-md transition-all hover:scale-[1.02] h-42">
             <div class="flex items-center gap-1.5 md:gap-3 mb-2 md:mb-4">
               <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-1.5 md:p-2.5 rounded-lg md:rounded-xl shadow-sm">
                 <UIcon name="i-heroicons-cube" class="w-4 h-4 md:w-6 md:h-6" />
@@ -104,7 +104,7 @@
                 Volume de Peças
               </span>
             </div>
-            <div class="text-xl md:text-4xl font-bold text-orange-900 mb-1 md:mb-2">
+            <div class="text-xl md:text-2xl font-bold text-orange-900 mb-1 md:mb-2">
               {{ stats?.itensEstoque }}
             </div>
             <p class="text-[10px] md:text-sm text-orange-700 font-medium">
@@ -156,7 +156,7 @@
       <div class="bg-white border-2 border-gray-200 rounded-lg md:rounded-2xl shadow-lg overflow-hidden">
         <div class="p-3 md:p-6 border-b-2 border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex justify-between items-center">
           <div class="flex items-center gap-2 md:gap-3">
-            <div class="w-8 h-8 md:w-10 md:h-10 bg-orange-600 rounded-lg md:rounded-xl flex items-center justify-center">
+            <div class="w-8 h-8 md:w-10 md:h-10 bg-gray-600 rounded-lg md:rounded-xl flex items-center justify-center">
               <UIcon name="i-heroicons-document-text" class="w-4 h-4 md:w-5 md:h-5 text-white" />
             </div>
             <h2 class="font-bold text-sm md:text-xl text-gray-900">
@@ -176,7 +176,7 @@
         <!-- Desktop Table -->
         <div class="hidden md:block overflow-x-auto">
           <table class="w-full text-left border-collapse">
-            <thead class="bg-orange-600">
+            <thead class="bg-gray-600">
               <tr>
                 <th class="py-4 px-6 text-xs uppercase font-bold text-amber-50">
                   <div class="flex items-center gap-2">

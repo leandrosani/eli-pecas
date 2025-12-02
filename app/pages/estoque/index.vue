@@ -4,8 +4,8 @@
     <div class="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
       <div class="flex justify-between items-center">
         <div>
-          <h2 class="text-md md:text-sm text-gray-800 mt-0.5 md:mt-1 font-bold">
-            Total de itens: <strong class="text-orange-600">{{ linhasFiltradas.length }}</strong>
+          <h2 class="text-[md] md:text-xl text-gray-800 mt-0.5 md:mt-1 font-bold">
+            Total de itens: <strong class="text-gray-600">{{ linhasFiltradas.length }}</strong>
           </h2>
         </div>
         
@@ -14,15 +14,17 @@
           to="/estoque/criar" 
           icon="i-heroicons-plus" 
           size="md" 
-          class="md:hidden shadow-lg rounded-full w-28 h-10 flex items-center justify-center p-0 bg-orange-50 border border-orange-200 font-bold text-orange-800" 
-        />
+          class="md:hidden shadow-lg rounded-full p-2 flex items-center justify-center bg-gray-600 font-bold text-white" 
+        >
+        Adicionar
+        </UButton>
         
         <!-- Botão Desktop -->
         <UButton 
           to="/estoque/criar" 
           icon="i-heroicons-plus" 
           size="lg" 
-          class="cursor-pointer border bg-gradient-to-br from-orange-600 to-orange-700 text-white border-orange-600 px-4 py-3 hidden md:flex shadow-lg hover:from-orange-700 hover:to-orange-800 hover:shadow-xl transition-all active:scale-[0.98] rounded-xl font-bold"
+          class="cursor-pointer border bg-gradient-to-br from-gray-600 to-gray-700 text-white border-gray-600 px-4 py-3 hidden md:flex shadow-lg hover:from-gray-700 hover:to-gray-800 hover:shadow-xl transition-all active:scale-[0.98] rounded-xl font-bold"
         >
           Adicionar Peça
         </UButton>
@@ -56,7 +58,7 @@
     <!-- Desktop Table -->
     <div class="hidden md:block bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
       <table class="w-full text-left border-collapse">
-        <thead class="bg-gradient-to-r from-orange-600 to-orange-700">
+        <thead class="bg-gray-600">
           <tr>
             <th class="py-4 px-6 text-xs uppercase font-bold text-white w-4/12">Peça / Marca</th>
             <th class="py-4 px-6 text-xs uppercase font-bold text-white w-2/12">Aplicação</th>
@@ -66,25 +68,25 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
-          <tr v-for="row in linhasFiltradas" :key="row.id" class="hover:bg-orange-50 transition-all group">
+          <tr v-for="row in linhasFiltradas" :key="row.id" class="hover:bg-gray-50 transition-all group">
             
             <!-- Peça / Marca -->
             <td class="py-4 px-6 align-middle">
               <div class="flex items-center gap-3">
                 <!-- Badge de Quantidade no lugar do ícone -->
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-100 to-orange-200 flex flex-col items-center justify-center shrink-0 shadow-sm border border-orange-300">
-                  <span class="text-2xl font-bold text-orange-900 leading-none">{{ row.quantidade }}</span>
-                  <span class="text-[8px] font-bold text-orange-600 uppercase tracking-wide">un.</span>
+                <div class="w-12 h-12 rounded-xl bg-gray-200 flex flex-col items-center justify-center shrink-0 shadow-sm border border-gray-300">
+                  <span class="text-2xl font-bold text-gray-800 leading-none">{{ row.quantidade }}</span>
+                  <span class="text-[8px] font-bold text-gray-600 uppercase tracking-wide">un.</span>
                 </div>
                 
                 <div>
                   <div class="font-bold text-gray-900 text-sm mb-1">{{ row.nome }}</div>
                   <div class="flex flex-col items-start gap-1.5">
-                    <span class="text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-orange-50 text-orange-700 border border-orange-200">
-                      {{ row.marca }}
+                    <span class="text-[12px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-gray-100 text-orange-800 border border-0">
+                      • {{ row.marca }}
                     </span>
-                    <span v-if="row.estado" class="text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-red-50 text-red-700 border border-red-100">
-                      {{ row.estado }}
+                    <span v-if="row.estado" class="text-[12px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-orange-100 text-black border border-0">
+                      • {{ row.estado }}
                     </span>
                   </div>
                 </div>
@@ -102,8 +104,8 @@
             <!-- Localização -->
             <td class="py-4 px-6 align-middle">
               <div class="flex items-center gap-1.5 bg-orange-50 border border-orange-100 px-2.5 py-1.5 rounded-lg w-fit">
-                <UIcon name="i-heroicons-map-pin" class="w-3.5 h-3.5 text-orange-600" />
-                <span class="text-xs font-bold text-orange-700">{{ row.detalhes }}</span>
+                <UIcon name="i-heroicons-map-pin" class="w-3.5 h-3.5 text-orange-800" />
+                <span class="text-[12px] font-bold text-orange-800">{{ row.detalhes }}</span>
               </div>
             </td>
 
@@ -118,7 +120,7 @@
 
             <!-- Preço -->
             <td class="py-4 px-6 align-middle text-right">
-              <div class="font-bold text-gray-900 text-base">{{ formatarPreco(row) }}</div>
+              <div class="font-bold text-gray-800 text-base">{{ formatarPreco(row) }}</div>
             </td>
 
             <!-- Ações -->
@@ -129,17 +131,24 @@
                   size="xs"
                   icon="i-heroicons-currency-dollar" 
                   @click="abrirVenda(row)"
-                  class="w-20 h-7 cursor-pointer px-2.5 py-1.5 transition-all active:scale-95 rounded-lg font-semibold text-[11px] bg-green-800/60 text-white shadow-sm hover:bg-green-800 hover:shadow-md"
+                  class="w-23 cursor-pointer transition-all active:scale-95 rounded-lg font-semibold text-[12px] bg-green-800 text-white shadow-sm hover:bg-green-600 hover:shadow-md px-2.5 py-1.5 text-center"
                   title="Vender"
                 > 
                 Vender
                 </UButton>
+
+                <span
+                  v-else
+                  class="w-23 cursor-pointer transition-all active:scale-95 rounded-lg font-semibold text-[12px] bg-red-50 text-red-600  shadow-sm hover:bg-green-600 hover:shadow-md px-2.5 py-1.5 text-center border-2 border-red-200"
+                >
+                  ESGOTADO
+                </span>
   
                 <UButton 
                   :to="`/estoque/editar/${row.id}`" 
                   icon="i-heroicons-pencil-square" 
                   size="xs"
-                  class="w-20 h-7 cursor-pointer px-2.5 py-1.5 bg-orange-800/60 text-white shadow-sm hover:bg-orange-800 hover:shadow-md transition-all active:scale-95 rounded-lg font-semibold text-[11px]"
+                  class="w-24 text-center cursor-pointer px-2.5 py-1.5 bg-[#fe8330] text-white shadow-sm hover:bg-orange-700 hover:shadow-md transition-all active:scale-95 rounded-lg font-semibold text-[12px]"
                   title="Editar"
                 >
                 Editar
@@ -149,7 +158,7 @@
                   icon="i-heroicons-trash" 
                   size="xs" 
                   @click="excluir(row.id)"
-                  class="w-20 h-7 cursor-pointer px-2.5 py-1.5 bg-red-800/60 text-white shadow-sm hover:bg-red-800 hover:shadow-md transition-all active:scale-95 rounded-lg font-semibold text-[11px]"
+                  class="w-24 text-center cursor-pointer px-2.5 py-1.5 bg-red-800 text-white shadow-sm hover:bg-red-600 hover:shadow-md transition-all active:scale-95 rounded-lg font-semibold text-[12px]"
                   title="Excluir"
                 >
                 Excluir
@@ -189,9 +198,9 @@
           </span>
           
           <!-- Quantidade movida para cá -->
-          <div class="flex items-center gap-1 bg-orange-50 px-2 py-0.5 rounded-md border border-orange-200">
-            <UIcon name="i-heroicons-cube" class="w-3 h-3 text-orange-600" />
-            <span class="text-xs font-bold text-orange-900">{{ item.quantidade }}</span>
+          <div class="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded-md border border-gray-200">
+            <UIcon name="i-heroicons-cube" class="w-3 h-3 text-gray-600" />
+            <span class="text-xs font-bold text-gray-900">{{ item.quantidade }}</span>
           </div>
         </div>
 
@@ -203,20 +212,20 @@
 
         <!-- Tags: Marca + Estado -->
         <div class="flex flex-wrap items-center gap-1.5 mb-2">
-          <span class="px-1.5 py-0.5 bg-orange-50 text-orange-700 text-[11px] font-semibold uppercase tracking-wide rounded-md border border-orange-200">
+          <span class="px-1.5 py-0.5 bg-gray-100 text-gray-900 text-[11px] font-semibold uppercase tracking-wide rounded-md border-0 text-gray-900">
             {{ item.marca }}
           </span>
 
           <span
             v-if="item.estado"
-            class="px-1.5 py-0.5 bg-red-50 text-red-700 border-red-200 text-[11px] font-semibold uppercase tracking-wide rounded-md border"
+            class="px-1.5 py-0.5 bg-orange-100 text-black text-[11px] font-semibold uppercase tracking-wide rounded-md border-0"
           >
             {{ item.estado }}
           </span>
         </div>
 
         <!-- Endereço -->
-        <div v-if="item.detalhes" class="mb-2 p-2 bg-orange-50 rounded-md border border-orange-100">
+        <div v-if="item.detalhes" class="mb-2 p-2 bg-gray-100 rounded-md border border-gray-200">
           <div class="flex justify-between items-center">
             
             <div>  
@@ -238,14 +247,14 @@
         </div>
 
         <!-- Botões de Ação (compactos) -->
-        <div class="flex gap-1.5">
+        <div class="flex gap-6">
           <!-- Botão Vender -->
           <UButton
             v-if="item.quantidade > 0"
             size="sm"
             icon="i-heroicons-currency-dollar"
             block
-            class="text-center text-[13px] text-white bg-green-800/60 px-3 py-2 rounded-lg"
+            class="text-center text-[13px] text-white bg-green-800 px-3 py-1 rounded-lg"
             @click="abrirVenda(item)"
           >
             Vender
@@ -253,7 +262,7 @@
 
           <span
             v-else
-            class="text-center text-[13px] font-bold text-red-600 bg-red-50 px-3 py-2 rounded-lg border-2 border-red-200"
+            class="text-center text-[12px] font-bold text-red-600 bg-red-50 px-3 py-1 rounded-lg border-2 border-red-200"
           >
             ESGOTADO
           </span>
@@ -264,7 +273,7 @@
             variant="soft"
             icon="i-heroicons-pencil-square" 
             size="sm"
-            class="text-center text-[13px] text-white bg-orange-800/60 px-3 py-2 rounded-lg"
+            class="text-center text-[13px] text-white bg-[#fe8330] px-3 py-1 rounded-lg"
           >
             Editar
           </UButton>
@@ -275,7 +284,7 @@
             icon="i-heroicons-trash" 
             size="sm" 
             @click="excluir(item.id)"
-            class="text-center text-[13px] text-white bg-red-800/60 px-3 py-2 rounded-lg"
+            class="text-center text-[13px] text-white bg-red-800 px-3 py-1 rounded-lg"
           >
             Excluir
           </UButton>

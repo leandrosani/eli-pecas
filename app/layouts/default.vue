@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-50 text-gray-900 font-sans">
     
     <!-- Header Mobile com Breadcrumb -->
-    <header class="md:hidden fixed top-0 left-0 right-0 h-16 bg-orange-700 border-b border-orange-100 z-40 flex items-center px-4 shadow-lg">
+    <header class="md:hidden fixed top-0 left-0 right-0 h-16 bg-gray-800 border-b border-black z-40 flex items-center px-4 shadow-lg">
       <!-- Botão Voltar (aparece quando NÃO está na home) 
       <button 
         v-if="!isHome"
@@ -26,22 +26,22 @@
     </header>
 
     <!-- Bottom Navigation Mobile -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-white border-t border-gray-200 z-50 shadow-2xl">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-15 bg-gray-800 border-t border-black z-50 shadow-2xl">
       <div class="flex items-center justify-around h-full px-2">
         
         <!-- Análise e Vendas -->
         <NuxtLink 
           to="/analise" 
           class="flex flex-col items-center justify-center gap-1 py-2 px-4 rounded-xl transition-all active:scale-95"
-          :class="rota === '/analise' ? 'text-orange-600' : 'text-gray-500'"
+          :class="rota === '/analise' ? 'text-white' : 'text-gray-600'"
         >
           <div 
-            class="relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all"
-            :class="rota === '/analise' ? 'bg-orange-100 shadow-lg scale-110' : 'bg-transparent'"
+            class="relative flex items-center justify-center w-8 h-8 rounded-2xl transition-all"
+            :class="rota === '/analise' ? 'bg-gray-600 shadow-lg scale-110' : 'bg-transparent'"
           >
-            <UIcon name="i-heroicons-chart-bar" class="w-7 h-7" />
+            <UIcon name="i-heroicons-chart-bar" class="w-5 h-5" />
           </div>
-          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/analise' ? 'text-orange-600' : 'text-gray-400'">
+          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/analise' ? 'text-white' : 'text-gray-400'">
             Análise
           </span>
         </NuxtLink>
@@ -50,15 +50,15 @@
         <NuxtLink 
           to="/estoque" 
           class="flex flex-col items-center justify-center gap-1 py-2 px-4 rounded-xl transition-all active:scale-95"
-          :class="rota === '/estoque' ? 'text-orange-600' : 'text-gray-500'"
+          :class="rota === '/estoque' ? 'text-white' : 'text-gray-600'"
         >
           <div 
-            class="relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all"
-            :class="rota === '/estoque' ? 'bg-orange-100 shadow-lg scale-110' : 'bg-transparent'"
+            class="relative flex items-center justify-center w-8 h-8 rounded-2xl transition-all"
+            :class="rota === '/estoque' ? 'bg-gray-600 shadow-lg scale-110' : 'bg-transparent'"
           >
-            <UIcon name="i-heroicons-archive-box" class="w-7 h-7" />
+            <UIcon name="i-heroicons-archive-box" class="w-5 h-5" />
           </div>
-          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/estoque' ? 'text-orange-600' : 'text-gray-400'">
+          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/estoque' ? 'text-white' : 'text-gray-400'">
             Estoque
           </span>
         </NuxtLink>
@@ -88,7 +88,7 @@
       <!-- Logo clicável = Home -->
       <NuxtLink 
         to="/analise"
-        class="h-20 flex items-center px-6 border-b border-orange-100 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 transition-all cursor-pointer group"
+        class="h-20 flex items-center px-6 border-b border-orange-100 bg-gradient-to-r from-gray-900 to-orange-700 cursor-pointer"
       >
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-orange-700 shadow-md group-hover:scale-110 transition-transform">
@@ -102,17 +102,17 @@
       </NuxtLink>
 
       <!-- Links Desktop -->
-      <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+      <nav class="bg-gray-800 flex-1 p-4 space-y-2 overflow-y-auto">
         <div v-for="(group, index) in menuStructure" :key="index">
-          <p v-if="group.label" class="px-3 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 mt-4">
+          <p v-if="group.label" class="px-3 text-xs font-bold text-white uppercase tracking-widest mb-2 mt-4">
             {{ group.label }}
           </p>
           <NuxtLink 
             v-for="link in group.links"
             :key="link.to"
             :to="link.to" 
-            class="mb-2 flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 hover:bg-orange-50 hover:text-orange-700 relative group"
-            :class="{ '!bg-orange-100 !text-orange-700 !font-bold shadow-lg ring-1 ring-orange-200 scale-105': $route.path === link.to }"
+            class="mb-2 flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-50 hover:bg-gray-600 hover:text-white relative group"
+            :class="{ '!bg-gray-600 !text-white !font-bold shadow-lg ring-1 scale-105': $route.path === link.to }"
           >
             <UIcon :name="link.icon" class="w-5 h-5" />
             {{ link.label }}
