@@ -401,7 +401,7 @@
 
             <div class="flex justify-between items-center">
                 <div class="flex-1 min-w-0 pr-4">
-                    <p class="font-bold text-gray-900 text-sm leading-tight truncate">{{ mov.peca.nome }}</p>
+                    <p class="font-bold text-gray-900 text-sm leading-tight whitespace-normal break-words">{{ mov.peca.nome }}</p>
                     <p class="text-xs text-gray-500 mt-0.5" v-if="!mov.peca.ativo">(Arquivada)</p>
                 </div>
                 <div class="text-right shrink-0">
