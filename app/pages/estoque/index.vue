@@ -251,7 +251,7 @@
         </div>
 
         <!-- Botões de Ação (compactos) -->
-        <div class="flex gap-6 justify-between">
+        <div class="mt-3 flex gap-6 justify-between">
           <!-- Botão Vender -->
           <UButton
             v-if="item.quantidade > 0"
