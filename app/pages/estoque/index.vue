@@ -4,7 +4,8 @@
     <div class="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
       <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">📦 </span>Estoque Total</h1>
 
-      <h1 class="text-3xl font-bold text-gray-900 tracking-tight hidden"><span class="text-4xl">📦 </span>Estoque Total</h1>
+      <h1 class="hidden md:block text-3xl font-bold text-gray-900 tracking-tight"><span class="text-4xl">📦 </span>Estoque Total</h1>
+
       <div class="flex justify-between items-center">
         <div>
           <h2 class="text-[md] md:text-xl text-gray-800 mt-0.5 md:mt-1 font-bold">

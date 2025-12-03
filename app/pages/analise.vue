@@ -7,7 +7,7 @@
       <div class="flex justify-between items-start">
         <!-- Desktop: Título completo -->
         <div class="hidden md:block">
-          <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Análise Financeira</h1>
+          <h1 class="text-3xl font-bold text-gray-900 tracking-tight"><span class="text-4xl">📊 </span>Análise Financeira</h1>
           <p class="text-sm text-gray-500 mt-1">
             Acompanhe o desempenho e extrato por período.
           </p>

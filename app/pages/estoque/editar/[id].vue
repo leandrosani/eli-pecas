@@ -13,7 +13,6 @@
     <form v-else @submit.prevent="salvar" class="space-y-5 md:space-y-6">
 
       <div class="flex items-center justify-between">
-        <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">✏️ </span>Editar</h1>
         <UButton 
           to="/estoque" 
           variant="ghost" 
@@ -24,6 +23,11 @@
           <UIcon name="i-heroicons-arrow-left" class="w-5 h-5" />
           <span class="hidden sm:inline">Voltar</span>
         </UButton>
+
+        <h1 class="mr-2 hidden md:block text-2xl font-bold text-gray-900 tracking-tight"><span class="text-3xl">✏️ </span>Editar</h1>
+
+        <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">✏️ </span>Editar</h1>
+        
       </div>
       
       <!-- CARD PRINCIPAL -->
