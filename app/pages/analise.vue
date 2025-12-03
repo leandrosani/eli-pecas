@@ -1,12 +1,11 @@
 <template>
   <div class="pb-20 relative">
 
-    <!-- ============================================== -->
-    <!-- CABEÇALHO: SAUDAÇÃO E FILTRO DE MÊS -->
-    <!-- ============================================== -->
+    <!-- CABEÇALHO: BEM-VINDO(A) E FILTRO DE MÊS -->
     <div class="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
       <div class="flex justify-between items-start">
         <div>
+          <!-- Título principal -->
           <h1 class="text-xl md:text-3xl font-bold text-gray-900 tracking-tight">
             Visão Geral
           </h1>
@@ -46,46 +45,207 @@
       <p class="text-xs md:text-sm text-gray-500 mt-2">Calculando estatísticas...</p>
     </div>
 
-    <!-- ============================================== -->
     <!-- ÁREA 1: KPIS E CARDS DE DESTAQUE -->
-    <!-- ============================================== -->
     <div v-else class="space-y-4 md:space-y-6">
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 md:gap-4">
-        
-        <!-- Card 1: Faturamento (Estilo Gradiente) -->
-        <div class="bg-gradient-to-br from-green-600 to-emerald-600 rounded-lg md:rounded-xl p-3 md:p-6 text-white shadow-sm md:shadow-lg relative overflow-hidden">
+      <div class="flex flex-col md:flex-row gap-2">
+
+        <!-- Card 1: Vendas -->
+
+        <div class="w-full flex-2 bg-gradient-to-br from-gray-600 via-green-600 to-emerald-600 rounded-lg md:rounded-2xl p-3 text-white shadow-lg hover:shadow-xl relative overflow-hidden transition-all hover:scale-[1.02] h-42">
+
           <div class="absolute top-0 right-0 p-2 md:p-4 opacity-10">
-            <UIcon name="i-heroicons-currency-dollar" class="w-16 h-16 md:w-24 md:h-24" />
+
+            <UIcon name="i-heroicons-currency-dollar" class="w-16 h-16 md:w-28 md:h-28" />
+
           </div>
+
           <div class="relative z-10">
-            <p class="text-green-100 text-[9px] md:text-xs font-bold uppercase tracking-wider mb-0.5 md:mb-1">Vendas em {{ nomeMesAtual }}</p>
-            <div class="text-xl md:text-3xl font-bold">{{ formatarDinheiro(stats?.faturamentoMes) }}</div>
-            <div class="mt-2 md:mt-4 flex items-center gap-1.5 md:gap-2 text-xs md:text-sm bg-white/20 w-fit px-2 md:px-3 py-0.5 md:py-1 rounded-full">
-              <UIcon name="i-heroicons-shopping-bag" class="w-3 h-3 md:w-4 md:h-4" />
-              <span>{{ stats?.vendasCount }} vendas realizadas</span>
+
+            <div class="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
+
+              <div class="w-7 h-7 md:w-10 md:h-10 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+
+                <UIcon name="i-heroicons-arrow-trending-up" class="w-3.5 h-3.5 md:w-5 md:h-5" />
+
+              </div>
+
+              <p class="text-green-100 text-[9px] md:text-xs font-bold uppercase tracking-wider">
+
+                Vendas em {{ nomeMesAtual.split(' ')[0] }}
+
+              </p>
+
             </div>
+
+            <div class="text-xl md:text-2xl font-bold mb-2 md:mb-4">
+
+              {{ formatarDinheiro(stats?.faturamentoMes) }}
+
+            </div>
+
+            <div class="flex items-center gap-1.5 md:gap-2 text-[10px] md:text-sm bg-white/25 backdrop-blur-sm w-fit px-2 md:px-3 py-1 md:py-1.5 rounded-full border border-white/30">
+
+              <UIcon name="i-heroicons-shopping-bag" class="w-3 h-3 md:w-4 md:h-4" />
+
+              <span class="font-semibold">{{ stats?.vendasCount }} vendas</span>
+
+            </div>
+
           </div>
+
         </div>
 
-        <!-- Card 2: Patrimônio Ativo (Estilo Padrão 1) -->
-        <div class="bg-gray-100 rounded-lg md:rounded-xl p-3 md:p-6 border border-gray-200 shadow-sm">
-          <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-4">
-            <div class="bg-blue-100 text-blue-600 p-1.5 md:p-2 rounded-lg"><UIcon name="i-heroicons-banknotes" class="w-4 h-4 md:w-6 md:h-6" /></div>
-            <span class="text-[9px] md:text-xs font-bold uppercase tracking-wider text-gray-400">Patrimônio Ativo</span>
+
+
+        <!-- DESKTOP -->
+
+        <!-- Card 2: Patrimônio -->
+
+        <div class="hidden md:flex gap-2">
+
+          <div class="flex-2 bg-gradient-to-br from-blue-50 to-blue-100/80 rounded-lg md:rounded-2xl p-3 border-2 border-blue-200 shadow-sm hover:shadow-md transition-all hover:scale-[1.02] h-42">
+
+            <div class="flex items-center gap-1.5 md:gap-3 mb-2 md:mb-4">
+
+              <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-1.5 md:p-2.5 rounded-lg md:rounded-xl shadow-sm">
+
+                <UIcon name="i-heroicons-banknotes" class="w-4 h-4 md:w-6 md:h-6" />
+
+              </div>
+
+              <span class="text-[9px] md:text-xs font-bold uppercase tracking-wider text-blue-600">
+
+                Patrimônio Ativo
+
+              </span>
+
+            </div>
+
+            <div class="text-xl md:text-2xl font-bold text-blue-900 mb-1 md:mb-2">
+
+              {{ formatarDinheiro(stats?.valorEstoque) }}
+
+            </div>
+
+            <p class="text-[10px] md:text-sm text-blue-700 font-medium">
+
+              Soma do preço de todas as peças ativas.
+
+            </p>
+
           </div>
-          <div class="text-xl md:text-3xl font-bold text-gray-900">{{ formatarDinheiro(stats?.valorEstoque) }}</div>
-          <p class="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">Soma do preço de todas as peças ativas.</p>
+
+
+
+          <!-- Card 3: Volume -->
+
+          <div class="flex-1 bg-gradient-to-br from-orange-50 to-orange-100/80 rounded-lg md:rounded-2xl p-3 border-2 border-orange-200 shadow-sm hover:shadow-md transition-all hover:scale-[1.02] h-42">
+
+            <div class="flex items-center gap-1.5 md:gap-3 mb-2 md:mb-4">
+
+              <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-1.5 md:p-2.5 rounded-lg md:rounded-xl shadow-sm">
+
+                <UIcon name="i-heroicons-cube" class="w-4 h-4 md:w-6 md:h-6" />
+
+              </div>
+
+              <span class="text-[9px] md:text-xs font-bold uppercase tracking-wider text-orange-600">
+
+                Volume de Peças
+
+              </span>
+
+            </div>
+
+            <div class="text-xl md:text-2xl font-bold text-orange-900 mb-1 md:mb-2">
+
+              {{ stats?.itensEstoque }}
+
+            </div>
+
+            <p class="text-[10px] md:text-sm text-orange-700 font-medium">
+
+              Unidades físicas nas prateleiras.
+
+            </p>
+
+          </div>
+
         </div>
 
-        <!-- Card 3: Volume Total (Estilo Padrão 2) -->
-        <div class="bg-white rounded-lg md:rounded-xl p-3 md:p-6 border border-gray-200 shadow-sm">
-          <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-4">
-            <div class="bg-orange-100 text-orange-600 p-1.5 md:p-2 rounded-lg"><UIcon name="i-heroicons-cube" class="w-4 h-4 md:w-6 md:h-6" /></div>
-            <span class="text-[9px] md:text-xs font-bold uppercase tracking-wider text-gray-400">Volume de Peças</span>
+        <!-- MOBILLE -->
+
+        <!-- Card 2: Patrimônio -->
+
+         <div class="md:hidden flex flex-row-reverse gap-2 w-full">
+
+          <div class="flex-2 bg-gradient-to-br from-blue-50 to-blue-100/80 rounded-lg md:rounded-2xl p-3 md:p-6 border-2 border-blue-200 shadow-sm hover:shadow-md transition-all hover:scale-[1.02]">
+
+            <div class="flex items-center gap-1.5 md:gap-3 mb-2 md:mb-4">
+
+              <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-1.5 md:p-2.5 rounded-lg md:rounded-xl shadow-sm">
+
+                <UIcon name="i-heroicons-banknotes" class="w-4 h-4 md:w-6 md:h-6" />
+
+              </div>
+
+              <span class="text-[9px] md:text-xs font-bold uppercase tracking-wider text-blue-600">
+
+                Patrimônio Ativo
+
+              </span>
+
+            </div>
+
+            <div class="text-xl md:text-4xl font-bold text-blue-900 mb-1 md:mb-2">
+
+              {{ formatarDinheiro(stats?.valorEstoque) }}
+
+            </div>
+
+            <p class="text-[10px] md:text-sm text-blue-700 font-medium">
+
+              Soma do preço de todas as peças ativas.
+
+            </p>
+
           </div>
-          <div class="text-xl md:text-3xl font-bold text-gray-900">{{ stats?.itensEstoque }}</div>
-          <p class="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">Unidades físicas nas prateleiras.</p>
+
+
+
+          <!-- Card 3: Volume -->
+
+          <div class="flex-1 bg-gradient-to-br from-orange-50 to-orange-100/80 rounded-lg md:rounded-2xl p-3 md:p-6 border-2 border-orange-200 shadow-sm hover:shadow-md transition-all hover:scale-[1.02]">
+
+            <div class="flex items-center gap-1.5 md:gap-3 mb-2 md:mb-4">
+
+              <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-1.5 md:p-2.5 rounded-lg md:rounded-xl shadow-sm">
+
+                <UIcon name="i-heroicons-cube" class="w-4 h-4 md:w-6 md:h-6" />
+
+              </div>
+
+              <span class="text-[9px] md:text-xs font-bold uppercase tracking-wider text-orange-600">
+
+                Volume de Peças
+
+              </span>
+
+            </div>
+
+            <div class="text-xl md:text-4xl font-bold text-orange-900 mb-1 md:mb-2">
+
+              {{ stats?.itensEstoque }}
+
+            </div>
+
+            <p class="text-[10px] md:text-sm text-orange-700 font-medium">
+
+              Unidades físicas nas prateleiras.
+
+            </p>
+          </div>
         </div>
       </div>
 
@@ -93,19 +253,46 @@
       <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
         
         <!-- BARRA DE ABAS (Filtro) -->
-        <div class="p-3 md:p-4 border-b border-gray-100 bg-white/80 flex flex-wrap gap-2 md:gap-4 items-center">
-            <h2 class="font-bold text-sm md:text-lg text-gray-900 mr-2">Extrato de {{ nomeMesAtual.split(' ')[0] }}</h2>
-            <UButton 
-                v-for="aba in abas" 
-                :key="aba.value"
-                :label="aba.label"
-                :variant="abaAtiva === aba.value ? 'solid' : 'ghost'"
-                :color="abaAtiva === aba.value ? 'black' : 'gray'"
-                size="sm"
-                @click="abaAtiva = aba.value"
-                class="text-xs md:text-sm"
-            />
-            <UButton icon="i-heroicons-arrow-path" size="xs" color="gray" variant="ghost" @click="refresh" />
+        <div class="mb-3 mt-2 border-b border-gray-100 bg-white/80 flex flex-wrap justify-between items-center">
+            <h2 class="font-bold text-sm md:text-lg text-gray-900 ml-5">Extrato de {{ nomeMesAtual.split(' ')[0] }}</h2>
+            
+            <!-- Grupo de Botões de Abas -->
+            <div class="flex flex-wrap gap-2 md:gap-3 justify-between w-full md:w-auto m-5">
+                <UButton 
+                  v-for="aba in abas" 
+                  :key="aba.value"
+                  :label="aba.label"
+                  
+                  :variant="abaAtiva === aba.value ? 'solid' : 'ghost'"
+                  color="gray"
+                  size="sm"
+                  @click="abaAtiva = aba.value"
+
+                  class="text-xs md:text-sm cursor-pointer transition-all duration-150 active:scale-[0.98]"
+
+                  :class="[
+                    abaAtiva === aba.value ? 'shadow-md scale-[1.03]' : '',
+
+                    // TODOS → cinza
+                    abaAtiva === aba.value && aba.value === 'todos'
+                      ? 'bg-gray-600 text-white border-gray-600'
+                      : '',
+
+                    // VENDAS → verde
+                    abaAtiva === aba.value && aba.value === 'vendas'
+                      ? 'bg-emerald-600 text-white border-emerald-600'
+                      : '',
+
+                    // ENTRADAS → azul
+                    abaAtiva === aba.value && aba.value === 'entradas'
+                      ? 'bg-blue-600 text-white border-blue-600'
+                      : ''
+                  ]"
+                />
+
+
+                <UButton icon="i-heroicons-arrow-path" size="xs" color="gray" variant="ghost" @click="refresh" />
+            </div>
         </div>
         
         <!-- Desktop Table -->
@@ -120,8 +307,8 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
-              <tr v-for="mov in historicoFiltrado" :key="mov.id" class="transition-all"
-                  :class="mov.tipo === 'SAIDA' ? 'hover:bg-green-50/50' : 'hover:bg-blue-50/50'"> <!-- HIGHLIGHT DE LINHA -->
+              <tr v-for="mov in historicoFiltrado" :key="mov.id" 
+                  :class="mov.tipo === 'SAIDA' ? 'hover:bg-green-50/50' : 'hover:bg-blue-50/50'">
                 <td class="py-4 px-6 align-middle whitespace-nowrap text-gray-500 text-sm">
                   {{ new Date(mov.createdAt).toLocaleDateString('pt-BR') }} 
                   <span class="text-xs text-gray-400 ml-1">{{ new Date(mov.createdAt).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}) }}</span>
@@ -170,11 +357,9 @@
 
             <div class="flex justify-between items-center pb-1">
                 <div class="flex-1 min-w-0">
-                    <!-- Peça e Arquivada -->
                     <p class="font-bold text-gray-900 text-sm leading-tight truncate">{{ mov.peca.nome }}</p>
                     <p class="text-xs text-gray-500 mt-0.5" v-if="!mov.peca.ativo">(Peça Arquivada)</p>
                 </div>
-                <!-- Valor Total -->
                 <div class="text-right ml-4">
                     <span class="font-mono font-bold text-base" :class="mov.tipo === 'SAIDA' ? 'text-green-800' : 'text-gray-900'">
                         {{ mov.tipo === 'SAIDA' ? '+' : '' }} {{ formatarDinheiro(Number(mov.peca.preco) * mov.quantidade) }}
@@ -193,32 +378,32 @@
       </div>
     </div>
     
-    <!-- ÁREA 2: ACESSO RÁPIDO (Menu de Navegação) -->
+    <!-- ÁREA 2: ACESSO RÁPIDO (Menu de Navegação) 
     <div class="mt-8 md:mt-10">
       <h2 class="text-sm md:text-base font-bold text-gray-800 tracking-wide mb-4 md:mb-5">
         Menu de Navegação
-      </h2>
+      </h2>-->
       
-      <!-- Grid de 3 colunas no mobile e 6 no desktop -->
-      <div class="grid grid-cols-3 md:grid-cols-6 gap-2.5 md:gap-4">
+      <!-- Grid de 3 colunas no mobile e 6 no desktop 
+      <div class="grid grid-cols-3 md:grid-cols-6 gap-2.5 md:gap-4">-->
         
-        <!-- Botão 1: Visão Geral (Link para a própria página) -->
+        <!-- Botão 1: Visão Geral (Link para a própria página) 
         <NuxtLink to="/dashboard" class="group block bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-md hover:bg-gray-50 active:scale-[0.98]">
           <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-100/50 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-3">
             <UIcon name="i-heroicons-squares-2x2" class="w-6 h-6 md:w-7 md:h-7 text-blue-600 transition-transform group-hover:scale-105" />
           </div>
           <p class="text-[10px] md:text-xs font-bold text-gray-800 uppercase">Visão Geral</p>
-        </NuxtLink>
+        </NuxtLink>-->
 
-        <!-- Botão 2: Estoque -->
+        <!-- Botão 2: Estoque 
         <NuxtLink to="/estoque" class="group block bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-md hover:bg-gray-50 active:scale-[0.98]">
           <div class="w-10 h-10 md:w-12 md:h-12 bg-green-100/50 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-3">
             <UIcon name="i-heroicons-archive-box" class="w-6 h-6 md:w-7 md:h-7 text-green-600 transition-transform group-hover:scale-105" />
           </div>
           <p class="text-[10px] md:text-xs font-bold text-gray-800 uppercase">Estoque</p>
-        </NuxtLink>
+        </NuxtLink>-->
 
-        <!-- Botão 3: Adicionar Peça Rápida -->
+        <!-- Botão 3: Adicionar Peça Rápida 
         <NuxtLink to="/estoque/criar" class="group block bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-md hover:bg-gray-50 active:scale-[0.98]">
           <div class="w-10 h-10 md:w-12 md:h-12 bg-black/50 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-3">
             <UIcon name="i-heroicons-plus-circle" class="w-6 h-6 md:w-7 md:h-7 text-gray-900 transition-transform group-hover:scale-105" />
@@ -227,7 +412,7 @@
         </NuxtLink>
         
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 
@@ -240,13 +425,13 @@ const { user } = useUserSession();
 
 // --- ESTADOS DAS ABAS ---
 const abas = [
-    { label: 'Todos os Registros', value: 'todos' },
-    { label: 'Apenas Vendas', value: 'saida' },
-    { label: 'Apenas Cadastradas', value: 'entrada' }
+  { label: 'Todos', value: 'todos', color: 'gray' },
+  { label: 'Vendas', value: 'vendas', color: 'emerald' },
+  { label: 'Entradas de estoque', value: 'entradas', color: 'blue' }
 ];
 const abaAtiva = ref('todos'); // Estado inicial
 
-// Dados da Dashboard
+// Dados da Dashboard (Mantido o useFetch original)
 const dataAtual = ref(new Date());
 
 const nomeMesAtual = computed(() => {
