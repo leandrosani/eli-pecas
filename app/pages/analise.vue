@@ -372,41 +372,35 @@
       </div>
     </div>
     
-    <!-- ÁREA 2: ACESSO RÁPIDO (Menu de Navegação) 
+    <!-- ÁREA 2: ACESSO RÁPIDO (Menu) -->
     <div class="mt-8 md:mt-10">
       <h2 class="text-sm md:text-base font-bold text-gray-800 tracking-wide mb-4 md:mb-5">
         Menu de Navegação
-      </h2>-->
+      </h2>
       
-      <!-- Grid de 3 colunas no mobile e 6 no desktop 
-      <div class="grid grid-cols-3 md:grid-cols-6 gap-2.5 md:gap-4">-->
-        
-        <!-- Botão 1: Visão Geral (Link para a própria página) 
+      <div class="grid grid-cols-3 md:grid-cols-6 gap-2.5 md:gap-4">
         <NuxtLink to="/dashboard" class="group block bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-md hover:bg-gray-50 active:scale-[0.98]">
-          <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-100/50 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-3">
-            <UIcon name="i-heroicons-squares-2x2" class="w-6 h-6 md:w-7 md:h-7 text-blue-600 transition-transform group-hover:scale-105" />
+          <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-100/50 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-3 transition-transform group-hover:scale-110">
+            <UIcon name="i-heroicons-squares-2x2" class="w-6 h-6 md:w-7 md:h-7 text-blue-600" />
           </div>
           <p class="text-[10px] md:text-xs font-bold text-gray-800 uppercase">Visão Geral</p>
-        </NuxtLink>-->
+        </NuxtLink>
 
-        <!-- Botão 2: Estoque 
         <NuxtLink to="/estoque" class="group block bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-md hover:bg-gray-50 active:scale-[0.98]">
-          <div class="w-10 h-10 md:w-12 md:h-12 bg-green-100/50 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-3">
-            <UIcon name="i-heroicons-archive-box" class="w-6 h-6 md:w-7 md:h-7 text-green-600 transition-transform group-hover:scale-105" />
+          <div class="w-10 h-10 md:w-12 md:h-12 bg-green-100/50 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-3 transition-transform group-hover:scale-110">
+            <UIcon name="i-heroicons-archive-box" class="w-6 h-6 md:w-7 md:h-7 text-green-600" />
           </div>
           <p class="text-[10px] md:text-xs font-bold text-gray-800 uppercase">Estoque</p>
-        </NuxtLink>-->
+        </NuxtLink>
 
-        <!-- Botão 3: Adicionar Peça Rápida 
         <NuxtLink to="/estoque/criar" class="group block bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-md hover:bg-gray-50 active:scale-[0.98]">
-          <div class="w-10 h-10 md:w-12 md:h-12 bg-black/50 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-3">
-            <UIcon name="i-heroicons-plus-circle" class="w-6 h-6 md:w-7 md:h-7 text-gray-900 transition-transform group-hover:scale-105" />
+          <div class="w-10 h-10 md:w-12 md:h-12 bg-black/50 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-3 transition-transform group-hover:scale-110">
+            <UIcon name="i-heroicons-plus-circle" class="w-6 h-6 md:w-7 md:h-7 text-white" />
           </div>
           <p class="text-[10px] md:text-xs font-bold text-gray-800 uppercase">Novo Item</p>
         </NuxtLink>
-        
       </div>
-    </div>-->
+    </div>
   </div>
 </template>
 
@@ -419,13 +413,13 @@ const { user } = useUserSession();
 
 // --- ESTADOS DAS ABAS ---
 const abas = [
-  { label: 'Todos', value: 'todos', color: 'gray' },
-  { label: 'Vendas', value: 'vendas', color: 'emerald' },
-  { label: 'Entradas de estoque', value: 'entradas', color: 'blue' }
+  { label: 'Todos', value: 'todos' },
+  { label: 'Vendas', value: 'saida' },
+  { label: 'Entradas', value: 'entrada' }
 ];
-const abaAtiva = ref('todos'); // Estado inicial
+const abaAtiva = ref('todos');
 
-// Dados da Dashboard (Mantido o useFetch original)
+// Dados da Dashboard
 const dataAtual = ref(new Date());
 
 const nomeMesAtual = computed(() => {
