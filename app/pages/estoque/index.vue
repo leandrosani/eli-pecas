@@ -255,9 +255,10 @@
           <!-- Botão Vender -->
           <UButton
             v-if="item.quantidade > 0"
+            color="primary"
+            variant="soft"
+            icon="i-heroicons-pencil-square" 
             size="sm"
-            icon="i-heroicons-currency-dollar"
-            block
             class="text-center text-[13px] text-white bg-green-800 px-3 py-1 rounded-lg"
             @click="abrirVenda(item)"
           >
