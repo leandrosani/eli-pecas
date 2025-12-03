@@ -3,6 +3,8 @@
     
     <div class="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
       <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">📦 </span>Estoque Total</h1>
+
+      <h1 class="text-3xl font-bold text-gray-900 tracking-tight hidden"><span class="text-4xl">📦 </span>Estoque Total</h1>
       <div class="flex justify-between items-center">
         <div>
           <h2 class="text-[md] md:text-xl text-gray-800 mt-0.5 md:mt-1 font-bold">
@@ -140,7 +142,7 @@
 
                 <span
                   v-else
-                  class="w-23 cursor-pointer transition-all active:scale-95 rounded-lg font-semibold text-[12px] bg-red-50 text-red-600  shadow-sm hover:bg-green-600 hover:shadow-md px-2.5 py-1.5 text-center border-2 border-red-200"
+                  class="w-23 cursor-pointer transition-all active:scale-95 rounded-lg font-semibold text-[12px] bg-red-50 text-red-600 shadow-sm px-2.5 py-1.5 text-center border-2 border-red-200"
                 >
                   ESGOTADO
                 </span>

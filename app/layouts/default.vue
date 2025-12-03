@@ -160,7 +160,7 @@ const rota = computed(() => {
 // Nome da página atual
 const paginaAtual = computed(() => {
   if (route.path === '/dashboard') return 'Eli Peças'
-  if (route.path === '/analise') return 'Análise e Vendas'
+  if (route.path === '/analise') return 'Análise Financeira'
   if (route.path === '/estoque') return 'Estoque Geral'
   if (route.path === '/estoque/criar') return 'Adicionar Peça'
   if (route.path.startsWith('/estoque/editar/')) return 'Editar Peça'
@@ -172,7 +172,7 @@ const menuStructure = computed(() => [
   {
     label: 'Estoque e Vendas', // ← Renomeado
     links: [
-      { label: 'Análise e Vendas', icon: 'i-heroicons-chart-bar', to: '/analise' },
+      { label: 'Análise Financeira', icon: 'i-heroicons-chart-bar', to: '/analise' },
       { label: 'Estoque Geral', icon: 'i-heroicons-archive-box', to: '/estoque', badge: '' },/*
       { label: 'Adicionar Peça', icon: 'i-heroicons-plus-circle', to: '/estoque/criar' },*/
     ]
