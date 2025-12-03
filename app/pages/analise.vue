@@ -1,48 +1,97 @@
 <template>
+
   <div class="pb-20 relative">
 
-    <!-- CABEÇALHO: BEM-VINDO(A) E FILTRO DE MÊS -->
-    <div class="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
+    
+
+    <!-- CABEÇALHO COM FILTRO DE MÊS -->
+
+    <div class="flex flex-col gap-3 md:gap-4 mb-3 md:mb-6">
+
+      <h1 class="md:hidden font-semibold text-xl text-black"><span class="text-2xl">📊 </span>Analise Financeira</h1>
+
       <div class="flex justify-between items-start">
-        <div>
-          <!-- Título principal -->
-          <h1 class="text-xl md:text-3xl font-bold text-gray-900 tracking-tight">
-            Visão Geral
-          </h1>
-          <p class="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">
-            Bem-vindo(a), {{ user?.name || 'Admin' }}! Gerencie sua loja com facilidade.
+
+        <!-- Desktop: Título completo -->
+
+        <div class="hidden md:block">
+
+          <h1 class="text-3xl font-bold text-gray-900 tracking-tight"><span class="text-4xl">📊 </span>Análise Financeira</h1>
+
+          <p class="text-sm text-gray-500 mt-1">
+
+            Acompanhe o desempenho e extrato por período.
+
           </p>
+
         </div>
 
-        <!-- FILTRO DE MÊS -->
-        <div class="flex items-center gap-2 bg-white p-1 rounded-xl border border-gray-200 shadow-sm">
+
+
+        <!-- Mobile: Só o filtro de mês (ocupa toda a largura) -->
+
+        <div class="flex items-center gap-2 bg-white p-1.5 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all h-12 md:h-14 w-full md:w-auto">
+
           <UButton 
+
             icon="i-heroicons-chevron-left" 
+
             color="gray" 
+
             variant="ghost" 
+
             size="xs"
+
             @click="mudarMes(-1)" 
-            class="md:size-sm"
+
+            class="md:size-sm hover:bg-blue-50 hover:text-blue-600 transition-colors rounded-lg"
+
           />
-          <span class="font-bold text-gray-900 text-xs md:text-sm w-24 md:w-32 text-center select-none capitalize">
+
+          <span class="font-bold text-gray-900 text-sm md:text-sm flex-1 md:w-32 text-center select-none capitalize">
+
             {{ nomeMesAtual }}
+
           </span>
+
           <UButton 
+
             icon="i-heroicons-chevron-right" 
+
             color="gray" 
+
             variant="ghost" 
+
             size="xs"
+
             @click="mudarMes(1)" 
+
             :disabled="ehMesFuturo"
-            class="md:size-sm"
+
+            class="md:size-sm hover:bg-blue-50 hover:text-blue-600 transition-colors rounded-lg disabled:opacity-30"
+
           />
+
         </div>
+
       </div>
+
     </div>
 
-    <div v-if="pending" class="text-center py-12">
-      <UIcon name="i-heroicons-arrow-path" class="w-7 h-7 md:w-8 md:h-8 animate-spin text-gray-400 mx-auto" />
-      <p class="text-xs md:text-sm text-gray-500 mt-2">Calculando estatísticas...</p>
+
+
+    <div v-if="pending" class="text-center py-16">
+
+      <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+
+        <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-blue-600" />
+
+      </div>
+
+      <p class="text-sm text-gray-600 font-medium">Calculando estatísticas...</p>
+
+      <p class="text-xs text-gray-400 mt-1">Aguarde um momento</p>
+
     </div>
 
     <!-- ÁREA 1: KPIS E CARDS DE DESTAQUE -->
