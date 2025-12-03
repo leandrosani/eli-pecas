@@ -15,4 +15,3 @@ body, * {
 .u-input :deep(input)::placeholder {
     @apply text-gray-500 italic;
 }
-
