@@ -1,6 +1,9 @@
 <template>
   <div class="pb-20 relative">
 
+    <!-- ============================================== -->
+    <!-- CABEÇALHO: SAUDAÇÃO E FILTRO DE MÊS -->
+    <!-- ============================================== -->
     <div class="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
       <div class="flex justify-between items-start">
         <div>
@@ -12,6 +15,7 @@
           </p>
         </div>
 
+        <!-- FILTRO DE MÊS -->
         <div class="flex items-center gap-2 bg-white p-1 rounded-xl border border-gray-200 shadow-sm">
           <UButton 
             icon="i-heroicons-chevron-left" 
@@ -42,10 +46,14 @@
       <p class="text-xs md:text-sm text-gray-500 mt-2">Calculando estatísticas...</p>
     </div>
 
+    <!-- ============================================== -->
+    <!-- ÁREA 1: KPIS E CARDS DE DESTAQUE -->
+    <!-- ============================================== -->
     <div v-else class="space-y-4 md:space-y-6">
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 md:gap-4">
         
+        <!-- Card 1: Faturamento (Estilo Gradiente) -->
         <div class="bg-gradient-to-br from-green-600 to-emerald-600 rounded-lg md:rounded-xl p-3 md:p-6 text-white shadow-sm md:shadow-lg relative overflow-hidden">
           <div class="absolute top-0 right-0 p-2 md:p-4 opacity-10">
             <UIcon name="i-heroicons-currency-dollar" class="w-16 h-16 md:w-24 md:h-24" />
@@ -60,6 +68,7 @@
           </div>
         </div>
 
+        <!-- Card 2: Patrimônio Ativo (Estilo Padrão 1) -->
         <div class="bg-gray-100 rounded-lg md:rounded-xl p-3 md:p-6 border border-gray-200 shadow-sm">
           <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-4">
             <div class="bg-blue-100 text-blue-600 p-1.5 md:p-2 rounded-lg"><UIcon name="i-heroicons-banknotes" class="w-4 h-4 md:w-6 md:h-6" /></div>
@@ -69,6 +78,7 @@
           <p class="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">Soma do preço de todas as peças ativas.</p>
         </div>
 
+        <!-- Card 3: Volume Total (Estilo Padrão 2) -->
         <div class="bg-white rounded-lg md:rounded-xl p-3 md:p-6 border border-gray-200 shadow-sm">
           <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-4">
             <div class="bg-orange-100 text-orange-600 p-1.5 md:p-2 rounded-lg"><UIcon name="i-heroicons-cube" class="w-4 h-4 md:w-6 md:h-6" /></div>
@@ -79,8 +89,10 @@
         </div>
       </div>
 
+      <!-- EXTRATO COM ABAS -->
       <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
         
+        <!-- BARRA DE ABAS (Filtro) -->
         <div class="p-3 md:p-4 border-b border-gray-100 bg-white/80 flex flex-wrap gap-2 md:gap-4 items-center">
             <h2 class="font-bold text-sm md:text-lg text-gray-900 mr-2">Extrato de {{ nomeMesAtual.split(' ')[0] }}</h2>
             <UButton 
@@ -96,6 +108,7 @@
             <UButton icon="i-heroicons-arrow-path" size="xs" color="gray" variant="ghost" @click="refresh" />
         </div>
         
+        <!-- Desktop Table -->
         <div class="hidden md:block overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead class="bg-gray-600">
@@ -107,7 +120,8 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
-              <tr v-for="mov in historicoFiltrado" :key="mov.id" class="hover:bg-gray-50/50 transition-colors">
+              <tr v-for="mov in historicoFiltrado" :key="mov.id" class="transition-all"
+                  :class="mov.tipo === 'SAIDA' ? 'hover:bg-green-50/50' : 'hover:bg-blue-50/50'"> <!-- HIGHLIGHT DE LINHA -->
                 <td class="py-4 px-6 align-middle whitespace-nowrap text-gray-500 text-sm">
                   {{ new Date(mov.createdAt).toLocaleDateString('pt-BR') }} 
                   <span class="text-xs text-gray-400 ml-1">{{ new Date(mov.createdAt).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}) }}</span>
@@ -137,10 +151,12 @@
           </table>
         </div>
 
+        <!-- Mobile Cards -->
         <div class="md:hidden space-y-2.5">
-          <div v-for="mov in historicoFiltrado" :key="mov.id" class="bg-white p-3 border-b border-gray-100">
+          <div v-for="mov in historicoFiltrado" :key="mov.id" class="p-3 border-b-2 transition-all"
+               :class="mov.tipo === 'SAIDA' ? 'bg-green-50/50 border-green-200' : 'bg-blue-50/50 border-blue-200'"> <!-- HIGHLIGHT DE LINHA MOBILE -->
             
-            <div class="flex justify-between items-start mb-1">
+            <div class="flex justify-between items-start mb-2">
               <span class="text-[9px] text-gray-400 font-medium">
                 {{ new Date(mov.createdAt).toLocaleDateString('pt-BR') }} • {{ new Date(mov.createdAt).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}) }}
               </span>
@@ -152,19 +168,20 @@
               </span>
             </div>
 
-            <div class="mb-2">
-              <p class="font-bold text-gray-900 text-base leading-tight">{{ mov.peca.nome }}</p>
-              <p class="text-xs text-gray-500 mt-0.5" v-if="!mov.peca.ativo">(Peça Arquivada)</p>
+            <div class="flex justify-between items-center pb-1">
+                <div class="flex-1 min-w-0">
+                    <!-- Peça e Arquivada -->
+                    <p class="font-bold text-gray-900 text-sm leading-tight truncate">{{ mov.peca.nome }}</p>
+                    <p class="text-xs text-gray-500 mt-0.5" v-if="!mov.peca.ativo">(Peça Arquivada)</p>
+                </div>
+                <!-- Valor Total -->
+                <div class="text-right ml-4">
+                    <span class="font-mono font-bold text-base" :class="mov.tipo === 'SAIDA' ? 'text-green-800' : 'text-gray-900'">
+                        {{ mov.tipo === 'SAIDA' ? '+' : '' }} {{ formatarDinheiro(Number(mov.peca.preco) * mov.quantidade) }}
+                    </span>
+                    <p class="text-xs text-gray-600 mt-0.5">Qtd: {{ mov.quantidade }}</p>
+                </div>
             </div>
-
-            <div class="flex justify-between items-end pt-2 border-t" 
-                :class="mov.tipo === 'SAIDA' ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'">
-              <span class="text-xs text-gray-600 font-medium">Qtd: {{ mov.quantidade }}</span>
-              <span class="font-mono font-bold text-lg" :class="mov.tipo === 'SAIDA' ? 'text-green-600' : 'text-gray-900'">
-                {{ mov.tipo === 'SAIDA' ? '+' : '' }} {{ formatarDinheiro(Number(mov.peca.preco) * mov.quantidade) }}
-              </span>
-            </div>
-
 
           </div>
 
@@ -176,30 +193,35 @@
       </div>
     </div>
     
+    <!-- ÁREA 2: ACESSO RÁPIDO (Menu de Navegação) -->
     <div class="mt-8 md:mt-10">
       <h2 class="text-sm md:text-base font-bold text-gray-800 tracking-wide mb-4 md:mb-5">
         Menu de Navegação
       </h2>
       
+      <!-- Grid de 3 colunas no mobile e 6 no desktop -->
       <div class="grid grid-cols-3 md:grid-cols-6 gap-2.5 md:gap-4">
         
-        <NuxtLink to="/dashboard" class="group block bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-md hover:bg-gray-50">
+        <!-- Botão 1: Visão Geral (Link para a própria página) -->
+        <NuxtLink to="/dashboard" class="group block bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-md hover:bg-gray-50 active:scale-[0.98]">
           <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-100/50 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-3">
             <UIcon name="i-heroicons-squares-2x2" class="w-6 h-6 md:w-7 md:h-7 text-blue-600 transition-transform group-hover:scale-105" />
           </div>
           <p class="text-[10px] md:text-xs font-bold text-gray-800 uppercase">Visão Geral</p>
         </NuxtLink>
 
-        <NuxtLink to="/estoque" class="group block bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-md hover:bg-gray-50">
+        <!-- Botão 2: Estoque -->
+        <NuxtLink to="/estoque" class="group block bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-md hover:bg-gray-50 active:scale-[0.98]">
           <div class="w-10 h-10 md:w-12 md:h-12 bg-green-100/50 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-3">
             <UIcon name="i-heroicons-archive-box" class="w-6 h-6 md:w-7 md:h-7 text-green-600 transition-transform group-hover:scale-105" />
           </div>
           <p class="text-[10px] md:text-xs font-bold text-gray-800 uppercase">Estoque</p>
         </NuxtLink>
 
-        <NuxtLink to="/estoque/criar" class="group block bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-md hover:bg-gray-50">
+        <!-- Botão 3: Adicionar Peça Rápida -->
+        <NuxtLink to="/estoque/criar" class="group block bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-md hover:bg-gray-50 active:scale-[0.98]">
           <div class="w-10 h-10 md:w-12 md:h-12 bg-black/50 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-3">
-            <UIcon name="i-heroicons-plus-circle" class="w-6 h-6 md:w-7 md:h-7 text-white transition-transform group-hover:scale-105" />
+            <UIcon name="i-heroicons-plus-circle" class="w-6 h-6 md:w-7 md:h-7 text-gray-900 transition-transform group-hover:scale-105" />
           </div>
           <p class="text-[10px] md:text-xs font-bold text-gray-800 uppercase">Novo Item</p>
         </NuxtLink>
@@ -224,7 +246,7 @@ const abas = [
 ];
 const abaAtiva = ref('todos'); // Estado inicial
 
-// Dados da Dashboard (Mantido o useFetch original)
+// Dados da Dashboard
 const dataAtual = ref(new Date());
 
 const nomeMesAtual = computed(() => {
