@@ -421,7 +421,7 @@
       </div>
     </div>
     
-    <!-- ÁREA 2: ACESSO RÁPIDO (Menu) -->
+    <!-- ÁREA 2: ACESSO RÁPIDO (Menu) 
     <div class="mt-8 md:mt-10">
       <h2 class="text-sm md:text-base font-bold text-gray-800 tracking-wide mb-4 md:mb-5">
         Menu de Navegação
@@ -449,7 +449,7 @@
           <p class="text-[10px] md:text-xs font-bold text-gray-800 uppercase">Novo Item</p>
         </NuxtLink>
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 
