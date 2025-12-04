@@ -73,7 +73,7 @@
             class="relative flex items-center justify-center w-8 h-8 rounded-2xl transition-all"
             :class="rota === '/despesas' ? 'bg-gray-600 shadow-lg scale-110' : 'bg-transparent'"
           >
-            <UIcon name="i-heroicons-chart-bar" class="w-5 h-5" />
+            <UIcon name="i-heroicons-banknotes" class="w-5 h-5" />
           </div>
           <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/analise' ? 'text-white' : 'text-gray-400'">
             Despesa
