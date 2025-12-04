@@ -1,18 +1,21 @@
-// Arquivo: server/utils/prisma.ts
 import { PrismaClient } from '@prisma/client'
 
-// Padrão global para Serverless (garante reutilização de conexão)
+// CORREÇÃO: Usamos 'prismaGlobal' aqui para evitar conflito de nome com a variável 'prisma' abaixo
 declare global {
-  var prisma: PrismaClient | undefined
+  var prismaGlobal: PrismaClient | undefined
 }
 
 let prisma: PrismaClient
+
 if (process.env.NODE_ENV === 'production') {
+  // Em produção, cria uma nova instância limpa
   prisma = new PrismaClient()
 } else {
-  if (!global.prisma) {
-    global.prisma = new PrismaClient()
+  // Em desenvolvimento (local), verifica se já existe a global para não abrir conexões demais
+  if (!global.prismaGlobal) {
+    global.prismaGlobal = new PrismaClient()
   }
-  prisma = global.prisma
+  prisma = global.prismaGlobal
 }
+
 export { prisma }

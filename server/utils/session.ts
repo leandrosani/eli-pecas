@@ -1,5 +1,5 @@
-// Arquivo: server/utils/session.ts
 import type { H3Event } from 'h3'
+import { prisma } from './prisma'
 
 export interface UserSession {
   id: string
@@ -9,39 +9,43 @@ export interface UserSession {
 }
 
 export async function getUserSession(event: H3Event) {
-  const config = useRuntimeConfig(event)
+  // Define um usuário padrão para o sistema (Admin)
+  const email = 'admin@elipecas.com'
+  
+  try {
+    // Tenta buscar ou criar o usuário no banco de dados REAL (Neon)
+    // Isso garante que o ID retornado seja válido para relacionamentos
+    const user = await prisma.user.upsert({
+      where: { email },
+      update: {},
+      create: {
+        email,
+        name: 'Admin Eli Peças',
+        provider: 'system_auto'
+      }
+    })
 
-  // 1. Senha Fixa e Longa (32 caracteres) para garantir a criptografia
-  // Isso evita erros de "password too short"
-  const password = 'minha-senha-super-secreta-com-32-chars-fixa'
-
-  const session = await useSession(event, {
-    password,
-    name: 'eli-pecas-token', // Nome único para o cookie
-    cookie: {
-      // --- AQUI ESTÁ A CORREÇÃO ---
-      // Forçamos FALSE. Em localhost (http) isso TEM que ser false.
-      secure: false, 
-      
-      // LAX é obrigatório para o Google devolver o usuário logado
-      sameSite: 'lax',
-      
-      httpOnly: true,
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7 // 7 dias
+    return {
+      data: {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name || 'Admin',
+          avatarUrl: user.avatarUrl
+        }
+      }
     }
-  })
-
-  return session
+  } catch (error) {
+    console.error('❌ Erro crítico ao obter usuário:', error)
+    // Retorna nulo para forçar erro de autorização se o banco falhar
+    return { data: { user: null } }
+  }
 }
 
 export async function setUserSession(event: H3Event, user: UserSession) {
-  const session = await getUserSession(event)
-  await session.update({ user })
-  return session
+  // Não faz nada
 }
 
 export async function clearUserSession(event: H3Event) {
-  const session = await getUserSession(event)
-  await session.clear()
+  // Não faz nada
 }

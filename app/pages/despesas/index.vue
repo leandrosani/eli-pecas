@@ -67,7 +67,7 @@
       <table class="w-full text-left border-collapse">
         <thead class="bg-gray-600">
           <tr>
-            <th class="py-4 px-6 text-xs uppercase font-bold text-white w-4/12">Categoria / Descrição</th>
+            <th class="py-4 px-6 text-xs uppercase font-bold text-white w-4/12">Descrição / Categoria</th>
             <th class="py-4 px-6 text-xs uppercase font-bold text-white w-2/12">Data</th>
             <th class="py-4 px-6 text-xs uppercase font-bold text-white w-2/12">Forma Pagto.</th>
             <th class="py-4 px-6 text-xs uppercase font-bold text-white w-2/12 text-right">Valor</th>
@@ -77,7 +77,7 @@
         <tbody class="divide-y divide-gray-200">
           <tr v-for="row in linhasFiltradas" :key="row.id" class="hover:bg-gray-50 transition-all group">
             
-            <!-- Categoria / Descrição -->
+            <!-- Descrição / Categoria -->
             <td class="py-4 px-6 align-middle">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-red-50 flex flex-col items-center justify-center shrink-0 shadow-sm border border-red-100">
@@ -85,8 +85,8 @@
                 </div>
                 
                 <div>
-                  <div class="font-bold text-gray-900 text-sm mb-0.5">{{ row.categoria }}</div>
-                  <div class="text-xs text-gray-500 font-medium uppercase tracking-wide">{{ row.descricao }}</div>
+                  <div class="font-bold text-gray-900 text-sm mb-0.5">{{ row.descricao }}</div>
+                  <div class="text-xs text-gray-500 font-medium uppercase tracking-wide">{{ row.categoria }}</div>
                 </div>
               </div>
             </td>

@@ -88,7 +88,7 @@
       <!-- Logo clicável = Home -->
       <NuxtLink 
         to="/analise"
-        class="h-20 flex items-center px-6 border-b border-orange-100 bg-gradient-to-r from-gray-900 to-orange-700 cursor-pointer"
+        class="h-20 flex items-center px-6 border-b border-orange-100 bg-gradient-to-r from-gray-900 to-orange-400 cursor-pointer"
       >
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-orange-700 shadow-md group-hover:scale-110 transition-transform">
@@ -173,7 +173,8 @@ const menuStructure = computed(() => [
     label: 'Estoque e Vendas', // ← Renomeado
     links: [
       { label: 'Análise Financeira', icon: 'i-heroicons-chart-bar', to: '/analise' },
-      { label: 'Estoque Geral', icon: 'i-heroicons-archive-box', to: '/estoque', badge: '' },/*
+      { label: 'Estoque Geral', icon: 'i-heroicons-archive-box', to: '/estoque', badge: '' },
+      { label: 'Despesas', icon: 'i-heroicons-banknotes', to: '/despesas', badge: '' },/*
       { label: 'Adicionar Peça', icon: 'i-heroicons-plus-circle', to: '/estoque/criar' },*/
     ]
   },

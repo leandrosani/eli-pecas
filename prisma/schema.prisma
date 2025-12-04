@@ -20,6 +20,7 @@ model User {
   createdAt DateTime @default(now())
   
   movimentacoes HistoricoMovimentacao[]
+  despesas      Despesa[] // Relacionamento inverso
 }
 
 model AuthCode {
@@ -54,45 +55,53 @@ model Caixa {
   pecas        Peca[]
 }
 
-// --- PEÇAS (Com o campo 'ativo') ---
+// --- PEÇAS ---
 
 model Peca {
   id          String   @id @default(uuid())
   nome        String
   marca       String
   modelo      String?  
-  ano         String?     
-  estado      String   
+  ano         String?
+  estado      String
   detalhes    String?  @db.Text
   preco       Decimal  @db.Decimal(10, 2)
   quantidade  Int      @default(1)
   fotoUrl     String?
-  
-  // O CAMPO NOVO ESTÁ AQUI:
-  ativo       Boolean  @default(true) 
-
+  ativo       Boolean  @default(true)
   caixaId     Int?
   caixa       Caixa?   @relation(fields: [caixaId], references: [id])
-
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
   movimentacoes HistoricoMovimentacao[]
 }
 
-// --- HISTÓRICO ---
-
 model HistoricoMovimentacao {
   id         String   @id @default(uuid())
-  tipo       String   // "ENTRADA", "SAIDA"
+  tipo       String
   quantidade Int
   observacao String?
-  
   pecaId     String
   peca       Peca     @relation(fields: [pecaId], references: [id])
-  
   userId     String?
   user       User?    @relation(fields: [userId], references: [id])
-
   createdAt  DateTime @default(now())
+}
+
+// --- FINANCEIRO (DESPESAS) ---
+// Esta parte é OBRIGATÓRIA para as despesas funcionarem!
+
+model Despesa {
+  id             String   @id @default(uuid())
+  descricao      String
+  categoria      String
+  valor          Decimal  @db.Decimal(10, 2)
+  formaPagamento String
+  data           DateTime
+  observacao     String?  @db.Text
+  
+  userId         String?
+  user           User?    @relation(fields: [userId], references: [id])
+
+  createdAt      DateTime @default(now())
 }
