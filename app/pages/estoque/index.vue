@@ -229,7 +229,7 @@
         </div>
 
         <!-- Endereço -->
-        <div v-if="item.detalhes" class="mt-3 mb-3 p-2 ">
+        <div v-if="item.detalhes" class="">
           <div class="flex justify-between items-center">
             
             <div>  
