@@ -174,14 +174,14 @@
         </div>-->
 
         <!-- Top Vendas -->
-  <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+  <div class="bg-gray-800 border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
     
     <!-- Cabeçalho -->
     <div 
-      class="p-4 border-b border-gray-100 bg-amber-100/60 cursor-pointer select-none flex justify-between items-center hover:bg-gray-100 transition-colors"
+      class="p-4 border-b border-gray-100 cursor-pointer select-none flex justify-between items-center hover:bg-gray-100 transition-colors"
       @click="openMaisVendidos = !openMaisVendidos"
     >
-      <h3 class="font-bold text-gray-900 flex items-center gap-2">
+      <h3 class="font-bold text-white flex items-center gap-2">
         <UIcon name="i-heroicons-trophy" class="w-5 h-5 text-yellow-500" /> 
         Mais Vendidos do Mês
       </h3>

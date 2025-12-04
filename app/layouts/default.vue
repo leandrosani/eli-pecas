@@ -75,7 +75,7 @@
           >
             <UIcon name="i-heroicons-banknotes" class="w-5 h-5" />
           </div>
-          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/analise' ? 'text-white' : 'text-gray-400'">
+          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/despesas' ? 'text-white' : 'text-gray-400'">
             Despesa
           </span>
         </NuxtLink>
