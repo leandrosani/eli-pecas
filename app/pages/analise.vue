@@ -174,11 +174,11 @@
         </div>-->
 
         <!-- Top Vendas -->
-  <div class="bg-gray-800 border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+  <div class=" border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
     
     <!-- Cabeçalho -->
     <div 
-      class="p-4 border-b border-gray-100 cursor-pointer select-none flex justify-between items-center hover:bg-gray-100 transition-colors"
+      class="p-4 border-b border-gray-100 cursor-pointer select-none flex justify-between items-center bg-gray-800"
       @click="openMaisVendidos = !openMaisVendidos"
     >
       <h3 class="font-bold text-white flex items-center gap-2">
@@ -188,7 +188,7 @@
 
       <UIcon 
         name="i-heroicons-chevron-down"
-        class="w-5 h-5 text-gray-500 transition-transform duration-300"
+        class="w-5 h-5 text-white transition-transform duration-300"
         :class="{ 'rotate-180': openMaisVendidos }"
       />
     </div>
@@ -228,20 +228,20 @@
                   <div class="flex flex-wrap gap-1 mt-0.5">
                     <span 
                       v-if="prod.ano" 
-                      class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 rounded border border-gray-200"
+                      class="text-[12px] font-bold text-gray-500 bg-gray-100 px-1.5 rounded border border-gray-200"
                     >
                       {{ prod.ano }}
                     </span>
 
                     <span 
                       v-if="prod.marca"
-                      class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 rounded border border-gray-200 uppercase"
+                      class="text-[12px] font-bold text-gray-500 bg-gray-100 px-1.5 rounded border border-gray-200 uppercase"
                     >
                       {{ prod.marca }}
                     </span>
                   </div>
 
-                  <p class="text-[10px] text-gray-400 mt-0.5 font-medium">
+                  <p class="text-[12px] text-gray-500 mt-0.5 ml-1 font-medium">
                     {{ prod.qtd }} un. vendidas
                   </p>
                 </div>
