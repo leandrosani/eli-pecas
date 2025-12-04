@@ -178,7 +178,7 @@
     
     <!-- Cabeçalho -->
     <div 
-      class="p-4 border-b border-gray-100 bg-gray-50/50 cursor-pointer select-none flex justify-between items-center hover:bg-gray-100 transition-colors"
+      class="p-4 border-b border-gray-100 bg-amber-100/60 cursor-pointer select-none flex justify-between items-center hover:bg-gray-100 transition-colors"
       @click="openMaisVendidos = !openMaisVendidos"
     >
       <h3 class="font-bold text-gray-900 flex items-center gap-2">

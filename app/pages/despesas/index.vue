@@ -3,24 +3,23 @@
     
     <!-- CABEÇALHO -->
     <div class="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
-      <div class="flex justify-between items-start">
-        <div>
-          <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">💸 </span>Despesas</h1>
-          <h1 class="hidden md:block text-3xl font-bold text-gray-900 tracking-tight"><span class="text-4xl">💸 </span>Gestão de Despesas</h1>
+      <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">📦 </span>Despesas</h1>
 
-          <div class="flex justify-between items-center mt-1">
-            <h2 class="text-[md] md:text-xl text-gray-800 font-bold">
-              Registros: <strong class="text-gray-600">{{ linhasFiltradas.length }}</strong>
-            </h2>
-          </div>
+      <h1 class="hidden md:block text-3xl font-bold text-gray-900 tracking-tight"><span class="text-4xl">💸 </span>Despesas</h1>
+
+      <div class="flex justify-between items-center">
+        <div>
+          <h2 class="text-[md] md:text-xl text-gray-800 mt-0.5 md:mt-1 font-bold">
+            Total de itens: <strong class="text-gray-600">{{ linhasFiltradas.length }}</strong>
+          </h2>
         </div>
         
         <!-- Botão Mobile -->
         <UButton 
           to="/despesas/criar" 
           icon="i-heroicons-plus" 
-          size="md" 
-          class="md:hidden shadow-lg rounded-full p-2 flex items-center justify-center bg-red-600 font-bold text-white" 
+          size="text-4xl"
+          class="md:hidden shadow-lg rounded-full p-2 flex items-center justify-center bg-gray-600 font-bold text-white" 
         >
         </UButton>
         
@@ -29,7 +28,7 @@
           to="/despesas/criar" 
           icon="i-heroicons-plus" 
           size="lg" 
-          class="cursor-pointer border bg-gradient-to-br from-red-600 to-red-700 text-white border-red-600 px-4 py-3 hidden md:flex shadow-lg hover:from-red-700 hover:to-red-800 hover:shadow-xl transition-all active:scale-[0.98] rounded-xl font-bold"
+          class="cursor-pointer border bg-gradient-to-br from-gray-600 to-gray-700 text-white border-gray-600 px-4 py-3 hidden md:flex shadow-lg hover:from-gray-700 hover:to-gray-800 hover:shadow-xl transition-all active:scale-[0.98] rounded-xl font-bold"
         >
           Nova Despesa
         </UButton>

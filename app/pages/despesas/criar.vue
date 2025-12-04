@@ -153,7 +153,7 @@
           <!-- Linha 3: Observações e Botões (Desktop) -->
           <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 md:gap-5">
             
-            <!-- Observação 
+            <!-- Observação -->
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
                 <UIcon name="i-heroicons-chat-bubble-bottom-center-text" class="w-4 h-4 text-orange-600" />
@@ -171,7 +171,7 @@
                   {{ form.observacao.length }}/500
                 </div>
               </div>
-            </div>-->
+            </div>
 
             <!-- BOTÕES DESKTOP (um em baixo do outro) -->
             <div class="hidden md:flex flex-col gap-3 justify-end">
@@ -209,7 +209,7 @@
           variant="ghost" 
           color="gray" 
           size="lg" 
-          class="w-full hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-transparent hover:border-red-200 justify-center"
+          class="w-full flex justify-center items-center hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-red-400 hover:border-red-800"
         >
           <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
           Cancelar
@@ -220,7 +220,7 @@
           size="lg" 
           :loading="loading" 
           :disabled="loading"
-          class="w-full cursor-pointer bg-gray-600 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
+          class="w-full flex justify-center items-center cursor-pointer bg-gray-600 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50"
         >
           <UIcon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
           {{ loading ? 'Salvando...' : 'Salvar Despesa' }}

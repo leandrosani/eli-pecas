@@ -17,14 +17,13 @@
         <UButton 
           to="/estoque/criar" 
           icon="i-heroicons-plus" 
-          size="md" 
+          size="text-4xl"
           class="md:hidden shadow-lg rounded-full p-2 flex items-center justify-center bg-gray-600 font-bold text-white" 
         >
-        Adicionar
         </UButton>
         
         <!-- Botão Desktop -->
-        <UButton 
+         <UButton 
           to="/estoque/criar" 
           icon="i-heroicons-plus" 
           size="lg" 
