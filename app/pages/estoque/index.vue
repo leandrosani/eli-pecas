@@ -229,7 +229,7 @@
         </div>
 
         <!-- Endereço -->
-        <div v-if="item.detalhes" class="mb-2 p-2 bg-gray-100 rounded-md border border-gray-200">
+        <div v-if="item.detalhes" class="mb-2 p-2 bg-gradient-to-br from-blue-50 to-blue-100/80 rounded-md border border-blue-200">
           <div class="flex justify-between items-center">
             
             <div>  
