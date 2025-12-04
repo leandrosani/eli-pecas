@@ -208,7 +208,7 @@
                 size="lg" 
                 :loading="saving" 
                 :disabled="saving"
-                class="cursor-pointer bg-gray-600 hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
+                class="flex items-center cursor-pointer bg-gray-600 hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
               >
                 <UIcon v-if="!saving" name="i-heroicons-check-circle" class="w-5 h-5" />
                 {{ saving ? 'Salvando...' : 'Salvar' }}
@@ -219,7 +219,7 @@
                 variant="ghost" 
                 color="gray" 
                 size="lg" 
-                class="hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-transparent hover:border-red-200 justify-center"
+                class="flex items-center hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-transparent hover:border-red-200 justify-center"
               >
                 <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
                 Cancelar
