@@ -229,8 +229,8 @@
         </div>
 
         <!-- Endereço -->
-        <div v-if="item.detalhes" class="">
-          <div class="flex justify-between items-center mb-3">
+        <div v-if="item.detalhes" class=" ">
+          <div class="flex justify-between items-center">
             
             <div>  
               <p class="text-[10px] font-bold text-orange-700 uppercase tracking-wide mb-0.5 flex items-center gap-1">
@@ -250,10 +250,10 @@
           </div>
         </div>
 
-        <div class= "border mb-3 border-gray-200 shadow-sm w-[100%]"></div>
+        <div class= "mb-3 mt-3 border border-gray-200 shadow-sm w-[100%]"></div>
 
         <!-- Botões de Ação (compactos) -->
-        <div class="mt-3 flex gap-6 justify-between">
+        <div class="flex gap-6 justify-between">
           <!-- Botão Vender -->
           <UButton
             v-if="item.quantidade > 0"
