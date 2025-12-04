@@ -250,7 +250,7 @@
           </div>
         </div>
 
-        <div class= "border border-gray-200 shadow-sm w-[100%]"></div>
+        <div class= "border mb-3 border-gray-200 shadow-sm w-[100%]"></div>
 
         <!-- Botões de Ação (compactos) -->
         <div class="mt-3 flex gap-6 justify-between">
