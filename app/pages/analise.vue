@@ -269,10 +269,10 @@
       <!-- 4. EXTRATO FINANCEIRO UNIFICADO -->
       <!-- =================================================== -->
       <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-        <div class="p-3 border-b border-gray-100 bg-gray-50 flex flex-col md:flex-row justify-between items-center gap-3">
+        <div class="p-3 border-b border-gray-100 bg-gray-800 flex flex-col md:flex-row justify-between items-center gap-3">
             
             <div class="flex items-center justify-between w-full md:w-auto">
-              <h2 class="font-bold text-gray-900">Extrato Financeiro</h2>
+              <h2 class="font-bold text-white">Extrato Financeiro</h2>
               <UButton icon="i-heroicons-arrow-path" size="xs" color="gray" variant="ghost" @click="refresh" class="md:hidden" />
             </div>
 
@@ -283,14 +283,14 @@
                   :variant="abaAtiva === aba.value ? 'solid' : 'ghost'"
                   size="xs" @click="abaAtiva = aba.value"
                   :class="[
-                    'flex-1 md:flex-none justify-center font-semibold cursor-pointer',
-                    abaAtiva === aba.value && aba.value === 'todos' ? 'bg-gray-600 text-white' : '',
-                    abaAtiva === aba.value && aba.value === 'saida' ? 'bg-emerald-600 text-white' : '',
-                    abaAtiva === aba.value && aba.value === 'entrada' ? 'bg-blue-600 text-white' : '',
-                    abaAtiva === aba.value && aba.value === 'despesa' ? 'bg-red-600 text-white' : ''
+                    'flex-1 md:flex-none justify-center font-semibold cursor-pointer text-white',
+                    abaAtiva === aba.value && aba.value === 'todos' ? 'bg-gray-600' : '',
+                    abaAtiva === aba.value && aba.value === 'saida' ? 'bg-emerald-600' : '',
+                    abaAtiva === aba.value && aba.value === 'entrada' ? 'bg-blue-600' : '',
+                    abaAtiva === aba.value && aba.value === 'despesa' ? 'bg-red-600' : ''
                   ]"
                 />
-                <UButton icon="i-heroicons-arrow-path" size="xs" color="gray" variant="ghost" @click="refresh" class="hidden md:flex" />
+                <UButton icon="i-heroicons-arrow-path" size="xs" color="gray" variant="ghost" @click="refresh" class="hidden md:flex text-white" />
             </div>
         </div>
         
