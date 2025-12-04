@@ -132,8 +132,8 @@
 
 
     <!-- Main Content -->
-    <main class="pt-2 pb-24 md:pt-0 md:pb-0 md:pl-64 min-h-screen transition-all">
-      <div class="p-4 md:p-8 max-w-7xl mx-auto">
+    <main class="bg-gray-100 pt-2 pb-24 md:pt-0 md:pb-0 md:pl-64 min-h-screen transition-all">
+      <div class="p-4 md:p-8 max-w-7xl mx-auto bg-gray-100">
         <slot />
       </div>
     </main>
