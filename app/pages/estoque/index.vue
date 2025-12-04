@@ -229,7 +229,7 @@
         </div>
 
         <!-- Endereço -->
-        <div v-if="item.detalhes" class="mt-3 mb-3 p-2 bg-gradient-to-br from-orange-50 to-orange-100/80 rounded-md border border-orange-200">
+        <div v-if="item.detalhes" class="mt-3 p-2 bg-gradient-to-br from-orange-50 to-orange-100/80 rounded-md border border-orange-200">
           <div class="flex justify-between items-center">
             
             <div>  
@@ -250,8 +250,10 @@
           </div>
         </div>
 
+        <div class= "border border-gray-200 shadow-sm w-[100%]"></div>
+
         <!-- Botões de Ação (compactos) -->
-        <div class="mt-3 flex gap-6 justify-between border-t border-gray-200 shadow-sm">
+        <div class="mt-3 flex gap-6 justify-between">
           <!-- Botão Vender -->
           <UButton
             v-if="item.quantidade > 0"
