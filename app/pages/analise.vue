@@ -416,6 +416,7 @@ import { ref, computed, reactive } from 'vue';
 definePageMeta({ layout: 'default' })
 
 const { user } = useUserSession();
+const openMaisVendidos = ref(false)
 
 // --- ESTADOS DAS ABAS ---
 const abas = [
