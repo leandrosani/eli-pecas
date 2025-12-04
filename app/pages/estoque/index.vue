@@ -230,7 +230,7 @@
 
         <!-- Endereço -->
         <div v-if="item.detalhes" class="">
-          <div class="flex justify-between items-center">
+          <div class="flex justify-between items-center mb-3">
             
             <div>  
               <p class="text-[10px] font-bold text-orange-700 uppercase tracking-wide mb-0.5 flex items-center gap-1">
