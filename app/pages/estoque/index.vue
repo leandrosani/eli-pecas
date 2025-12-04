@@ -269,7 +269,10 @@
 
           <span
             v-else
-            class="text-center text-[12px] font-bold text-red-600 bg-red-50 px-3 py-1 rounded-lg border-2 border-red-200"
+            color="primary"
+            variant="soft"
+            size="sm"
+            class="text-center text-[13px] text-white text-red-600 bg-red-50 px-3 py-1 rounded-lg border-2 border-red-200"
           >
             ESGOTADO
           </span>
