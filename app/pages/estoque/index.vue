@@ -229,7 +229,7 @@
         </div>
 
         <!-- Endereço -->
-        <div v-if="item.detalhes" class="mt-3 p-2 bg-gradient-to-br from-orange-50 to-orange-100/80 rounded-md border border-orange-200">
+        <div v-if="item.detalhes" class="mt-3 mb-3 p-2 bg-gradient-to-br from-orange-50 to-orange-100/80 rounded-md border border-orange-200">
           <div class="flex justify-between items-center">
             
             <div>  
