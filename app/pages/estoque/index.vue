@@ -18,7 +18,7 @@
           to="/estoque/criar" 
           icon="i-heroicons-plus" 
           size="text-4xl"
-          class="md:hidden shadow-lg rounded-full p-2 flex items-center justify-center bg-gray-600 font-bold text-white" 
+          class="md:hidden shadow-lg rounded-full p-2 flex items-center justify-center bg-blue-600 font-bold text-white" 
         >
         </UButton>
         

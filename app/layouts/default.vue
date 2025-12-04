@@ -26,7 +26,7 @@
     </header>-->
 
     <!-- Bottom Navigation Mobile -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-15 bg-gray-800 border-t border-black z-50 shadow-2xl">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-19 bg-gray-800 border-t border-gray-600 z-50 shadow-2xl">
       <div class="flex items-center justify-around h-full px-2">
         
         <!-- Análise e Vendas -->
@@ -36,12 +36,12 @@
           :class="rota === '/analise' ? 'text-white' : 'text-gray-600'"
         >
           <div 
-            class="relative flex items-center justify-center w-8 h-8 rounded-2xl transition-all"
-            :class="rota === '/analise' ? 'bg-gray-600 shadow-lg scale-110' : 'bg-transparent'"
+            class="relative flex items-center justify-center w-12 h-10 rounded-2xl transition-all"
+            :class="rota === '/analise' ? 'bg-orange-400/80 shadow-lg scale-110' : 'bg-transparent'"
           >
             <UIcon name="i-heroicons-chart-bar" class="w-5 h-5" />
           </div>
-          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/analise' ? 'text-white' : 'text-gray-400'">
+          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/analise' ? 'text-orange-400' : 'text-gray-400'">
             Análise
           </span>
         </NuxtLink>
@@ -53,12 +53,12 @@
           :class="rota === '/estoque' ? 'text-white' : 'text-gray-600'"
         >
           <div 
-            class="relative flex items-center justify-center w-8 h-8 rounded-2xl transition-all"
-            :class="rota === '/estoque' ? 'bg-gray-600 shadow-lg scale-110' : 'bg-transparent'"
+            class="relative flex items-center justify-center w-12 h-10 rounded-2xl transition-all"
+            :class="rota === '/estoque' ? 'bg-orange-400/80 shadow-lg scale-110' : 'bg-transparent'"
           >
             <UIcon name="i-heroicons-archive-box" class="w-5 h-5" />
           </div>
-          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/estoque' ? 'text-white' : 'text-gray-400'">
+          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/estoque' ? 'text-orange-400' : 'text-gray-400'">
             Estoque
           </span>
         </NuxtLink>
@@ -70,12 +70,12 @@
           :class="rota === '/despesas' ? 'text-white' : 'text-gray-600'"
         >
           <div 
-            class="relative flex items-center justify-center w-8 h-8 rounded-2xl transition-all"
-            :class="rota === '/despesas' ? 'bg-gray-600 shadow-lg scale-110' : 'bg-transparent'"
+            class="relative flex items-center justify-center w-12 h-10 rounded-2xl transition-all"
+            :class="rota === '/despesas' ? 'bg-orange-400/80 shadow-lg scale-110' : 'bg-transparent'"
           >
             <UIcon name="i-heroicons-banknotes" class="w-5 h-5" />
           </div>
-          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/despesas' ? 'text-white' : 'text-gray-400'">
+          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/despesas' ? 'text-orange-400' : 'text-gray-400'">
             Despesa
           </span>
         </NuxtLink>

@@ -99,6 +99,8 @@
         </div>
       </div>
 
+      <div class= "mb-3 mt-3 border border-gray-200 shadow-sm w-[100%]"></div>
+
       <!-- =================================================== -->
       <!-- 2. INSIGHTS E INDICADORES SECUNDÁRIOS -->
       <!-- =================================================== -->
@@ -141,11 +143,12 @@
         </div>
       </div>
 
+      <div class= "mb-3 mt-3 border border-gray-200 shadow-sm w-[100%]"></div>
+
       <!-- =================================================== -->
       <!-- 3. ALERTAS E TOP SELLERS -->
       <!-- =================================================== -->
       <div class="grid grid-cols-1 gap-6">
-        
         <!-- Alerta de Estoque Baixo 
         <div class="bg-white border border-red-100 rounded-2xl shadow-sm overflow-hidden">
           <div class="p-4 border-b border-red-100 bg-red-50/50 flex items-center justify-between">
@@ -172,7 +175,6 @@
             </div>
           </div>
         </div>-->
-
         <!-- Top Vendas -->
   <div class=" border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
     
@@ -260,10 +262,8 @@
       </div>
     </Transition>
 </div>
-
-
-
       </div>
+      <div class= "mb-3 mt-3 border border-gray-200 shadow-sm w-[100%]"></div>
 
       <!-- =================================================== -->
       <!-- 4. EXTRATO FINANCEIRO UNIFICADO -->
@@ -360,7 +360,7 @@
         </span>
       </div>
 
-      <p class="font-bold text-gray-900 text-sm truncate">
+      <p class="font-bold text-gray-900 text-sm">
         {{ mov.peca?.nome || mov.descricao }}
       </p>
 
