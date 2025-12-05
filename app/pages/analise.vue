@@ -19,7 +19,7 @@
               <UButton icon="i-heroicons-chevron-right" color="gray" variant="ghost" size="3xs" @click="mudarMes(1)" :disabled="ehMesFuturo" />
           </div>
         </div>
-        <div class="w-22 h-22 rounded-lg flex items-center justify-center bg-black shadow-md overflow-hidden border-3 border-orange-400/60">
+        <div class="w-22 h-22 rounded-2xl flex items-center justify-center bg-black shadow-md overflow-hidden border-3 border-white">
           <img src="/logo.jpg" alt="Logo Eli Peças" class="max-w-full max-h-full object-contain">
         </div>
       </div>
@@ -91,23 +91,23 @@
 
         <!-- Balanço Líquido (Lucro/Prejuízo) -->
         <div 
-          class="rounded-xl p-3 relative overflow-hidden group border-2 transition-transform hover:scale-[1.01]"
+          class="rounded-xl p-3 text-white relative overflow-hidden group transition-transform hover:scale-[1.01]"
           :class="Number(stats?.balancoLiquido) >= 0 
-            ? 'bg-amber-50 border-amber-100' 
+            ? 'bg-gradient-to-br from-yellow-500 to-amber-400' 
             : 'bg-amber-50 border-red-100'"
         >
           <div class="absolute right-0 top-0 p-4 opacity-10">
             <UIcon name="i-heroicons-scale" class="w-20 h-20 text-gray-400" />
           </div>
-          <p class="text-xs font-bold uppercase tracking-wider mb-1 text-gray-500">Balanço Líquido</p>
+          <p class="text-xs font-bold uppercase tracking-wider mb-1 text-amber-100">Lucro Líquido</p>
           <div 
             class="text-xl font-bold mb-4"
-            :class="Number(stats?.balancoLiquido) >= 0 ? 'text-gray-800' : 'text-red-600'"
+            :class="Number(stats?.balancoLiquido) >= 0 ? 'text-white' : 'text-red-600'"
           >
             {{ formatarDinheiro(stats?.balancoLiquido) }}
           </div>
           
-          <div v-if="Number(stats?.balancoLiquido) >= 0" class="flex items-center gap-2 text-xs  bg-black/10 backdrop-blur-sm text-gray-800 w-fit px-3 py-1 rounded-full">
+          <div v-if="Number(stats?.balancoLiquido) >= 0" class="flex items-center gap-2 text-xs  bg-white/20 backdrop-blur-sm w-fit px-3 py-1 rounded-full">
             <UIcon name="i-heroicons-hand-thumb-up" class="w-4 h-4" />
             <span>Lucro Operacional</span>
           </div>
@@ -139,23 +139,24 @@
 
         
         <!-- Volume -->
-        <div class="bg-white p-3 rounded-2xl border border-blue-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+        <div class="bg-white p-3 rounded-2xl border-2 border-blue-200 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
           <div>
-            <div class="flex items-center gap-2 text-blue-600 mb-2">
+            <div class="flex items-center gap-2 text-gray-600 mb-2">
               <UIcon name="i-heroicons-cube" class="w-5 h-5" />
-              <span class="text-xs font-bold uppercase">Peças</span>
+              <span class="text-xs font-bold uppercase">Estoque</span>
             </div>
-            <div class="text-xl text-center font-bold text-gray-900">{{ stats?.itensEstoque }}</div>
+            <div class="text-xl text-center font-bold text-gray-800">{{ stats?.itensEstoque }}</div>
+            <p class="text-xs text-center text-gray-500 mt-1">Quantidade</p>
           </div>
         </div>
         <!-- Patrimônio -->
-        <div class="bg-gradient-to-br from-blue-50 to-blue-100/80 p-3 col-span-2 rounded-2xl border-2 border-blue-200 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+        <div class="bg-white p-3 col-span-2 rounded-2xl border-2 border-blue-200 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
           <div>
-            <div class="flex items-center gap-2 text-blue-600 mb-2">
+            <div class="flex items-center gap-2 text-gray-600 mb-2">
               <UIcon name="i-heroicons-banknotes" class="w-5 h-5" />
               <span class="text-xs font-bold uppercase">Patrimônio Ativo</span>
             </div>
-            <div class="text-xl font-bold text-gray-900">{{ formatarDinheiro(stats?.valorEstoque) }}</div>
+            <div class="text-xl font-bold text-gray-800">{{ formatarDinheiro(stats?.valorEstoque) }}</div>
             <p class="text-xs text-gray-500 mt-1">Valor de custo em peças</p>
           </div>
         </div>
