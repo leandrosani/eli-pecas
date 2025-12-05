@@ -9,7 +9,7 @@
           variant="ghost" 
           color="gray" 
           size="md"
-          class="hover:bg-gray-100 transition-all font-semibold rounded-xl border-2 border-gray-300 hover:border-gray-400"
+          class="flex bg-gray-600 text-white hover:bg-gray-500 transition-all font-semibold rounded-xl border-2 border-gray-300 hover:border-gray-400"
         >
           <UIcon name="i-heroicons-arrow-left" class="w-5 h-5" />
           <span class="hidden sm:inline">Voltar</span>
@@ -180,7 +180,7 @@
                 size="lg" 
                 :loading="loading" 
                 :disabled="loading"
-                class="flex justify-center items-center cursor-pointer bg-gray-600 hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50"
+                class="flex justify-center items-center cursor-pointer bg-gray-600 hover:bg-gray-500 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50"
               >
                 <UIcon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
                 {{ loading ? 'Salvando...' : 'Salvar' }}

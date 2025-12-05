@@ -42,7 +42,7 @@
           size="lg"
           class="w-full shadow-sm rounded-xl border-2 border-gray-200 focus-within:border-red-400 transition-all [&_input]:pl-11"
           :ui="{ 
-            base: 'placeholder:text-gray-400 focus:ring-2 focus:ring-red-400/20'
+            base: 'placeholder:text-gray-400 bg-white focus:ring-2 focus:ring-red-400/20'
           }"
         >
           <template #trailing v-if="busca">

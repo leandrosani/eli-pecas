@@ -26,9 +26,8 @@
     </header>-->
 
     <!-- Bottom Navigation Mobile -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-19 bg-gray-800 border-t border-gray-600 z-50 shadow-2xl">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-gray-800 border-t border-gray-600 z-50 shadow-2xl pb-[env(safe-area-inset-bottom)]">
       <div class="flex items-center justify-around h-full px-2">
-        
         <!-- Análise e Vendas -->
         <NuxtLink 
           to="/analise" 
@@ -149,11 +148,12 @@
 
 
     <!-- Main Content -->
-    <main class="bg-gray-100 pt-2 pb-24 md:pt-0 md:pb-0 md:pl-64 min-h-screen transition-all">
-      <div class="p-4 md:p-8 max-w-7xl mx-auto bg-gray-100">
+    <main class="bg-gray-200 pt-2 pb-24 md:pt-0 md:pb-0 md:pl-64 min-h-[100dvh] transition-all" style="padding-bottom: calc(6rem + env(safe-area-inset-bottom))">
+      <div class="p-4 md:p-8 max-w-7xl mx-auto bg-gray-200">
         <slot />
       </div>
     </main>
+
 
   </div>
 </template>

@@ -41,7 +41,7 @@
           size="lg"
           class="w-full shadow-sm rounded-xl border-2 border-gray-200 focus-within:border-orange-400 transition-all [&_input]:pl-11"
           :ui="{ 
-            base: 'placeholder:text-gray-400 focus:ring-2 focus:ring-orange-400/20'
+            base: 'placeholder:text-gray-400 bg-white focus:ring-2 focus:ring-orange-400/20'
           }"
         >
           <template #trailing v-if="busca">
@@ -151,7 +151,7 @@
                   :to="`/estoque/editar/${row.id}`" 
                   icon="i-heroicons-pencil-square" 
                   size="xs"
-                  class="w-24 text-center cursor-pointer px-2.5 py-1.5 bg-[#fe8330] text-white shadow-sm hover:bg-orange-700 hover:shadow-md transition-all active:scale-95 rounded-lg font-semibold text-[12px]"
+                  class="w-24 text-center cursor-pointer px-2.5 py-1.5 bg-orange-500/80 text-white shadow-sm hover:bg-orange-400/90 hover:shadow-md transition-all active:scale-95 rounded-lg font-semibold text-[12px]"
                   title="Editar"
                 >
                 Editar

@@ -198,7 +198,7 @@
     <!-- Conteúdo com animação -->
     <Transition name="collapse">
       <div v-show="openMaisVendidos">
-        <div class="p-2">
+        <div class="p-2 bg-gray-100">
 
           <!-- Sem produtos -->
           <div v-if="!stats?.topProdutos?.length" class="p-6 text-center text-gray-400 text-sm">
@@ -211,7 +211,7 @@
             <div 
               v-for="(prod, index) in stats.topProdutos"
               :key="index"
-              class="flex items-center justify-between p-3 hover:bg-yellow-50 rounded-lg transition-colors"
+              class="flex items-center justify-between p-3 hover:bg-yellow-50 rounded-lg transition-colors bg-white"
             >
               <div class="flex items-center gap-3">
                 
