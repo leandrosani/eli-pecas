@@ -24,7 +24,7 @@
 
     <!-- Main Content -->
     <main 
-      class="flex-1 pt-2 md:pt-0 md:pl-64 transition-all" 
+      class="flex-1 pt-2 md:pt-0 md:pl-64 transition-all bg-gray-200" 
       style="padding-bottom: calc(4rem + env(safe-area-inset-bottom))"
     >
       <div class="p-4 md:p-8 max-w-7xl mx-auto bg-gray-200 min-h-full">
@@ -42,7 +42,7 @@
           :class="rota === '/analise' ? 'text-white' : 'text-gray-600'"
         >
           <div 
-            class="relative flex items-center justify-center w-12 h-10 rounded-2xl transition-all"
+            class="relative flex items-center justify-center w-12 h-8 rounded-2xl transition-all"
             :class="rota === '/analise' ? 'bg-orange-400/80 shadow-lg scale-110' : 'bg-transparent'"
           >
             <UIcon name="i-heroicons-chart-bar" class="w-5 h-5" />
@@ -59,7 +59,7 @@
           :class="rota === '/estoque' ? 'text-white' : 'text-gray-600'"
         >
           <div 
-            class="relative flex items-center justify-center w-12 h-10 rounded-2xl transition-all"
+            class="relative flex items-center justify-center w-12 h-8 rounded-2xl transition-all"
             :class="rota === '/estoque' ? 'bg-orange-400/80 shadow-lg scale-110' : 'bg-transparent'"
           >
             <UIcon name="i-heroicons-archive-box" class="w-5 h-5" />
@@ -76,7 +76,7 @@
           :class="rota === '/despesas' ? 'text-white' : 'text-gray-600'"
         >
           <div 
-            class="relative flex items-center justify-center w-12 h-10 rounded-2xl transition-all"
+            class="relative flex items-center justify-center w-12 h-8 rounded-2xl transition-all"
             :class="rota === '/despesas' ? 'bg-orange-400/80 shadow-lg scale-110' : 'bg-transparent'"
           >
             <UIcon name="i-heroicons-banknotes" class="w-5 h-5" />
