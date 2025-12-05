@@ -92,13 +92,13 @@
     <aside class="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 bg-white border-r border-gray-200 z-30 shadow-sm">
       <NuxtLink 
         to="/analise"
-        class="h-20 flex items-center px-6 border-b border-orange-100 bg-gradient-to-r from-gray-900 to-orange-400 cursor-pointer"
+        class="h-20 flex items-center px-6 border-b border-orange-100 bg-orange-600/80 cursor-pointer"
       >
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-orange-700 shadow-md group-hover:scale-110 transition-transform">
-            <UIcon name="i-heroicons-wrench-screwdriver" class="w-4 h-4" />
+          <div class="w-16 h-16 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform overflow-hidden border-3 border-gray-600">
+            <img src="/logo.jpg" alt="Logo Eli Peças" class="w-full h-full object-cover">
           </div>
-          <div>
+          <div class="ml-2">
             <h1 class="font-bold text-lg leading-tight text-white">Eli Peças</h1>
             <p class="text-[10px] uppercase font-bold text-orange-200 tracking-wider">Gestão</p>
           </div>

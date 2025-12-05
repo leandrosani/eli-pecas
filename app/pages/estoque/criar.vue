@@ -18,8 +18,9 @@
         <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">📦 </span>Adicionar Peça</h1>
 
         <h1 class="mr-2 hidden md:block text-2xl font-bold text-gray-900 tracking-tight"><span class="text-3xl">➕ </span>Adicionar Peça</h1>
-
       </div>
+      <div class= "mb-6 mt-3 border border-gray-200 shadow-sm w-[100%]"></div>
+
       <div class="bg-white rounded-xl md:rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
         
         <!-- HEADER DO CARD -->

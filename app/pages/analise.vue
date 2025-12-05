@@ -3,11 +3,29 @@
     <!-- =================================================== -->
     <!-- CABEÇALHO: BEM-VINDO(A) E FILTRO DE MÊS -->
     <!-- =================================================== -->
-    <div class="flex flex-col gap-3 md:gap-4 mb-3 md:mb-6 ">
-      <h1 class="md:hidden font-semibold text-xl text-black">
-        <span class="text-2xl">📊 </span> Visão Geral
-      </h1>
+     
+    
+      <!--MOBILLE-->
+      <div class="md:hidden flex justify-between gap-3">
+        <div class="flex flex-col justify-between items-start">
+          <h1 class="md:hidden font-semibold text-xl text-black">
+            <span class="text-2xl">📊 </span> Visão Geral
+          </h1>
+          <div class="flex items-center gap-2 bg-white p-1.5 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all h-12 md:h-14 w-full md:w-auto">
+              <UButton icon="i-heroicons-chevron-left" color="gray" variant="ghost" size="3xs" @click="mudarMes(-1)" />
+              <span class="font-bold text-gray-900 text-sm md:text-sm flex-1 w-24 text-center select-none capitalize">
+                {{ nomeMesAtual }}
+              </span>
+              <UButton icon="i-heroicons-chevron-right" color="gray" variant="ghost" size="3xs" @click="mudarMes(1)" :disabled="ehMesFuturo" />
+          </div>
+        </div>
+        <div class="w-40 h-24 rounded-lg flex items-center justify-center bg-black shadow-md overflow-hidden border-3 border-orange-400/60">
+          <img src="/logo.jpg" alt="Logo Eli Peças" class="max-w-full max-h-full object-contain">
+        </div>
+      </div>
 
+      <!--DESKTOP-->
+      <div class="flex flex-col gap-3 md:gap-4 mb-3 md:mb-6 ">
       <div class="flex justify-between items-start">
         <div class="hidden md:block">
           <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
@@ -18,17 +36,18 @@
             Acompanhe o desempenho e extrato por período. 
           </p>
         </div>
-      
 
-    <div class="flex items-center gap-2 bg-white p-1.5 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all h-12 md:h-14 w-full md:w-auto">
-        <UButton icon="i-heroicons-chevron-left" color="gray" variant="ghost" size="3xs" @click="mudarMes(-1)" />
-        <span class="font-bold text-gray-900 text-sm md:text-sm flex-1 md:w-32 text-center select-none capitalize">
-          {{ nomeMesAtual }}
-        </span>
-        <UButton icon="i-heroicons-chevron-right" color="gray" variant="ghost" size="3xs" @click="mudarMes(1)" :disabled="ehMesFuturo" />
-      </div>
+        <div class="hidden flex items-center gap-2 bg-white p-1.5 rounded-xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all h-12 md:h-14 w-full md:w-auto">
+            <UButton icon="i-heroicons-chevron-left" color="gray" variant="ghost" size="3xs" @click="mudarMes(-1)" />
+            <span class="font-bold text-gray-900 text-sm md:text-sm flex-1 md:w-32 text-center select-none capitalize">
+              {{ nomeMesAtual }}
+            </span>
+            <UButton icon="i-heroicons-chevron-right" color="gray" variant="ghost" size="3xs" @click="mudarMes(1)" :disabled="ehMesFuturo" />
+        </div>
       </div>
     </div>
+
+    <div class= "mb-3 mt-3 border border-gray-200 shadow-sm w-[100%]"></div>
     
 
     <!-- LOADING -->
@@ -42,10 +61,10 @@
       <!-- =================================================== -->
       <!-- 1. INDICADORES FINANCEIROS (LINHA PRINCIPAL) -->
       <!-- =================================================== -->
-      <div class="grid grid-cols-1 gap-1 md:grid-cols-3 md:gap-4">
+      <div class="grid grid-cols-1 gap-1.5 md:grid-cols-3 md:gap-4">
         
         <!-- Faturamento (Vendas) -->
-        <div class="bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl p-3 text-white shadow-lg relative overflow-hidden group transition-transform hover:scale-[1.01]">
+        <div class="border-2 border-green-600/60 bg-gradient-to-br from-gray-600 to-green-600 rounded-2xl p-3 text-white relative overflow-hidden group transition-transform hover:scale-[1.01]">
           <div class="absolute right-0 top-0 p-4 opacity-20 group-hover:scale-110 transition-transform">
             <UIcon name="i-heroicons-currency-dollar" class="w-20 h-20" />
           </div>
@@ -58,7 +77,7 @@
         </div>
 
         <!-- Despesas (Saídas) -->
-        <div class="bg-gradient-to-br from-red-500 to-rose-600 rounded-2xl p-3 text-white shadow-lg relative overflow-hidden group transition-transform hover:scale-[1.01]">
+        <div class="border-2 border-red-600/60 bg-gradient-to-br from-gray-600 to-rose-600 rounded-2xl p-3 text-white  relative overflow-hidden group transition-transform hover:scale-[1.01]">
           <div class="absolute right-0 top-0 p-4 opacity-20 group-hover:scale-110 transition-transform">
             <UIcon name="i-heroicons-arrow-trending-down" class="w-20 h-20" />
           </div>
@@ -72,10 +91,10 @@
 
         <!-- Balanço Líquido (Lucro/Prejuízo) -->
         <div 
-          class="rounded-xl p-3 shadow-lg relative overflow-hidden group border-2 transition-transform hover:scale-[1.01]"
+          class="rounded-xl p-3 relative overflow-hidden group border-2 transition-transform hover:scale-[1.01]"
           :class="Number(stats?.balancoLiquido) >= 0 
-            ? 'bg-white border-blue-100' 
-            : 'bg-white border-red-100'"
+            ? 'bg-amber-50 border-amber-200' 
+            : 'bg-amber-50 border-red-100'"
         >
           <div class="absolute right-0 top-0 p-4 opacity-10">
             <UIcon name="i-heroicons-scale" class="w-20 h-20 text-gray-400" />
@@ -83,12 +102,12 @@
           <p class="text-xs font-bold uppercase tracking-wider mb-1 text-gray-500">Balanço Líquido</p>
           <div 
             class="text-xl font-bold mb-4"
-            :class="Number(stats?.balancoLiquido) >= 0 ? 'text-blue-600' : 'text-red-600'"
+            :class="Number(stats?.balancoLiquido) >= 0 ? 'text-amber-500' : 'text-red-600'"
           >
             {{ formatarDinheiro(stats?.balancoLiquido) }}
           </div>
           
-          <div v-if="Number(stats?.balancoLiquido) >= 0" class="flex items-center gap-2 text-xs bg-blue-50 text-blue-700 w-fit px-3 py-1 rounded-full">
+          <div v-if="Number(stats?.balancoLiquido) >= 0" class="flex items-center gap-2 text-xs  bg-black/10 backdrop-blur-sm text-amber-600 w-fit px-3 py-1 rounded-full">
             <UIcon name="i-heroicons-hand-thumb-up" class="w-4 h-4" />
             <span>Lucro Operacional</span>
           </div>

@@ -5,6 +5,7 @@
       <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">📦 </span>Estoque Total</h1>
 
       <h1 class="hidden md:block text-3xl font-bold text-gray-900 tracking-tight"><span class="text-4xl">📦 </span>Estoque Total</h1>
+      <div class= "mb-3 mt-3 border border-gray-200 shadow-sm w-[100%]"></div>
 
       <div class="flex justify-between items-center">
         <div>
