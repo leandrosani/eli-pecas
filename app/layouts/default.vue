@@ -33,7 +33,7 @@
     </main>
 
     <!-- Bottom Navigation Mobile -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-gray-800 border-t border-gray-600 z-50 shadow-2xl pb-[env(safe-area-inset-bottom)]">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-gray-800 z-50 shadow-2xl pb-[env(safe-area-inset-bottom)]">
       <div class="flex items-center justify-around h-full px-2">
         <!-- Análise -->
         <NuxtLink 
