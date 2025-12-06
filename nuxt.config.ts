@@ -1,48 +1,43 @@
 // Arquivo: nuxt.config.ts
+
 export default defineNuxtConfig({
+  // Habilita SSR para o site funcionar corretamente na Vercel
+  ssr: true,
+
   future: {
     compatibilityVersion: 4,
   },
 
-  // Habilita as ferramentas de dev
   devtools: { enabled: true },
-
-  // Módulo de UI
+  
   modules: ['@nuxt/ui'],
 
-  // Configuração de Cores e Ícones
   colorMode: {
     preference: 'light'
   },
 
   app: {
     head: {
-      // 1. Link para carregar a fonte Inter do Google Fonts
+      title: 'Eli Peças',
       link: [
-        {
-          rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap'
-        }
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap' }
       ]
     }
   },
 
-  // CSS Global
   css: ['~/assets/css/main.css'],
 
-  // Variáveis de Ambiente
+  // Configuração padrão do Nitro (Vercel detecta automático)
+  // Deixamos vazio para não forçar caminhos que quebrem o deploy
+  nitro: {},
+
   runtimeConfig: {
-    // VARIÁVEIS NOVAS
     sessionSecret: '',
-    appPassword: '', // <-- CHAVE SECRETA DO LOGIN
-
-    // VARIÁVEIS ANTIGAS REMOVIDAS
-    // googleClientId: '',
-    // googleClientSecret: '',
-    // resendApiKey: '',
-
+    appPassword: '',
+    
     public: {
-      baseUrl: ''
+      // Deixe vazio aqui. A Vercel preenche com a variável de ambiente.
+      baseUrl: '' 
     }
   }
 })
