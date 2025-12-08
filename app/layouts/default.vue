@@ -37,17 +37,17 @@
       <div class="flex items-center justify-around h-full px-2">
         <!-- Análise -->
         <NuxtLink 
-          to="/analise" 
+          to="/dashboard" 
           class="flex flex-col items-center justify-center gap-1 py-2 px-4 rounded-xl transition-all active:scale-95"
-          :class="rota === '/analise' ? 'text-white' : 'text-gray-600'"
+          :class="rota === '/dashboard' ? 'text-white' : 'text-gray-600'"
         >
           <div 
             class="relative flex items-center justify-center w-12 h-8 rounded-2xl transition-all"
-            :class="rota === '/analise' ? 'bg-orange-400/80 shadow-lg scale-110' : 'bg-transparent'"
+            :class="rota === '/dashboard' ? 'bg-orange-400/80 shadow-lg scale-110' : 'bg-transparent'"
           >
             <UIcon name="i-heroicons-chart-bar" class="w-5 h-5" />
           </div>
-          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/analise' ? 'text-orange-400' : 'text-gray-400'">
+          <span class="text-[10px] font-bold uppercase tracking-wide" :class="rota === '/dashboard' ? 'text-orange-400' : 'text-gray-400'">
             Análise
           </span>
         </NuxtLink>
@@ -91,7 +91,7 @@
     <!-- Sidebar Desktop -->
     <aside class="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 bg-white border-r border-gray-200 z-30 shadow-sm">
       <NuxtLink 
-        to="/analise"
+        to="/dashboard"
         class="h-20 flex items-center px-6 border-b border-orange-100 bg-orange-600/80 cursor-pointer"
       >
         <div class="flex items-center gap-3">
@@ -145,13 +145,13 @@ const isHome = computed(() => route.path === '/dashboard')
 const rota = computed(() => {
   if (route.path.startsWith('/estoque/criar')) return '/estoque/criar'
   if (route.path.startsWith('/estoque')) return '/estoque'
-  if (route.path.startsWith('/analise')) return '/analise'
+  if (route.path.startsWith('/dashboard')) return '/dashboard'
   return route.path
 })
 
 const paginaAtual = computed(() => {
   if (route.path === '/dashboard') return 'Eli Peças'
-  if (route.path === '/analise') return 'Análise Financeira'
+  if (route.path === '/dashboard') return 'Análise Financeira'
   if (route.path === '/estoque') return 'Estoque Geral'
   if (route.path === '/estoque/criar') return 'Adicionar Peça'
   if (route.path.startsWith('/estoque/editar/')) return 'Editar Peça'
@@ -162,7 +162,7 @@ const menuStructure = computed(() => [
   {
     label: 'Estoque e Vendas',
     links: [
-      { label: 'Análise Financeira', icon: 'i-heroicons-chart-bar', to: '/analise' },
+      { label: 'Análise Financeira', icon: 'i-heroicons-chart-bar', to: '/dashboard' },
       { label: 'Estoque Geral', icon: 'i-heroicons-archive-box', to: '/estoque', badge: '' },
       { label: 'Despesas', icon: 'i-heroicons-banknotes', to: '/despesas', badge: '' },
     ]

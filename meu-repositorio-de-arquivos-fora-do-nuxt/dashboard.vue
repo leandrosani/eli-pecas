@@ -26,7 +26,7 @@
         
         <!-- Card 1: Visão Geral 
         <NuxtLink 
-          to="/analise" 
+          to="/dashboard" 
           class="group block bg-gradient-to-br from-blue-50 to-blue-100/50 hover:from-blue-100 hover:to-blue-200/50 rounded-lg md:rounded-xl border border-blue-200 shadow-sm p-4 md:p-5 text-center transition-all hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
         >
           <div class="w-12 h-12 md:w-14 md:h-14 bg-white rounded-xl flex items-center justify-center mx-auto mb-2 md:mb-3 shadow-sm group-hover:shadow-md transition-all">
@@ -114,7 +114,7 @@
         </NuxtLink>
 
         <!-- Ação 2: Ver Extrato 
-        <NuxtLink to="/analise" class="bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 hover:shadow-md transition-all hover:border-blue-300 block">
+        <NuxtLink to="/dashboard" class="bg-white rounded-lg md:rounded-xl border border-gray-200 shadow-sm p-4 md:p-5 hover:shadow-md transition-all hover:border-blue-300 block">
           <div class="flex items-center gap-3 md:gap-4">
             <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
               <UIcon name="i-heroicons-document-text" class="w-5 h-5 md:w-6 md:h-6 text-blue-600" />

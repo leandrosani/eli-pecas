@@ -8,44 +8,37 @@ export interface UserSession {
   avatarUrl: string | null
 }
 
+// Obtém a sessão do cookie
 export async function getUserSession(event: H3Event) {
-  // Define um usuário padrão para o sistema (Admin)
-  const email = 'admin@elipecas.com'
+  const config = useRuntimeConfig(event)
   
-  try {
-    // Tenta buscar ou criar o usuário no banco de dados REAL (Neon)
-    // Isso garante que o ID retornado seja válido para relacionamentos
-    const user = await prisma.user.upsert({
-      where: { email },
-      update: {},
-      create: {
-        email,
-        name: 'Admin Eli Peças',
-        provider: 'system_auto'
-      }
-    })
-
-    return {
-      data: {
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name || 'Admin',
-          avatarUrl: user.avatarUrl
-        }
-      }
+  // O Prisma é importado aqui para ser usado em rotas que precisam de acesso ao DB (ex: login.post)
+  
+  // Configuração padrão de sessão via Cookie
+  const session = await useSession(event, {
+    password: config.sessionSecret || 'fallback-senha-secreta-longa',
+    name: 'eli-pecas-session',
+    cookie: {
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7 // 7 dias
     }
-  } catch (error) {
-    console.error('❌ Erro crítico ao obter usuário:', error)
-    // Retorna nulo para forçar erro de autorização se o banco falhar
-    return { data: { user: null } }
-  }
+  })
+
+  return session
 }
 
+// Salva a sessão no cookie
 export async function setUserSession(event: H3Event, user: UserSession) {
-  // Não faz nada
+  const session = await getUserSession(event)
+  await session.update({ user })
+  return session
 }
 
+// Limpa a sessão no cookie
 export async function clearUserSession(event: H3Event) {
-  // Não faz nada
+  const session = await getUserSession(event)
+  await session.clear()
 }
