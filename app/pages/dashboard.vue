@@ -645,6 +645,10 @@ function getSinal(tipo: string) {
 }
 
 function getValor(mov: any) {
-  return mov.valor || mov.total || mov.preco || 0;
+    if (mov.tipo === 'DESPESA') {
+        return Number(mov.valor); 
+    }
+    return Number(mov.peca?.preco || 0) * Number(mov.quantidade || 0);
 }
+
 </script>
