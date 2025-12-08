@@ -166,8 +166,8 @@
       >
         <!-- Botões de ação (Topo Direito) -->
         <div class="absolute top-3 right-3 flex gap-2">
-          <UButton :to="`/despesas/editar/${item.id}`" color="gray" variant="ghost" icon="i-heroicons-pencil-square" size="xs" class="w-8 h-8 p-0 text-orange-500 bg-orange-50"/>
-          <UButton color="red" variant="ghost" icon="i-heroicons-trash" size="xs" class="w-8 h-8 p-0 text-red-600 bg-red-50" @click="excluir(item.id)" />
+          <UButton :to="`/despesas/editar/${item.id}`" color="gray" variant="ghost" icon="i-heroicons-pencil-square" size="xl" class="w-8 h-8 p-0 text-orange-500 bg-orange-50 flex items-center justify-center"/>
+          <UButton color="red" variant="ghost" icon="i-heroicons-trash" size="xl" class="w-8 h-8 p-0 text-red-600 bg-red-50 flex items-center justify-center" @click="excluir(item.id)" />
         </div>
 
         <!-- Header: Data -->
