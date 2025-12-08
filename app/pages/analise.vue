@@ -431,7 +431,7 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue';
 
-definePageMeta({ layout: 'default' })
+definePageMeta({ layout: 'default', lazy: true })
 
 const { user } = useUserSession();
 const openMaisVendidos = ref(false)

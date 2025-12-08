@@ -37,7 +37,7 @@
       <div class="flex items-center justify-around h-full px-2">
         <!-- Análise -->
         <NuxtLink 
-          to="/analise" prefetch
+          to="/analise" 
           class="flex flex-col items-center justify-center gap-1 py-2 px-4 rounded-xl transition-all active:scale-95"
           :class="rota === '/analise' ? 'text-white' : 'text-gray-600'"
         >
@@ -54,7 +54,7 @@
 
         <!-- Estoque -->
         <NuxtLink 
-          to="/estoque" prefetch
+          to="/estoque" 
           class="flex flex-col items-center justify-center gap-1 py-2 px-4 rounded-xl transition-all active:scale-95"
           :class="rota === '/estoque' ? 'text-white' : 'text-gray-600'"
         >
@@ -71,7 +71,7 @@
 
         <!-- Despesas -->
         <NuxtLink 
-          to="/despesas" prefetch
+          to="/despesas" 
           class="flex flex-col items-center justify-center gap-1 py-2 px-4 rounded-xl transition-all active:scale-95"
           :class="rota === '/despesas' ? 'text-white' : 'text-gray-600'"
         >
@@ -91,7 +91,7 @@
     <!-- Sidebar Desktop -->
     <aside class="hidden md:flex flex-col w-64 fixed inset-y-0 left-0 bg-white border-r border-gray-200 z-30 shadow-sm">
       <NuxtLink 
-        to="/analise" prefetch
+        to="/analise"
         class="h-20 flex items-center px-6 border-b border-orange-100 bg-orange-600/80 cursor-pointer"
       >
         <div class="flex items-center gap-3">

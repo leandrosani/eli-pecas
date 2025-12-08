@@ -389,10 +389,12 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
+definePageMeta({ layout: 'default', lazy: true })
 
 const busca = ref('')
-const { data, status, refresh } = await useFetch('/api/pecas')
+const { data, status, refresh } = await useFetch('/api/pecas', {
+  lazy: true // só faz fetch quando a página montar
+})
 
 const modalVendaAberto = ref(false)
 const itemParaVenda = ref<any>(null)
