@@ -62,7 +62,7 @@
       <!-- 1. INDICADORES FINANCEIROS (LINHA PRINCIPAL) -->
       <!-- =================================================== -->
       <div class="grid grid-cols-1 gap-1.5 md:grid-cols-3 md:gap-4">
-        
+        <InstallPWA />
         <!-- Faturamento (Vendas) -->
         <div class="bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl p-3 text-white relative overflow-hidden group transition-transform hover:scale-[1.01]">
           <div class="absolute right-0 top-0 p-4 opacity-20 group-hover:scale-110 transition-transform">
@@ -425,7 +425,7 @@
         </NuxtLink>
       </div>
     </div>-->
-
+    
   </div>
 </template>
 

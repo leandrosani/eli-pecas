@@ -4,20 +4,20 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
 
-  // Habilita as ferramentas de dev
   devtools: { enabled: true },
 
-  // Módulo de UI
-  modules: ['@nuxt/ui'],
+  // Adicione o módulo PWA aqui
+  modules: [
+    '@nuxt/ui',
+    '@vite-pwa/nuxt' // <-- NOVO
+  ],
 
-  // Configuração de Cores e Ícones
   colorMode: {
     preference: 'light'
   },
 
   app: {
     head: {
-      // 1. Link para carregar a fonte Inter do Google Fonts
       link: [
         {
           rel: 'stylesheet',
@@ -27,20 +27,48 @@ export default defineNuxtConfig({
     }
   },
 
-  // CSS Global
   css: ['~/assets/css/main.css'],
 
-  // Variáveis de Ambiente
+  // Configuração do PWA
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: 'Eli Peças - Sistema',
+      short_name: 'Eli Peças',
+      description: 'Sistema de gestão Eli Peças',
+      theme_color: '#ffffff',
+      background_color: '#ffffff',
+      display: 'standalone',
+      start_url: '/',
+      icons: [
+        {
+          src: '/icon-192.png',
+          sizes: '192x192',
+          type: 'image/png'
+        },
+        {
+          src: '/icon-512.png',
+          sizes: '512x512',
+          type: 'image/png'
+        }
+      ]
+    },
+    workbox: {
+      navigateFallback: '/',
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+    },
+    client: {
+      installPrompt: true,
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module'
+    }
+  },
+
   runtimeConfig: {
-    // VARIÁVEIS NOVAS
     sessionSecret: '',
-    appPassword: '', // <-- CHAVE SECRETA DO LOGIN
-
-    // VARIÁVEIS ANTIGAS REMOVIDAS
-    // googleClientId: '',
-    // googleClientSecret: '',
-    // resendApiKey: '',
-
+    appPassword: '',
     public: {
       baseUrl: ''
     }
