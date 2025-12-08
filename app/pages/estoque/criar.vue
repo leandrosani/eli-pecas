@@ -258,6 +258,10 @@ const loading = ref(false)
 const listaLados = [
   "LADO DIREITO",
   "LADO ESQUERDO",
+  "DIANTEIRO",
+  "TRASEIRO",
+  "DIANTEIRO DIREITO",
+  "TRASEIRO ESQUERDO",
 ]
 
 const listaCondicao = [
