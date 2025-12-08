@@ -1,5 +1,5 @@
 <template>
-  <div class="pb-24 relative">
+  <div class="pb-20 relative" v-memo="[stats, abaAtiva, dataAtual]">
     <!-- =================================================== -->
     <!-- CABEÇALHO: BEM-VINDO(A) E FILTRO DE MÊS -->
     <!-- =================================================== -->
@@ -429,115 +429,121 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue';
+import { ref, computed, reactive, watch } from 'vue'
 
-definePageMeta({ layout: 'default', lazy: true })
+definePageMeta({
+  layout: 'default',
+  loading: true // ativa carregamento automático
+});
 
-const { user } = useUserSession();
+const { user } = useUserSession()
 const openMaisVendidos = ref(false)
 
-// --- ESTADOS DAS ABAS ---
+// --- ABAS ---
 const abas = [
   { label: 'Todos', value: 'todos', color: 'gray' },
   { label: 'Vendas', value: 'saida', color: 'emerald' },
   { label: 'Entradas', value: 'entrada', color: 'blue' },
   { label: 'Despesas', value: 'despesa', color: 'red' }
-];
-const abaAtiva = ref('todos');
+]
+const abaAtiva = ref('todos')
 
-// Dados da Dashboard
-const dataAtual = ref(new Date());
+// DATA ATUAL
+const dataAtual = ref(new Date())
 
-const nomeMesAtual = computed(() => {
-    return dataAtual.value.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
-});
-
-const ehMesFuturo = computed(() => {
-    const hoje = new Date();
-    return dataAtual.value.getMonth() === hoje.getMonth() && dataAtual.value.getFullYear() === hoje.getFullYear();
-});
+const nomeMesAtual = computed(() =>
+  dataAtual.value.toLocaleString('pt-BR', {
+    month: 'long',
+    year: 'numeric'
+  })
+)
 
 const params = computed(() => ({
-    mes: dataAtual.value.getMonth() + 1, 
-    ano: dataAtual.value.getFullYear() 
-}));
+  mes: dataAtual.value.getMonth() + 1,
+  ano: dataAtual.value.getFullYear()
+}))
 
+// FETCH (somente quando mês mudar)
 const { data: stats, pending, refresh } = await useFetch('/api/dashboard/stats', {
-    query: params
+  query: params,
+  lazy: true,
+  immediate: true // mantém a chamada automática, mas depois da montagem
 });
 
-// --- LÓGICA DE FILTRAGEM (FRONTEND) ---
+
+// Recarrega ao mudar mês
+watch(params, () => refresh())
+
+// PRÉ-PROCESSAMENTO — roda 1 vez por atualização do servidor
+const dadosProcessados = computed(() => {
+  const estoque = stats.value?.historicoMes || []
+  const despesas = (stats.value?.despesasMes || []).map((d: any) => ({
+    ...d,
+    tipo: 'DESPESA'
+  }))
+
+  return {
+    estoqueSaida: estoque.filter((m: any) => m.tipo === 'SAIDA'),
+    estoqueEntrada: estoque.filter((m: any) => m.tipo === 'ENTRADA'),
+    despesas,
+    todos: [...estoque, ...despesas].sort(
+      (a, b) =>
+        new Date(b.createdAt || b.data).getTime() -
+        new Date(a.createdAt || a.data).getTime()
+    )
+  }
+})
+
+// FILTRO RÁPIDO — zero processamento pesado
 const historicoFiltrado = computed(() => {
-    const estoque = stats.value?.historicoMes || [];
-    const despesas = (stats.value?.despesasMes || []).map((d: any) => ({ ...d, tipo: 'DESPESA' }));
-    
-    let lista = [];
-    
-    if (abaAtiva.value === 'saida') {
-        return estoque.filter((m: any) => m.tipo === 'SAIDA');
-    }
-    if (abaAtiva.value === 'entrada') {
-        return estoque.filter((m: any) => m.tipo === 'ENTRADA');
-    }
-    if (abaAtiva.value === 'despesa') {
-        return despesas;
-    }
-    
-    // Aba TODOS: Junta tudo e ordena por data
-    lista = [...estoque, ...despesas].sort((a, b) => 
-        new Date(b.createdAt || b.data).getTime() - new Date(a.createdAt || a.data).getTime()
-    );
-
-    return lista.slice(0, 50); // Limita a 50 itens para não travar a tela
-});
-
+  const d = dadosProcessados.value
+  if (abaAtiva.value === 'saida') return d.estoqueSaida
+  if (abaAtiva.value === 'entrada') return d.estoqueEntrada
+  if (abaAtiva.value === 'despesa') return d.despesas
+  return d.todos.slice(0, 50) // limite para performance
+})
 
 function mudarMes(delta: number) {
-    const novaData = new Date(dataAtual.value);
-    novaData.setMonth(novaData.getMonth() + delta);
-    dataAtual.value = novaData;
+  const nova = new Date(dataAtual.value)
+  nova.setMonth(nova.getMonth() + delta)
+  dataAtual.value = nova
 }
 
-function formatarDinheiro(val: number | null) { 
-    // Garante que 'val' seja tratado como número, mesmo se vier null
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(val) || 0); 
+function formatarDinheiro(val: number | null) {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(Number(val) || 0)
 }
-
-// --- FUNÇÕES DE ESTILO E VALOR ---
 
 function getBadgeClass(tipo: string) {
-    if (tipo === 'SAIDA') return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-    if (tipo === 'ENTRADA') return 'bg-blue-50 text-blue-700 border-blue-200';
-    if (tipo === 'DESPESA') return 'bg-red-50 text-red-700 border-red-200';
-    return 'bg-gray-50 text-gray-700';
+  if (tipo === 'SAIDA') return 'bg-emerald-50 text-emerald-700 border-emerald-200'
+  if (tipo === 'ENTRADA') return 'bg-blue-50 text-blue-700 border-blue-200'
+  if (tipo === 'DESPESA') return 'bg-red-50 text-red-700 border-red-200'
+  return 'bg-gray-50 text-gray-700'
 }
 
 function getLabelTipo(tipo: string) {
-    if (tipo === 'SAIDA') return 'Venda';
-    if (tipo === 'ENTRADA') return 'Entrada';
-    if (tipo === 'DESPESA') return 'Despesa';
-    return tipo;
+  if (tipo === 'SAIDA') return 'Venda'
+  if (tipo === 'ENTRADA') return 'Entrada'
+  if (tipo === 'DESPESA') return 'Despesa'
+  return tipo
 }
 
 function getValorClass(tipo: string) {
-    if (tipo === 'SAIDA') return 'text-emerald-600';
-    if (tipo === 'DESPESA') return 'text-red-600';
-    return 'text-gray-900';
+  if (tipo === 'SAIDA') return 'text-emerald-600'
+  if (tipo === 'DESPESA') return 'text-red-600'
+  return 'text-gray-900'
 }
 
 function getSinal(tipo: string) {
-    if (tipo === 'SAIDA') return '+';
-    if (tipo === 'DESPESA') return '-';
-    return '';
+  if (tipo === 'SAIDA') return '+'
+  if (tipo === 'DESPESA') return '-'
+  return ''
 }
 
-// CORREÇÃO AQUI:
 function getValor(mov: any) {
-    if (mov.tipo === 'DESPESA') {
-        // Converte string "50.00" para número 50.00
-        return Number(mov.valor); 
-    }
-    // Converte preço da peça e quantidade para números
-    return Number(mov.peca?.preco || 0) * Number(mov.quantidade || 0);
+  if (mov.tipo === 'DESPESA') return Number(mov.valor)
+  return Number(mov.peca?.preco || 0) * Number(mov.quantidade || 0)
 }
 </script>
