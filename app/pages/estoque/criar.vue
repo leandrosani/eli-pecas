@@ -265,7 +265,8 @@ const listaLados = [
 ]
 
 const listaCondicao = [
-  "SEM-DETALHE",
+  "NOVO",
+  "SEM DETALHE",
   "1 GARRA RECUPERADA",
   "DETALHE NA LENTE",
   "2 GARRAS RECUPERADAS",
@@ -317,7 +318,7 @@ const form = reactive({
   ano: '',
   preco: undefined,
   quantidade: 1,
-  estado: 'SEM-DETALHE',
+  estado: 'SEM DETALHE',
   detalhes: ''
 })
 
