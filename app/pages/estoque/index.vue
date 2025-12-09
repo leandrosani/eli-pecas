@@ -87,7 +87,7 @@
                       </span>
 
 
-                      <span v-if="row.estado" class="text-[12px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-orange-100 text-black">
+                      <span v-if="row.estado" class="text-[12px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-orange-100 text-gray-900">
                         • {{ row.estado }}
                       </span>
                     </div>
@@ -140,7 +140,7 @@
           <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <UIcon name="i-heroicons-archive-box-x-mark" class="w-8 h-8 text-gray-400" />
           </div>
-          <p class="text-gray-500 font-medium">Nenhuma peça encontrada</p>
+          <p class="text-gray-600 font-medium">Nenhuma peça encontrada</p>
           <p class="text-gray-400 text-sm mt-1">Verifique os filtros ou cadastre um novo item.</p>
         </div>
       </div>
@@ -152,53 +152,86 @@
         <div v-for="row in linhasFiltradas" :key="row.id" class="bg-white border-2 border-gray-200 rounded-xl shadow-sm overflow-hidden">
           
           <!-- Header do Card -->
-          <div class="bg-gray-600 p-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <!-- Quantidade -->
-              <div class="w-12 h-12 rounded-xl bg-white flex flex-col items-center justify-center shadow-sm">
-                <span class="text-2xl font-bold text-gray-800 leading-none">{{ row.quantidade }}</span>
-                <span class="text-[8px] font-bold text-gray-600 uppercase tracking-wide">un.</span>
-              </div>
-              
-              <!-- Nome -->
-              <h3 class="font-bold text-white text-sm">{{ row.nome }}</h3>
+          <div class="bg-gray-600 p-4 gap-2 flex items-center justify-between">
+            <!-- Nome -->
+            <h3 class="font-bold text-white text-sm">{{ row.nome }}</h3>
+
+            <!-- Quantidade -->
+            <div class="-mr-3 min-w-[36px] h-6 flex flex-col gap-1 items-center justify-center">
+              <span class="text-base font-bold text-white leading-none">{{ row.quantidade }}</span>
+              <span class="text-[8px] font-bold text-white uppercase tracking-wide">un.</span>
             </div>
           </div>
 
+
           <!-- Conteúdo do Card -->
-          <div class="p-4 space-y-3">
+          <div class="p-2 space-y-3">
             
             <!-- Marca + Procedência + Estado -->
-            <div class="flex gap-1.5 flex-wrap">
-              <span class="text-[11px] font-bold uppercase tracking-wide px-2 py-1 rounded-md bg-gray-100 text-orange-800">
-                {{ row.marca }}
-              </span>
+             <div class="flex justify-between">
+              <div class="flex flex-col gap-2">
+                <div class="flex gap-1.5 flex-col border-b pb-2 border-gray-200">
+                  <span class="text-sm font-bold uppercase tracking-wide text-gray-900">
+                    {{ row.marca }}
+                  </span>
 
-              <span v-if="row.estado" class="text-[11px] font-bold uppercase tracking-wide px-2 py-1 rounded-md bg-orange-100 text-black">
-                {{ row.estado }}
-              </span>
-            </div>
+                  <span v-if="row.estado" class="text-sm font-bold uppercase tracking-wide text-orange-500">
+                    {{ row.estado }}
+                  </span>
+                </div>
 
-            <!-- Aplicação -->
-            <div class="flex items-center gap-2">
-              <UIcon name="i-heroicons-wrench-screwdriver" class="w-4 h-4 text-gray-500" />
-              <span class="text-xs font-bold text-gray-500 uppercase">{{ row.modelo || 'Universal' }}</span>
-              <span v-if="row.ano" class="text-sm font-bold text-gray-900">{{ row.ano }}</span>
-            </div>
+                <!-- Aplicação -->
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-bold text-gray-500 uppercase">{{ row.modelo || 'Universal' }}</span>
+                  <span v-if="row.ano" class="text-sm font-bold text-gray-900">{{ row.ano }}</span>
+                </div>
 
-            <!-- Localização -->
-            <div v-if="row.localizacao" class="flex items-center gap-2">
-              <UIcon name="i-heroicons-map-pin" class="w-4 h-4 text-purple-600" />
-              <span class="text-sm font-bold text-purple-800">{{ row.localizacao }}</span>
+                <!-- Localização -->
+                <div v-if="row.localizacao" class="flex items-center gap-1 -ml-0.5">
+                  <UIcon name="i-heroicons-map-pin" class="w-4 h-4 text-purple-600" />
+                  <span class="text-sm font-bold text-purple-800">{{ row.localizacao }}</span>
+                </div>
+              </div>
+
+              <!--btns Mobille-->
+              <div class="flex flex-col gap-2">
+                <UButton 
+                  variant="soft" 
+                  icon="i-heroicons-currency-dollar" 
+                  size="xl" 
+                  square
+                  class="flex items-center justify-center w-8 h-8 !bg-green-100 !text-green-600 hover:!bg-green-200 shadow-sm rounded-lg transition-all hover:shadow-md" 
+                  @click="excluir(row.id)" 
+                />
+                
+                <UButton 
+                  :to="`/estoque/editar/${row.id}`" 
+                  variant="soft" 
+                  icon="i-heroicons-pencil-square" 
+                  size="xl" 
+                  square
+                  class="flex items-center justify-center w-8 h-8 !bg-orange-50 !text-orange-500 hover:!bg-orange-100 shadow-sm rounded-lg transition-all hover:shadow-md"
+                />
+                
+                <UButton 
+                  variant="soft" 
+                  icon="i-heroicons-trash" 
+                  size="xl" 
+                  square
+                  class="flex items-center justify-center w-8 h-8 !bg-red-50 !text-red-600 hover:!bg-red-100 shadow-sm rounded-lg transition-all hover:shadow-md" 
+                  @click="excluir(row.id)" 
+                />
+              </div>
+
             </div>
 
             <!-- Preço -->
             <div class="flex items-center justify-between pt-2 border-t border-gray-200">
-              <span class="text-xs font-bold text-gray-500 uppercase">Preço</span>
-              <span class="text-lg font-bold text-gray-900">{{ formatarPreco(row) }}</span>
+              <span class="text-base font-bold text-gray-900 uppercase">Preço</span>
+              <span class="text-base font-bold text-gray-900">{{ formatarPreco(row) }}</span>
             </div>
 
-            <!-- Botões de Ação -->
+            <!-- Botões de Ação 
             <div class="grid grid-cols-3 gap-2 pt-2">
               <UButton v-if="row.quantidade > 0" icon="i-heroicons-currency-dollar" size="xs" @click="abrirVenda(row)" class="bg-green-700 hover:bg-green-600 text-white rounded-lg py-2 text-[11px] font-semibold">Vender</UButton>
               <span v-else class="col-span-1 text-center py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg text-[11px] font-semibold">ESGOTADO</span>
@@ -206,7 +239,7 @@
               <UButton :to="`/estoque/editar/${row.id}`" icon="i-heroicons-pencil-square" size="xs" class="bg-orange-500/80 hover:bg-orange-400/90 text-white rounded-lg py-2 text-[11px] font-semibold">Editar</UButton>
               
               <UButton icon="i-heroicons-trash" size="xs" @click="excluir(row.id)" class="bg-red-700 hover:bg-red-600 text-white rounded-lg py-2 text-[11px] font-semibold">Excluir</UButton>
-            </div>
+            </div>-->
 
           </div>
         </div>
