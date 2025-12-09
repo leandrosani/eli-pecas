@@ -46,7 +46,7 @@
             
             <!-- MARCA (Select) -->
             <div class="space-y-1">
-              <label class="text-xs font-semibold text-gray-600">Marca</label>
+              <label class="text-xs font-semibold text-gray-600">Lado</label>
               <select v-model="internalFilters.marca" :disabled="!options.marcas || !options.marcas.length" class="w-full h-10 appearance-none bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-1 focus:ring-blue-500 px-3 cursor-pointer shadow-sm disabled:bg-gray-100 uppercase">
                 <option value="">Todas</option>
                 <option v-for="m in options.marcas" :key="m" :value="m">{{ m }}</option>
@@ -55,7 +55,7 @@
 
             <!-- MODELO (Select) -->
             <div class="space-y-1">
-              <label class="text-xs font-semibold text-gray-600">Modelo</label>
+              <label class="text-xs font-semibold text-gray-600">Marca</label>
               <select v-model="internalFilters.modelo" :disabled="!options.modelos || !options.modelos.length" class="w-full h-10 appearance-none bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-1 focus:ring-blue-500 px-3 cursor-pointer shadow-sm disabled:bg-gray-100 uppercase">
                 <option value="">Todos</option>
                 <option v-for="m in options.modelos" :key="m" :value="m">{{ m }}</option>
