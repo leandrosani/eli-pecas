@@ -19,6 +19,16 @@
           <strong class="text-gray-900">{{ linhasFiltradas.length }}</strong>
         </h2>
 
+        <!-- Botão Mobile -->
+        <div class="md:hidden">
+          <UButton
+            to="/estoque/criar"
+            icon="i-heroicons-plus"
+            size="xl"
+            class="w-12 h-12 rounded-full bg-gray-800 text-white shadow-2xl hover:bg-gray-800 active:scale-95 flex items-center justify-center"
+          />
+        </div>
+
         <!-- Botão Desktop -->
         <UButton
           to="/estoque/criar"
@@ -154,10 +164,10 @@
           <!-- Header do Card -->
           <div class="bg-gray-600 p-4 gap-2 flex items-center justify-between">
             <!-- Nome -->
-            <h3 class="font-bold text-white text-sm">{{ row.nome }}</h3>
+            <h3 class="font-bold text-white text-base">{{ row.nome }}</h3>
 
             <!-- Quantidade -->
-            <div class="-mr-3 min-w-[36px] h-6 flex flex-col gap-1 items-center justify-center">
+            <div class="min-w-[36px] h-6 flex flex-col gap-1 items-center justify-center">
               <span class="text-base font-bold text-white leading-none">{{ row.quantidade }}</span>
               <span class="text-[8px] font-bold text-white uppercase tracking-wide">un.</span>
             </div>
@@ -165,7 +175,7 @@
 
 
           <!-- Conteúdo do Card -->
-          <div class="p-2 space-y-3">
+          <div class="p-4 space-y-3">
             
             <!-- Marca + Procedência + Estado -->
              <div class="flex justify-between">
@@ -254,16 +264,6 @@
         </div>
       </div>
     </template>
-
-    <!-- Botão Flutuante Mobile -->
-    <div class="block md:hidden fixed bottom-6 right-6 z-50">
-      <UButton
-        to="/estoque/criar"
-        icon="i-heroicons-plus"
-        size="xl"
-        class="w-14 h-14 rounded-full bg-gray-700 text-white shadow-2xl hover:bg-gray-800 active:scale-95 flex items-center justify-center"
-      />
-    </div>
 
   </div>
 </template>
