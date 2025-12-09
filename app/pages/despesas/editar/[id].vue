@@ -153,7 +153,7 @@
           </div>
 
           
-          <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 md:gap-5">
+          <div>
             <!-- Linha 3: Observações e Botões 
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
@@ -174,31 +174,34 @@
             </div>-->
 
             <!-- BOTÕES DESKTOP -->
-            <div class="hidden md:flex flex-col gap-3 justify-end">
+            <!-- Linha 4: Observações e Botões (Desktop) Localização no Estoque-->
+          <div>
+            <!-- BOTÕES DESKTOP (um em baixo do outro) -->
+            <div class="hidden md:flex gap-3 justify-end">
               <UButton 
                 type="submit" 
                 size="lg" 
-                :loading="saving" 
-                :disabled="saving"
-                class="flex items-center cursor-pointer bg-gray-600 hover:bg-gray-500 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
+                :loading="loading" 
+                :disabled="loading"
+                class=" max-w-36 flex items-center cursor-pointer bg-gray-600 hover:bg-gray-500 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-5 active:scale-[0.98] disabled:opacity-50 justify-center"
               >
-                <UIcon v-if="!saving" name="i-heroicons-check-circle" class="w-5 h-5" />
-                {{ saving ? 'Salvando...' : 'Salvar' }}
+                <UIcon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
+                {{ loading ? 'Salvando...' : 'Salvar' }}
               </UButton>
 
               <UButton 
-                to="/despesas" 
+                to="/estoque" 
                 variant="ghost" 
                 color="gray" 
                 size="lg" 
-                class="flex items-center hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-transparent hover:border-red-200 justify-center"
+                class="max-w-36 flex justify-center items-center hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-red-100 hover:border-red-200"
               >
                 <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
                 Cancelar
               </UButton>
             </div>
           </div>
-
+          </div>
         </div>
       </div>
 

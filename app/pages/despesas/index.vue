@@ -28,7 +28,7 @@
         <UButton 
           to="/despesas/criar"
           icon="i-heroicons-plus"
-          class="md:hidden bg-red-600 text-white rounded-full p-2 shadow-lg"
+          class="flex justify-center items-center w-10 h-10 md:hidden bg-red-600 text-white rounded-full p-2 shadow-lg"
         />
 
         <!-- Botão Desktop -->
@@ -159,14 +159,22 @@
     </div>
 
     <!-- ============================================== -->
+    <!--CARREGANDO LOADING ANALISANDO-->
+    <!-- ============================================== -->
+    <div v-if="status === 'pending'" class="text-center py-12">
+      <UIcon
+        name="i-heroicons-arrow-path"
+        class="w-10 h-10 animate-spin text-blue-500 mx-auto"
+      />
+      <p class="text-gray-500 mt-3 text-sm font-medium">
+        Analisando dados...
+      </p>
+    </div>
+
+    <!-- ============================================== -->
     <!-- VISÃO MOBILE (LISTA DE CARDS) -->
     <!-- ============================================== -->
     <div class="md:hidden space-y-3">
-      <div v-if="status === 'pending'" class="text-center py-12">
-        <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin mx-auto text-red-500" />
-        <p class="text-gray-500 text-sm mt-2">Carregando...</p>
-      </div>
-
       <div
         v-for="item in linhasFiltradas"
         :key="item.id"

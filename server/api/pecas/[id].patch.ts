@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
         preco: parseFloat(body.preco),
         quantidade: parseInt(body.quantidade),
         estado: body.estado,
-        detalhes: body.detalhes 
+        localizacao: body.localizacao || null,
       }
     })
     return { success: true, peca: atualizado }

@@ -202,37 +202,15 @@
           </div>
 
           <!-- Linha 4: Observações e Botões (Desktop) Localização no Estoque-->
-          <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 md:gap-5">
-            <div class="space-y-2 flex gap-8">
-            <!--OBS-->
-            <div class="flex flex-col flex-2">
-              <label class="mb-2 text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-chat-bubble-left" class="w-4 h-4" />
-                Observações:
-              </label>
-              <div class="relative">
-                <textarea 
-                  v-model="form.detalhes" 
-                  class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border-2 border-gray-300 focus:ring-2 resize-none transition-all hover:border-gray-400 font-medium uppercase" 
-                  rows="3" 
-                  placeholder="Detalhe bem superficial"
-                  maxlength="500"
-                ></textarea>
-                <div class="absolute bottom-3 right-3 text-xs text-gray-400 font-medium">
-                  {{ form.detalhes.length }}/500
-                </div>
-              </div>
-            </div>
-          </div>
-
+          <div>
             <!-- BOTÕES DESKTOP (um em baixo do outro) -->
-            <div class="hidden md:flex flex-col gap-3 justify-end">
+            <div class="hidden md:flex gap-3 justify-end">
               <UButton 
                 type="submit" 
                 size="lg" 
                 :loading="loading" 
                 :disabled="loading"
-                class="flex items-center cursor-pointer bg-gray-600 hover:bg-gray-500 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
+                class=" max-w-36 flex items-center cursor-pointer bg-gray-600 hover:bg-gray-500 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-5 active:scale-[0.98] disabled:opacity-50 justify-center"
               >
                 <UIcon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
                 {{ loading ? 'Salvando...' : 'Salvar' }}
@@ -243,7 +221,7 @@
                 variant="ghost" 
                 color="gray" 
                 size="lg" 
-                class="flex justify-center items-center **:hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-transparent hover:border-red-200"
+                class="max-w-36 flex justify-center items-center hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-red-100 hover:border-red-200"
               >
                 <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
                 Cancelar
@@ -270,12 +248,12 @@
         <UButton 
           type="submit" 
           size="lg" 
-          :loading="loading" 
-          :disabled="loading"
+          :loading="saving" 
+          :disabled="saving"
           class="flex justify-center items-center w-full cursor-pointer bg-gray-600 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50"
         >
-          <UIcon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
-          {{ loading ? 'Salvando...' : 'Salvar Produto' }}
+          <UIcon v-if="!saving" name="i-heroicons-check-circle" class="w-5 h-5" />
+          {{ saving ? 'Salvando...' : 'Salvar Produto' }}
         </UButton>
       </div>
 
@@ -369,6 +347,7 @@ watchEffect(() => {
     form.preco = p.preco
     form.quantidade = p.quantidade || 1
     form.estado = p.estado || 'SEM-DETALHE'
+    form.localizacao = p.localizacao || ''
     form.detalhes = p.detalhes || ''
   }
 })
@@ -386,7 +365,6 @@ function formatarAno(event: Event) {
   form.ano = valor
 }
 
-// Formatar código (A1001 -> A-1-001)
 // Formatar código (A1001 -> A-1-001)
 function formatarCodigo(event: Event) {
   const target = event.target as HTMLInputElement
@@ -438,7 +416,7 @@ async function salvar() {
     return
   }
 
-  saving.value = true
+saving.value = true
   try {
     // Garante que tudo salva em maiúscula
     const payload = {

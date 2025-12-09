@@ -151,54 +151,33 @@
           </div>
 
           <!-- Linha 3: Observações e Botões (Desktop) -->
-          <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 md:gap-5">
-            
-            <!-- Observação -->
-            <div class="space-y-2">
-              <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-chat-bubble-bottom-center-text" class="w-4 h-4 text-orange-600" />
-                Observações (Opcional)
-              </label>
-              <div class="relative">
-                <textarea 
-                  v-model="form.observacao" 
-                  class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none transition-all hover:border-gray-400 font-medium uppercase" 
-                  rows="3" 
-                  placeholder="Detalhes adicionais..."
-                  maxlength="500"
-                ></textarea>
-                <div class="absolute bottom-3 right-3 text-xs text-gray-400 font-medium">
-                  {{ form.observacao.length }}/500
-                </div>
-              </div>
-            </div>
-
+          <!-- Linha 4: Observações e Botões (Desktop) Localização no Estoque-->
+          <div>
             <!-- BOTÕES DESKTOP (um em baixo do outro) -->
-            <div class="hidden md:flex flex-col gap-3 justify-end">
+            <div class="hidden md:flex gap-3 justify-end">
               <UButton 
                 type="submit" 
                 size="lg" 
                 :loading="loading" 
                 :disabled="loading"
-                class="flex justify-center items-center cursor-pointer bg-gray-600 hover:bg-gray-500 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50"
+                class=" max-w-36 flex items-center cursor-pointer bg-gray-600 hover:bg-gray-500 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-5 active:scale-[0.98] disabled:opacity-50 justify-center"
               >
                 <UIcon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
                 {{ loading ? 'Salvando...' : 'Salvar' }}
               </UButton>
 
               <UButton 
-                to="/despesas" 
+                to="/estoque" 
                 variant="ghost" 
                 color="gray" 
                 size="lg" 
-                class="flex justify-center items-center hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-transparent hover:border-red-200"
+                class="max-w-36 flex justify-center items-center hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-red-100 hover:border-red-200"
               >
                 <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
                 Cancelar
               </UButton>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -261,7 +240,6 @@ const form = reactive({
   categoria: '',
   formaPagamento: '',
   data: new Date().toISOString().split('T')[0], // Data de hoje (YYYY-MM-DD)
-  observacao: ''
 })
 
 async function salvar() {
@@ -279,7 +257,6 @@ async function salvar() {
       categoria: form.categoria,
       formaPagamento: form.formaPagamento,
       data: new Date(form.data), // Converte string para Date
-      observacao: form.observacao ? form.observacao.toUpperCase() : null
     }
     
     // Envia para a API (Você precisará criar a rota /api/despesas/index.post.ts depois)
