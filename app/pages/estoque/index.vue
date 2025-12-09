@@ -2,7 +2,7 @@
   <div class="pb-20 relative">
 
     <!-- HEADER + AÇÕES -->
-    <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 mb-6 flex flex-col gap-4">
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 mb-1 flex flex-col gap-4">
 
       <!-- Título -->
       <h1 class="text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-2">
@@ -35,8 +35,10 @@
     <FiltroEstoque 
       v-model="filtrosAtivos"
       :options="opcoesUnicas"
+      :estoque="estoqueCompleto || []"
       class="mb-6"
     />
+
     
     <!-- LOADING STATE -->
     <div v-if="status === 'pending'" class="py-12 text-center bg-white border border-gray-200 rounded-xl shadow-sm">
