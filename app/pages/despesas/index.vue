@@ -167,7 +167,7 @@
         class="w-10 h-10 animate-spin text-blue-500 mx-auto"
       />
       <p class="text-gray-500 mt-3 text-sm font-medium">
-        Analisando dados...
+        Carregando despesas...
       </p>
     </div>
 

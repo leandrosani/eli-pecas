@@ -124,10 +124,21 @@ const route = useRoute()
 const router = useRouter()
 
 /* Sidebar retrátil */
-const sidebarAberta = ref(true)
+const sidebarAberta = ref(false)
+
+onMounted(() => {
+  const saved = localStorage.getItem('sidebarAberta')
+  if (saved !== null) {
+    sidebarAberta.value = saved === 'true'
+  }
+})
+
 function toggleSidebar() {
   sidebarAberta.value = !sidebarAberta.value
+  // Salvar preferência
+  localStorage.setItem('sidebarAberta', sidebarAberta.value.toString())
 }
+
 
 const rota = computed(() => {
   if (route.path.startsWith('/estoque/criar')) return '/estoque/criar'
