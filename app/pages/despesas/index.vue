@@ -28,7 +28,7 @@
         <UButton 
           to="/despesas/criar"
           icon="i-heroicons-plus"
-          class="flex justify-center items-center w-10 h-10 md:hidden bg-red-600 text-white rounded-full p-2 shadow-lg"
+          class="w-12 h-12 rounded-full bg-red-700 text-white shadow-2xl hover:bg-gray-800 active:scale-95 flex items-center justify-center"
         />
 
         <!-- Botão Desktop -->

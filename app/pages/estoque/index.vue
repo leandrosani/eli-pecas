@@ -5,8 +5,8 @@
     <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 mb-1 flex flex-col gap-4">
 
       <!-- Título -->
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-2">
-        📦 <span>Estoque Total</span>
+      <h1 class="text-2xl md:text-4xl font-bold text-gray-900 flex items-center gap-2">
+        📦 <span class="text-xl">Estoque Total</span>
       </h1>
 
       <!-- Linha divisória -->

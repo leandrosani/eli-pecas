@@ -29,7 +29,7 @@
         <div 
           v-if="isOpen"
           @click="isOpen = false"
-          class="fixed inset-0 bg-black/70 z-[100]"
+          class="fixed inset-0 bg-black/85 z-[100]"
           style="will-change: opacity;"
         />
       </Transition>
@@ -45,15 +45,15 @@
       >
         <div 
           v-if="isOpen"
-          class="fixed right-0 top-0 bottom-0 w-full sm:max-w-sm bg-white shadow-2xl z-[101] flex flex-col"
+          class="rounded-t-3xl fixed right-0 bottom-0 w-full h-145 sm:max-w-sm bg-white shadow-2xl z-[101] flex flex-col"
           style="will-change: transform;"
           @click.stop
         >
           <!-- Header Compacto -->
-          <div class="bg-gray-800 border-b border-gray-200 px-4 py-3 flex items-center justify-between shrink-0">
+          <div class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shrink-0 rounded-t-2xl">
             <div class="flex-1">
-              <h3 class="font-bold text-white text-xl">Filtros</h3>
-              <p class="text-base text-gray-200 mt-0.5">
+              <h3 class="font-bold text-black text-base">Filtros</h3>
+              <p class="text-xs text-gray-600 mt-0.5">
                 {{ totalFiltros > 0 ? `${totalFiltros} ativos` : 'Nenhum ativo' }}
               </p>
             </div>
@@ -84,55 +84,58 @@
                 />
               </div>
 
+              <!-- Marca / Lado -->
+              <div class="flex justify-between gap-1 w-full mb-1">
               <!-- Marca (Modelo no seu caso) -->
-              <div class="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
-                <label for="modelo-select" class="text-xs font-bold text-gray-700 mb-1.5 block">
-                  Marca
-                  <span v-if="internalFilters.modelo" class="text-blue-600 font-normal text-[11px] ml-1">({{ internalFilters.modelo }})</span>
-                </label>
-                <select 
-                  id="modelo-select"
-                  v-model="internalFilters.modelo" 
-                  :disabled="!opcoesFiltradasDinamicamente.modelos.length"
-                  class="w-full h-10 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3 cursor-pointer uppercase font-semibold disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors duration-150"
-                >
-                  <option value="">Todos</option>
-                  <option v-for="m in opcoesFiltradasDinamicamente.modelos" :key="m" :value="m">
-                    {{ m }}
-                  </option>
-                </select>
-              </div>
+                <div class="bg-white flex-1 rounded-lg py-3 px-2 shadow-sm border border-gray-200">
+                  <label for="modelo-select" class="text-xs font-bold text-gray-700 mb-1.5 block">
+                    Marca
+                    <span v-if="internalFilters.modelo" class="text-blue-600 font-normal text-xs ml-1">({{ internalFilters.modelo }})</span>
+                  </label>
+                  <select 
+                    id="modelo-select"
+                    v-model="internalFilters.modelo" 
+                    :disabled="!opcoesFiltradasDinamicamente.modelos.length"
+                    class="w-full h-8 bg-white border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3 cursor-pointer uppercase font-semibold disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors duration-150"
+                  >
+                    <option value="">Todas</option>
+                    <option v-for="m in opcoesFiltradasDinamicamente.modelos" :key="m" :value="m">
+                      {{ m }}
+                    </option>
+                  </select>
+                </div>
 
-              <!-- Lado (Marca no seu caso) -->
-              <div class="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
-                <label for="marca-select" class="text-xs font-bold text-gray-700 mb-1.5 block">
-                  Lado
-                  <span v-if="internalFilters.marca" class="text-blue-600 font-normal text-[11px] ml-1">({{ internalFilters.marca }})</span>
-                </label>
-                <select 
-                  id="marca-select"
-                  v-model="internalFilters.marca" 
-                  :disabled="!opcoesFiltradasDinamicamente.marcas.length"
-                  class="w-full h-10 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3 cursor-pointer uppercase font-semibold disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors duration-150"
-                >
-                  <option value="">Todas</option>
-                  <option v-for="m in opcoesFiltradasDinamicamente.marcas" :key="m" :value="m">
-                    {{ m }}
-                  </option>
-                </select>
+                <!-- Lado (Marca no seu caso) -->
+                <div class="bg-white flex-1 rounded-lg py-3 px-2 shadow-sm border border-gray-200">
+                  <label for="marca-select" class="text-xs font-bold text-gray-700 mb-1.5 block">
+                    Lado
+                    <span v-if="internalFilters.marca" class="text-blue-600 font-normal text-xs ml-1">({{ internalFilters.marca }})</span>
+                  </label>
+                  <select 
+                    id="marca-select"
+                    v-model="internalFilters.marca" 
+                    :disabled="!opcoesFiltradasDinamicamente.marcas.length"
+                    class="w-full h-8 bg-white border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3 cursor-pointer uppercase font-semibold disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors duration-150"
+                  >
+                    <option value="">Todos</option>
+                    <option v-for="m in opcoesFiltradasDinamicamente.marcas" :key="m" :value="m">
+                      {{ m }}
+                    </option>
+                  </select>
+                </div>
               </div>
 
               <!-- Ano -->
-              <div class="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
+              <div class="mb-1 bg-white rounded-lg p-3 shadow-sm border border-gray-200">
                 <label for="ano-select" class="text-xs font-bold text-gray-700 mb-1.5 block">
                   Ano
-                  <span v-if="internalFilters.ano" class="text-blue-600 font-normal text-[11px] ml-1">({{ internalFilters.ano }})</span>
+                  <span v-if="internalFilters.ano" class="text-blue-600 font-normal text-xs ml-1">({{ internalFilters.ano }})</span>
                 </label>
                 <select 
                   id="ano-select"
                   v-model="internalFilters.ano" 
                   :disabled="!opcoesFiltradasDinamicamente.anos.length"
-                  class="w-full h-10 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3 cursor-pointer uppercase font-semibold disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors duration-150"
+                  class="w-full h-8 bg-white border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3 cursor-pointer uppercase font-semibold disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors duration-150"
                 >
                   <option value="">Todos</option>
                   <option v-for="a in opcoesFiltradasDinamicamente.anos" :key="a" :value="a">
@@ -142,17 +145,17 @@
               </div>
 
               <!-- Localização -->
-              <div class="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
+              <div class="mb-1 bg-white rounded-lg p-3 shadow-sm border border-gray-200">
                 <label for="localizacao-select" class="text-xs font-bold text-gray-700 mb-1.5 block flex items-center gap-1.5">
                   <span>📍</span>
                   <span>Localização</span>
-                  <span v-if="internalFilters.localizacao" class="text-blue-600 font-normal text-[11px] ml-0.5">({{ internalFilters.localizacao }})</span>
+                  <span v-if="internalFilters.localizacao" class="text-blue-600 font-normal text-xs ml-0.5">({{ internalFilters.localizacao }})</span>
                 </label>
                 <select 
                   id="localizacao-select"
                   v-model="internalFilters.localizacao" 
                   :disabled="!opcoesFiltradasDinamicamente.localizacoes.length"
-                  class="w-full h-10 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3 cursor-pointer uppercase font-semibold disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors duration-150"
+                  class="w-full h-8 bg-white border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3 cursor-pointer uppercase font-semibold disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors duration-150"
                 >
                   <option value="">Todas</option>
                   <option v-for="l in opcoesFiltradasDinamicamente.localizacoes" :key="l" :value="l">
@@ -166,13 +169,13 @@
                 <label for="estado-select" class="text-xs font-bold text-gray-700 mb-1.5 block flex items-center gap-1.5">
                   <span>⭐</span>
                   <span>Condição</span>
-                  <span v-if="internalFilters.estado" class="text-blue-600 font-normal text-[11px] ml-0.5">({{ internalFilters.estado }})</span>
+                  <span v-if="internalFilters.estado" class="text-blue-600 font-normal text-xs ml-0.5">({{ internalFilters.estado }})</span>
                 </label>
                 <select 
                   id="estado-select"
                   v-model="internalFilters.estado"
                   :disabled="!opcoesFiltradasDinamicamente.estados.length"
-                  class="w-full h-10 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3 cursor-pointer uppercase font-semibold disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors duration-150"
+                  class="w-full h-8 bg-white border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3 cursor-pointer uppercase font-semibold disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors duration-150"
                 >
                   <option value="">Todos</option>
                   <option v-for="e in opcoesFiltradasDinamicamente.estados" :key="e" :value="e">
@@ -193,7 +196,7 @@
                 variant="solid"
                 size="md"
                 block
-                class="font-semibold text-sm h-11 border border-gray-300 hover:bg-gray-50 text-gray-700"
+                class="font-semibold text-sm h-8 border border-gray-300 hover:bg-gray-50 text-gray-700"
               >
                 Limpar
               </UButton>
@@ -202,7 +205,7 @@
                 @click="aplicarFiltros" 
                 size="md"
                 block
-                class="font-semibold text-sm h-11 bg-blue-600 hover:bg-blue-700 text-white"
+                class="font-semibold text-sm h-8 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 Ver {{ linhasFiltradas }}
               </UButton>
