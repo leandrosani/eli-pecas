@@ -1,44 +1,42 @@
-// Arquivo: server/api/pecas/index.post.ts
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../../utils/prisma'
 import { getUserSession } from '../../utils/session'
 
-import { prisma } from '../../utils/prisma'
-
 export default defineEventHandler(async (event) => {
-  // 1. Proteção: Só quem está logado pode criar peças
   const session = await getUserSession(event)
-  if (!session.data.user) {
-    throw createError({ statusCode: 401, message: 'Não autorizado' })
-  }
-
-  // 2. Recebe os dados do formulário
   const body = await readBody(event)
 
-  // 3. Validação básica
-  if (!body.nome || !body.marca || !body.preco) {
-    throw createError({ statusCode: 400, message: 'Campos obrigatórios faltando' })
+  if (!session.data.user) throw createError({ statusCode: 401, message: 'Login necessário' })
+
+  // 1. CONVERSÃO E VALIDAÇÃO DE TIPOS
+  const preco = parseFloat(String(body.preco).replace(',', '.'))
+  const quantidade = parseInt(String(body.quantidade)) || 1
+  const ano = body.ano ? String(body.ano) : null
+  
+  if (isNaN(preco) || isNaN(quantidade)) {
+    throw createError({ statusCode: 400, message: 'Preço ou quantidade inválidos' })
   }
 
   try {
-    // 4. Salva no Banco de Dados
+    // 2. CRIAÇÃO DA PEÇA (O objeto 'peca' é retornado pelo Prisma com relacionamentos)
     const peca = await prisma.peca.create({
       data: {
-        nome: body.nome,
-        marca: body.marca,
-        modelo: body.modelo || '',
-        ano: body.ano || null, // ✅ CORRIGIDO - salva como string
+        nome: body.nome.toUpperCase(),
+        marca: body.marca.toUpperCase(),
+        lado: body.lado.toUpperCase(),
+        modelo: body.modelo.toUpperCase(), 
+        ano: ano,
         estado: body.estado,
-        detalhes: body.detalhes,
-        preco: parseFloat(body.preco), // Garante que é número decimal
-        quantidade: parseInt(body.quantidade) || 1,
-        fotoUrl: body.fotoUrl || null,
-        localizacao: body.localizacao || null,
+        detalhes: body.detalhes ? body.detalhes.toUpperCase() : null, 
+        localizacao: body.localizacao ? body.localizacao.toUpperCase() : null, 
+        preco: preco,
+        quantidade: quantidade,
+        ativo: true,
         
-        // Vamos registrar que houve uma entrada no histórico automaticamente
+        // ⚠️ O bloco 'movimentacoes' cria o relacionamento circular que causa a falha de serialização
         movimentacoes: {
           create: {
             tipo: 'ENTRADA',
-            quantidade: parseInt(body.quantidade) || 1,
+            quantidade: quantidade,
             observacao: 'Cadastro inicial',
             userId: session.data.user.id
           }
@@ -46,10 +44,11 @@ export default defineEventHandler(async (event) => {
       }
     })
 
-    return { success: true, peca }
+    // 3. RETORNO CORRIGIDO: Retorna apenas o ID para evitar JSON Circular.
+    return { success: true, id: peca.id } 
 
   } catch (error) {
-    console.error('Erro ao criar peça:', error)
-    throw createError({ statusCode: 500, message: 'Erro no banco de dados' })
+    console.error('❌ Erro ao salvar Peça (Prisma):', error)
+    throw createError({ statusCode: 500, message: 'Falha ao salvar a peça no banco de dados.' })
   }
 })

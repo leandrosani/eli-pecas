@@ -51,6 +51,6 @@ export default defineEventHandler(async (event) => {
       }
     })
 
-    return { success: true, novaQuantidade: pecaAtualizada.quantidade }
+    
   })
 })

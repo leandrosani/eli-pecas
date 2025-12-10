@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <UApp> <!-- AQUI! -->
     <VitePwaManifest />
     <NuxtLoadingIndicator color="#3b82f6" />
 
@@ -8,11 +8,10 @@
     </NuxtLayout>
 
     <UNotifications />
-  </div>
+  </UApp>
 </template>
 
 <script setup lang="ts">
-// Configuração básica de SEO e Título da aba do navegador
 useHead({
   titleTemplate: (titleChunk) => {
     return titleChunk ? `${titleChunk} - Eli Peças` : 'Eli Peças - Controle de Estoque'

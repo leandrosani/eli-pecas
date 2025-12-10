@@ -66,7 +66,7 @@
 
           <thead class="bg-gray-600">
             <tr>
-              <th class="py-4 px-6 text-xs uppercase font-bold text-white w-4/12">Peça / Marca</th>
+              <th class="py-4 px-6 text-xs uppercase font-bold text-white w-4/12">Peça</th>
               <th class="py-4 px-6 text-xs uppercase font-bold text-white w-2/12">Aplicação</th>
               <th class="py-4 px-6 text-xs uppercase font-bold text-white w-2/12">Localização</th>
               <th class="py-4 px-6 text-xs uppercase font-bold text-white w-2/12 text-right">Preço</th>
@@ -90,15 +90,15 @@
                   <!-- Texto -->
                   <div>
                     <div class="font-bold text-gray-900 text-sm mb-1">{{ row.nome }}</div>
+                    <div class="font-bold text-gray-900 text-sm mb-1">{{ row.modelo }}</div>
 
                     <div class="flex gap-1.5 flex-wrap">
                       <span class="text-[12px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-gray-100 text-orange-800">
-                        • {{ row.marca }}
+                        {{ row.lado }}
                       </span>
 
-
                       <span v-if="row.estado" class="text-[12px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-orange-100 text-gray-900">
-                        • {{ row.estado }}
+                        {{ row.estado }}
                       </span>
                     </div>
                   </div>
@@ -109,7 +109,7 @@
               <!-- APLICAÇÃO -->
               <td class="py-4 px-6">
                 <div class="flex flex-col">
-                  <span class="text-xs font-bold uppercase text-gray-500">{{ row.modelo || 'Universal' }}</span>
+                  <span class="text-xs font-bold uppercase text-gray-500">{{ row.marca || 'Universal' }}</span>
                   <span v-if="row.ano" class="text-sm font-bold mt-0.5 text-gray-900">{{ row.ano }}</span>
                 </div>
               </td>
@@ -164,15 +164,16 @@
           <!-- Header do Card -->
           <div class="bg-gray-600 p-4 gap-2 flex items-center justify-between">
             <!-- Nome -->
-            <h3 class="font-bold text-white text-base">{{ row.nome }}</h3>
-
+            <div>  
+              <h3 class="font-bold text-white text-base">{{ row.nome }}</h3>
+              <h3 class="font-bold text-white text-base">{{ row.modelo }}</h3>
+            </div>
             <!-- Quantidade -->
             <div class="min-w-[36px] h-6 flex flex-col gap-1 items-center justify-center">
               <span class="text-base font-bold text-white leading-none">{{ row.quantidade }}</span>
               <span class="text-[8px] font-bold text-white uppercase tracking-wide">un.</span>
             </div>
           </div>
-
 
           <!-- Conteúdo do Card -->
           <div class="p-4 space-y-3">
@@ -182,7 +183,7 @@
               <div class="flex flex-col gap-2">
                 <div class="flex gap-1.5 flex-col border-b pb-2 border-gray-200">
                   <span class="text-sm font-bold uppercase tracking-wide text-gray-900">
-                    {{ row.marca }}
+                    {{ row.lado }}
                   </span>
 
                   <span v-if="row.estado" class="text-sm font-bold uppercase tracking-wide text-orange-500">
@@ -192,7 +193,7 @@
 
                 <!-- Aplicação -->
                 <div class="flex items-center gap-2">
-                  <span class="text-sm font-bold text-gray-500 uppercase">{{ row.modelo || 'Universal' }}</span>
+                  <span class="text-sm font-bold text-gray-500 uppercase">{{ row.marca || 'Universal' }}</span>
                   <span v-if="row.ano" class="text-sm font-bold text-gray-900">{{ row.ano }}</span>
                 </div>
 
@@ -211,7 +212,7 @@
                   size="xl" 
                   square
                   class="flex items-center justify-center w-8 h-8 !bg-green-100 !text-green-600 hover:!bg-green-200 shadow-sm rounded-lg transition-all hover:shadow-md" 
-                  @click="excluir(row.id)" 
+                  @click="abrirVenda(row)"
                 />
                 
                 <UButton 
@@ -241,16 +242,6 @@
               <span class="text-base font-bold text-gray-900">{{ formatarPreco(row) }}</span>
             </div>
 
-            <!-- Botões de Ação 
-            <div class="grid grid-cols-3 gap-2 pt-2">
-              <UButton v-if="row.quantidade > 0" icon="i-heroicons-currency-dollar" size="xs" @click="abrirVenda(row)" class="bg-green-700 hover:bg-green-600 text-white rounded-lg py-2 text-[11px] font-semibold">Vender</UButton>
-              <span v-else class="col-span-1 text-center py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg text-[11px] font-semibold">ESGOTADO</span>
-              
-              <UButton :to="`/estoque/editar/${row.id}`" icon="i-heroicons-pencil-square" size="xs" class="bg-orange-500/80 hover:bg-orange-400/90 text-white rounded-lg py-2 text-[11px] font-semibold">Editar</UButton>
-              
-              <UButton icon="i-heroicons-trash" size="xs" @click="excluir(row.id)" class="bg-red-700 hover:bg-red-600 text-white rounded-lg py-2 text-[11px] font-semibold">Excluir</UButton>
-            </div>-->
-
           </div>
         </div>
 
@@ -265,104 +256,201 @@
       </div>
     </template>
 
+    <!-- MODAL DE VENDA -->
+    <div 
+      v-if="modalVendaAberto"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 flex items-center justify-center -mt-18"
+    >
+      <!-- MODAL CENTRALIZADO -->
+      <div class="z-50">
+        <ModalVenda 
+          v-model="modalVendaAberto" 
+          :peca="pecaSelecionada"
+          @confirmado="handleVendaConfirmada"
+        />
+      </div>
+    </div>
+
+
   </div>
 </template>
 
 <script setup lang="ts">
-import FiltroEstoque from '~/components/FiltroEstoque.vue';
-import { ref, computed } from 'vue';
+import FiltroEstoque from '~/components/FiltroEstoque.vue'
+import ModalVenda from '~/components/ModalVenda.vue'
+import { ref, computed } from 'vue'
 
 definePageMeta({ layout: 'default' })
+
+const toast = useToast()
 
 // 1. ESTADO DOS FILTROS
 const filtrosAtivos = ref({
   busca: '',
   marca: '',
+  lado: '',
   procedencia: '',
   modelo: '',
   ano: '',
   estado: '',
   localizacao: '',
-});
+})
 
-// 2. REQUISIÇÃO DE DADOS
+// 2. ESTADOS DO MODAL
+const modalVendaAberto = ref(false)
+const pecaSelecionada = ref<any>(null)
+
+// 3. REQUISIÇÃO DE DADOS
 const { data: estoqueCompleto, status, refresh } = await useFetch('/api/pecas', {
   lazy: true,
 })
 
-// 3. LISTAS FIXAS E EXTRAÇÃO DE OPÇÕES ÚNICAS
+// 4. LISTAS FIXAS E EXTRAÇÃO DE OPÇÕES ÚNICAS
 const estadosValidos = [
   'NOVO', 'SEM-DETALHE', '1 GARRA RECUPERADA', 'DETALHE NA LENTE', 
   '2 GARRAS RECUPERADAS', '3 GARRAS RECUPERADAS', 'TODAS GARRAS RECUPERADAS'
-];
+]
 
 const opcoesUnicas = computed(() => {
-  const lista = estoqueCompleto.value || [];
+  const lista = estoqueCompleto.value || []
   
-  const marcas = new Set<string>();
-  const procedencias = new Set<string>();
-  const anos = new Set<string>();
-  const localizacoes = new Set<string>();
-  const modelos = new Set<string>();
+  const marcas = new Set<string>()
+  const procedencias = new Set<string>()
+  const lados = new Set<string>()
+  const anos = new Set<string>()
+  const localizacoes = new Set<string>()
+  const modelos = new Set<string>()
 
   lista.forEach((p: any) => {
-    if (p.marca) marcas.add(p.marca); 
-    if (p.procedencia) procedencias.add(p.procedencia);
-    if (p.ano) anos.add(p.ano);
-    if (p.localizacao) localizacoes.add(p.localizacao);
-    if (p.modelo) modelos.add(p.modelo);
-  });
+    if (p.marca) marcas.add(p.marca) 
+    if (p.procedencia) procedencias.add(p.procedencia)
+    if (p.lado) lados.add(p.lado)
+    if (p.ano) anos.add(p.ano)
+    if (p.localizacao) localizacoes.add(p.localizacao)
+    if (p.modelo) modelos.add(p.modelo)
+  })
 
   return {
     marcas: Array.from(marcas).sort(),
     procedencias: Array.from(procedencias).sort(),
+    lados: Array.from(lados).sort(),
     modelos: Array.from(modelos).sort(),
     anos: Array.from(anos).sort(),
     localizacoes: Array.from(localizacoes).sort(),
     estados: estadosValidos,
-  };
-});
+  }
+})
 
-// 4. LÓGICA DE FILTRAGEM NO FRONTEND
+// 5. LÓGICA DE FILTRAGEM NO FRONTEND
 const linhasFiltradas = computed(() => {
-  const lista = estoqueCompleto.value || [];
-  const filtros = filtrosAtivos.value;
+  const lista = estoqueCompleto.value || []
+  const filtros = filtrosAtivos.value
   
   return lista.filter((row: any) => {
     // 1. Filtro de Busca Geral
     if (filtros.busca) {
-      const buscaLower = filtros.busca.toLowerCase();
-      const nome = (row.nome || '').toLowerCase();
-      const marca = (row.marca || '').toLowerCase();
-      const observacoes = (row.observacoes || '').toLowerCase();
-      const detalhes = (row.detalhes || '').toLowerCase();
+      const buscaLower = filtros.busca.toLowerCase()
+      const nome = (row.nome || '').toLowerCase()
+      const marca = (row.marca || '').toLowerCase()
+      const lado = (row.lado || '').toLowerCase()
+      const observacoes = (row.observacoes || '').toLowerCase()
+      const detalhes = (row.detalhes || '').toLowerCase()
       
       const encontrou = nome.includes(buscaLower) || 
                        marca.includes(buscaLower) || 
                        observacoes.includes(buscaLower) ||
-                       detalhes.includes(buscaLower);
+                       lado.includes(buscaLower) ||
+                       detalhes.includes(buscaLower)
       
-      if (!encontrou) return false;
+      if (!encontrou) return false
     }
+
+    // Filtros específicos
+    if (filtros.lado && row.lado !== filtros.lado) return false
+    if (filtros.marca && row.marca !== filtros.marca) return false
+    if (filtros.modelo && row.modelo !== filtros.modelo) return false
+    if (filtros.ano && row.ano !== filtros.ano) return false
+    if (filtros.estado && row.estado !== filtros.estado) return false
+    if (filtros.localizacao && row.localizacao !== filtros.localizacao) return false
+
+    return true
+  })
+})
+
+// ===============================
+// FUNÇÕES
+// ===============================
+
+function abrirVenda(row: any) {
+  pecaSelecionada.value = { ...row }
+  modalVendaAberto.value = true
+}
+
+async function handleVendaConfirmada() {
+  console.log('Venda confirmada, fechando modal e atualizando lista')
+  
+  // Fecha o modal
+  modalVendaAberto.value = false
+  
+  // Aguarda um pouco antes de limpar
+  setTimeout(() => {
+    pecaSelecionada.value = null
+  }, 300)
+  
+  // Atualiza a lista
+  await refresh()
+}
+
+// Watch para garantir que quando o modal fecha, limpa a peça selecionada
+watch(modalVendaAberto, (isOpen) => {
+  if (!isOpen) {
+    setTimeout(() => {
+      pecaSelecionada.value = null
+    }, 300)
+  }
+})
+
+async function excluir(id: string) {
+  const confirma = confirm('⚠️ Tem certeza que deseja excluir esta peça?\n\nEla será marcada como inativa e não aparecerá mais na listagem.')
+  
+  if (!confirma) return
+
+  try {
+    await $fetch(`/api/pecas/${id}`, {
+      method: 'DELETE'
+    })
+
+    toast.add({ 
+      title: 'Peça excluída', 
+      description: 'A peça foi removida do estoque com sucesso',
+      color: 'green',
+      timeout: 3000
+    })
+
+    await refresh()
     
-    // 2. Filtro de Marca
-    if (filtros.marca && row.marca !== filtros.marca) return false;
+  } catch (error: any) {
+    console.error('Erro ao excluir:', error)
     
-    // 4. Filtro de Modelo
-    if (filtros.modelo && row.modelo !== filtros.modelo) return false;
+    const mensagem = error?.data?.message || 'Não foi possível excluir a peça'
+    
+    toast.add({ 
+      title: 'Erro ao excluir', 
+      description: mensagem,
+      color: 'red',
+      timeout: 5000
+    })
+  }
+}
 
-    // 5. Outros Selects
-    if (filtros.ano && row.ano !== filtros.ano) return false;
-    if (filtros.estado && row.estado !== filtros.estado) return false;
-    if (filtros.localizacao && row.localizacao !== filtros.localizacao) return false;
+function formatarPreco(row: any) { 
+  return formatarDinheiro(Number(row.preco)) 
+}
 
-    return true;
-  });
-});
-
-// Funções Auxiliares
-function formatarPreco(row: any) { return formatarDinheiro(Number(row.preco)) }
-function formatarDinheiro(val: number) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0) }
-function abrirVenda(row: any) { alert('Abrir modal de venda para ' + row.nome); }
-function excluir(id: string) { if (confirm('Confirmar exclusão?')) console.log('Excluindo:', id); }
+function formatarDinheiro(val: number) { 
+  return new Intl.NumberFormat('pt-BR', { 
+    style: 'currency', 
+    currency: 'BRL' 
+  }).format(val || 0) 
+}
 </script>

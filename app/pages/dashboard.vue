@@ -348,10 +348,10 @@
                           </span>
 
                           <span
-                            v-if="prod.marca"
+                            v-if="prod.lado"
                             class="text-[12px] font-bold text-gray-500 bg-gray-100 px-1.5 rounded border border-gray-200 uppercase"
                           >
-                            {{ prod.marca }}
+                            {{ prod.lado }}
                           </span>
                         </div>
 
@@ -444,9 +444,17 @@
                 :key="mov.id"
                 class="hover:bg-gray-50 transition-colors"
               >
-                <td class="py-3 px-4 font-medium text-gray-900">
+
+              <div >
+                <td class="py-3 pl-3 px-1 font-medium text-gray-900">
                   {{ mov.peca?.nome || mov.descricao }}
                 </td>
+
+                <td class="py-3 font-medium text-gray-900">
+                  {{ mov.peca?.modelo || mov.descricao }}
+                </td>
+              </div>
+                
 
                 <td class="py-3 px-4">
                   <span
@@ -462,7 +470,7 @@
                 </td>
 
                 <td class="py-3 px-4 text-gray-800">
-                  {{ mov.marca || mov.peca?.marca || '—' }}
+                  {{ mov.lado || mov.peca?.lado || '—' }}
                 </td>
 
                 <td
@@ -492,32 +500,51 @@
           >
             <div class="flex-1 min-w-0 pr-2">
 
-              <div class="flex items-center gap-2 mb-1">
-                <span
-                  class="text-[10px] px-1.5 py-0.5 rounded border font-bold"
-                  :class="getBadgeClass(mov.tipo)"
-                >
-                  {{ getLabelTipo(mov.tipo) }}
-                </span>
-              </div>
-
               <p class="font-bold text-gray-900 text-sm">
                 {{ mov.peca?.nome || mov.descricao }}
               </p>
 
-              <p class="text-xs text-gray-500">
-                Ano: {{ mov.ano || mov.peca?.ano || '—' }} •
-                {{ mov.marca || mov.peca?.marca || '—' }}
+              <p class="font-bold text-gray-900 text-sm">
+                {{ mov.peca?.modelo || mov.descricao }}
               </p>
+
+              <div class="mt-2">
+                <p class="text-xs text-gray-500">
+                  {{ mov.ano || mov.peca?.ano || '—' }} 
+                </p>
+
+                <p class="text-xs text-gray-500">
+                  {{ mov.lado || mov.peca?.lado || '—' }}
+                </p>
+              </div>
+
             </div>
 
-            <span
-              class="font-mono font-bold text-sm whitespace-nowrap"
-              :class="getValorClass(mov.tipo)"
-            >
-              {{ getSinal(mov.tipo) }}
-              {{ formatarDinheiro(getValor(mov)) }}
-            </span>
+            <div class="flex flex-col justify-between items-end self-stretch">
+              <p class="font-bold text-gray-600 text-xs">
+                {{ mov.peca?.marca || mov.descricao }}
+              </p>
+              
+              <div class= "flex flex-col items-end">
+                <div class="flex items-center gap-2 mb-1">
+                  <span
+                    class="text-[10px] px-1.5 py-0.5 rounded border font-bold"
+                    :class="getBadgeClass(mov.tipo)"
+                  >
+                    {{ getLabelTipo(mov.tipo) }}
+                  </span>
+                </div>
+
+                <span
+                  class="font-mono font-bold text-sm whitespace-nowrap"
+                  :class="getValorClass(mov.tipo)"
+                >
+                  {{ getSinal(mov.tipo) }}
+                  {{ formatarDinheiro(getValor(mov)) }}
+                </span>
+              </div>
+            </div>
+
           </div>
 
           <div

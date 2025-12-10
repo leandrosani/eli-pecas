@@ -4,7 +4,7 @@
     <!-- LOADING STATE -->
     <div v-if="status === 'pending'" class="text-center py-16">
       <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-gray-600" />
+        <UIicon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-gray-600" />
       </div>
       <p class="text-sm text-gray-600 font-medium">Carregando dados da peça...</p>
       <p class="text-xs text-gray-400 mt-1">Aguarde um momento</p>
@@ -20,7 +20,7 @@
           size="md"
           class="flex bg-gray-600 text-white hover:bg-gray-500 transition-all font-semibold rounded-xl border-2 border-gray-300 hover:border-gray-400"
         >
-          <UIcon name="i-heroicons-arrow-left" class="w-5 h-5" />
+          <UIicon name="i-heroicons-arrow-left" class="w-5 h-5" />
           <span class="hidden sm:inline">Voltar</span>
         </UButton>
 
@@ -29,7 +29,7 @@
         <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">✏️ </span>Editar Peça</h1>
       </div>
 
-      <div class= "mb-6 mt-3 border border-gray-200 shadow-sm w-[100%]"></div>
+      <div class="mb-6 mt-3 border border-gray-200 shadow-sm w-full"></div>
       
       <!-- CARD PRINCIPAL -->
       <div class="bg-white rounded-xl md:rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
@@ -37,7 +37,7 @@
         <!-- HEADER DO CARD -->
         <div class="px-4 md:px-6 py-4 md:py-5 border-b-2 border-gray-200 bg-gray-600 flex items-center gap-3">
           <div class="bg-white/25 backdrop-blur-sm p-2 md:p-2.5 rounded-xl border border-white/30">
-            <UIcon name="i-heroicons-cube" class="w-5 h-5 md:w-6 md:h-6 text-white" />
+            <UIicon name="i-heroicons-cube" class="w-5 h-5 md:w-6 md:h-6 text-white" />
           </div>
           <div>
             <h2 class="font-bold text-base md:text-lg text-white">Identificação da Peça</h2>
@@ -52,7 +52,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-tag" class="w-4 h-4 text-gray-600" />
+                <UIicon name="i-heroicons-tag" class="w-4 h-4 text-gray-600" />
                 Nome da Peça 
                 <span class="text-red-500">*</span>
               </label>
@@ -71,7 +71,7 @@
 
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-arrows-right-left" class="w-4 h-4 text-gray-600" />
+                <UIicon name="i-heroicons-arrows-right-left" class="w-4 h-4 text-gray-600" />
                 Lado 
                 <span class="text-red-500">*</span>
               </label>
@@ -86,46 +86,48 @@
             </div>
           </div>
 
-          <!-- Linha 2: Modelo, Ano, Condição -->
+          <!-- Linha 2 -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+            
+            <!-- Montadora -->
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-truck" class="w-4 h-4 text-gray-600" />
+                <UIicon name="i-heroicons-truck" class="w-4 h-4 text-gray-600" />
                 Montadora
               </label>
               <select 
-                v-model="form.modelo" 
+                v-model="form.montadora" 
                 class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-gray-600 px-4 transition-all hover:border-gray-400 cursor-pointer uppercase"
               >
                 <option value="">SELECIONE</option>
-                <option v-for="montadora in listaMontadoras" :key="montadora" :value="montadora">
+                <option v-for="montadora in listaMontadorasNomes" :key="montadora" :value="montadora">
                   {{ montadora }}
                 </option>
               </select>
             </div>
 
+            <!-- Modelo -->
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-calendar" class="w-4 h-4 text-gray-600" />
-                Ano
+                <UIicon name="i-heroicons-wrench-screwdriver" class="w-4 h-4 text-gray-600" />
+                Modelo
               </label>
-              <UInput 
-                :model-value="form.ano"
-                @input="formatarAno"
-                size="lg" 
-                type="text"
-                placeholder="2020 ou 2015/2018"
-                maxlength="9"
-                class="w-full"
-                :ui="{ 
-                  base: 'h-12 focus:ring-2 focus:ring-gray-500 border-2 border-gray-300 rounded-xl font-medium text-gray-900 placeholder:text-gray-400'
-                }"
-              />
+              <select 
+                v-model="form.modelo" 
+                :disabled="!form.montadora || modelosFiltrados.length === 0"
+                class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-gray-600 px-4 transition-all hover:border-gray-400 cursor-pointer uppercase disabled:bg-gray-100 disabled:text-gray-400"
+              >
+                <option value="">SELECIONE O MODELO</option>
+                <option v-for="modelo in modelosFiltrados" :key="modelo" :value="modelo">
+                  {{ modelo }}
+                </option>
+              </select>
             </div>
 
+            <!-- Condição -->
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-shield-check" class="w-4 h-4 text-gray-600" />
+                <UIicon name="i-heroicons-shield-check" class="w-4 h-4 text-gray-600" />
                 Condição
               </label>
               <select 
@@ -139,12 +141,12 @@
             </div>
           </div>
 
-          <!-- Linha 3: Preço e Quantidade -->
+          <!-- Linha 3 -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-currency-dollar" class="w-4 h-4 text-green-600" />
-                Preço de Venda (R$) 
+                <UIicon name="i-heroicons-currency-dollar" class="w-4 h-4 text-green-600" />
+                Preço (R$) 
                 <span class="text-red-500">*</span>
               </label>
               <div class="relative">
@@ -165,7 +167,7 @@
 
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-cube-transparent" class="w-4 h-4 text-gray-600" />
+                <UIicon name="i-heroicons-cube-transparent" class="w-4 h-4 text-gray-600" />
                 Quantidade em Estoque
               </label>
               <UInput 
@@ -175,16 +177,40 @@
                 placeholder="1"
                 class="w-full"
                 :ui="{ 
-                  base: 'h-12 focus:ring-2 border-2 border-gray-300 rounded-xl font-bold text-gray-900 placeholder:text-gray-400'
+                  base: 'h-12 focus:ring-2 focus:ring-orange-500 border-2 border-gray-300 rounded-xl font-bold text-gray-900 placeholder:text-gray-400'
                 }"
               />
             </div>
 
-            <!--ENDEREÇO-->
-            <div class="flex flex-col">
-              <label class="block text-xs md:text-sm font-bold text-gray-700 mb-2 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-map-pin" class="w-4 h-4 text-orange-600" />
-                Localização (Ex: A-01-04-06)
+            <div class="space-y-2">
+              <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                <UIicon name="i-heroicons-calendar" class="w-4 h-4 text-gray-600" />
+                Ano
+              </label>
+              <UInput 
+                :model-value="form.ano"
+                @input="formatarAno"
+                size="lg" 
+                type="text"
+                placeholder="2020 ou 2015/2018"
+                maxlength="9"
+                class="w-full"
+                :ui="{ 
+                  base: 'h-12 focus:ring-2 focus:ring-gray-500 border-2 border-gray-300 rounded-xl font-medium text-gray-900 placeholder:text-gray-400'
+                }"
+              />
+            </div>
+
+          </div>
+
+          <!-- Linha 4 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+            
+            <!-- Localização -->
+            <div class="space-y-2">
+              <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                <UIicon name="i-heroicons-map-pin" class="w-4 h-4 text-orange-600" />
+                Localização (A-01-04-06)
               </label>
               <div class="relative">
                 <UInput
@@ -192,68 +218,64 @@
                   @input="formatarCodigo"
                   size="lg" 
                   placeholder="A-01-04-06"
+                  maxlength="9"
                   class="w-full"
                   :ui="{ 
-                    base: 'h-12 focus:ring-2 border-2 focus:ring-orange-500 border-gray-300 rounded-xl font-bold text-gray-900 placeholder:text-gray-400'
+                    base: 'h-12 focus:ring-2 border-2 focus:ring-orange-500 border-gray-300 rounded-xl font-bold text-gray-900 placeholder:text-gray-400 uppercase tracking-widest'
                   }" 
                 />
               </div>
             </div>
-          </div>
 
-          <!-- Linha 4: Observações e Botões (Desktop) Localização no Estoque-->
-          <div>
-            <!-- BOTÕES DESKTOP (um em baixo do outro) -->
-            <div class="hidden md:flex gap-3 justify-end">
-              <UButton 
-                type="submit" 
-                size="lg" 
-                :loading="loading" 
-                :disabled="loading"
-                class=" max-w-36 flex items-center cursor-pointer bg-gray-600 hover:bg-gray-500 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-5 active:scale-[0.98] disabled:opacity-50 justify-center"
-              >
-                <UIcon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
-                {{ loading ? 'Salvando...' : 'Salvar' }}
-              </UButton>
-
-              <UButton 
-                to="/estoque" 
-                variant="ghost" 
-                color="gray" 
-                size="lg" 
-                class="max-w-36 flex justify-center items-center hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-red-100 hover:border-red-200"
-              >
-                <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
-                Cancelar
-              </UButton>
+            <!-- Observações -->
+            <div class="space-y-2 flex-col flex-1">
+              <label class="mb-2 text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                <UIicon name="i-heroicons-chat-bubble-left" class="w-4 h-4 text-gray-600" />
+                Observações:
+              </label>
+              <div class="relative">
+                <textarea 
+                  v-model="form.detalhes" 
+                  class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-gray-500 resize-none transition-all hover:border-gray-400 font-medium uppercase" 
+                  rows="3" 
+                  placeholder="Detalhes sobre avarias, garantias, etc."
+                  maxlength="500"
+                ></textarea>
+                <div class="absolute bottom-3 right-3 text-xs text-gray-400 font-medium">
+                  {{ form.detalhes?.length || 0 }}/500
+                </div>
+              </div>
             </div>
           </div>
-
+          
         </div>
       </div>
 
-      <!-- BOTÕES MOBILE (lado a lado, embaixo) -->
-      <div class="flex md:hidden flex-col-reverse items-stretch gap-3 pt-2">
-        <UButton 
-          to="/estoque" 
-          variant="ghost" 
-          color="gray" 
-          size="lg" 
-          class="w-full flex justify-center items-center hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-red-400 hover:border-red-800"
-        >
-          <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
-          Cancelar
-        </UButton>
-
+      <!-- BOTÕES MOBILE/DESKTOP -->
+      <div class="flex flex-col md:flex-row-reverse gap-3 pt-2 md:pt-4">
+        
+        <!-- BOTÃO SALVAR -->
         <UButton 
           type="submit" 
           size="lg" 
           :loading="saving" 
           :disabled="saving"
-          class="flex justify-center items-center w-full cursor-pointer bg-gray-600 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50"
+          class="w-full md:w-auto flex items-center cursor-pointer bg-gray-600 hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
         >
-          <UIcon v-if="!saving" name="i-heroicons-check-circle" class="w-5 h-5" />
-          {{ saving ? 'Salvando...' : 'Salvar Produto' }}
+          <UIicon v-if="!saving" name="i-heroicons-check-circle" class="w-5 h-5" />
+          {{ saving ? 'Salvando...' : 'Salvar Alterações' }}
+        </UButton>
+
+        <!-- BOTÃO CANCELAR -->
+        <UButton 
+          to="/estoque" 
+          variant="ghost" 
+          color="gray" 
+          size="lg" 
+          class="w-full md:w-auto flex justify-center items-center hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-transparent hover:border-red-200"
+        >
+          <UIicon name="i-heroicons-x-mark" class="w-5 h-5" />
+          Cancelar
         </UButton>
       </div>
 
@@ -262,11 +284,14 @@
 </template>
 
 <script setup lang="ts">
+import { reactive, ref, computed, watch, nextTick } from 'vue';
+
 definePageMeta({ layout: 'default' })
 const route = useRoute()
 const router = useRouter()
 const id = route.params.id
 const saving = ref(false)
+const toast = useToast()
 
 const listaLados = [
   "LADO DIREITO",
@@ -278,7 +303,7 @@ const listaLados = [
 ]
 
 const listaCondicao = [
-  "SEM-DETALHE",
+  "SEM DETALHE",
   "1 GARRA RECUPERADA",
   "DETALHE NA LENTE",
   "2 GARRAS RECUPERADAS",
@@ -286,65 +311,135 @@ const listaCondicao = [
   "TODAS GARRAS RECUPERADAS"
 ]
 
-const listaMontadoras = [
-  "CHEVROLET",
-  "VOLKSWAGEN",
-  "FIAT",
-  "FORD",
-  "RENAULT",
-  "HYUNDAI",
-  "TOYOTA",
-  "HONDA",
-  "NISSAN",
-  "JEEP",
-  "PEUGEOT",
-  "CITROËN",
-  "MITSUBISHI",
-  "CAOA CHERY",
-  "JAC MOTORS",
-  "BYD",
-  "VOLVO",
-  "BMW",
-  "MERCEDES-BENZ",
-  "AUDI",
-  "LAND ROVER",
-  "PORSCHE",
-  "KIA",
-  "SUBARU",
-  "SUZUKI",
-  "RAM",
-  "MINI",
-  "LIFAN",
-  "EFFA",
-  "IVECO",
-  "TROLLER",
-  "DODGE",
-  "CHRYSLER",
-  "SSANGYONG"
-]
+const listaMontadorasCompleta = [
+  { nome: 'VOLKSWAGEN', modelos: [
+    'GOL', 'PARATI', 'SAVEIRO', 'VOYAGE', 'FUSCA', 'BRASILIA', 'POLO',
+    'POLO SEDAN', 'GOLF', 'JETTA', 'PASSAT', 'SANTANA', 'VIRTUS', 'T-CROSS',
+    'TAOS', 'AMAROK', 'KOMBI'
+  ]},
+
+  { nome: 'CHEVROLET', modelos: [
+    'CHEVETTE', 'OPALA', 'OMEGA', 'KADETT', 'IPANEMA', 'CORSA',
+    'CELTA', 'PRISMA', 'ONIX', 'ONIX PLUS', 'CRUZE', 'VECTRA',
+    'MONTANA', 'S10', 'BLAZER', 'TRACKER', 'SPIN'
+  ]},
+
+  { nome: 'FIAT', modelos: [
+    '147', 'UNO', 'PREMIO', 'ELBA', 'PALIO', 'SIENA', 'STRADA',
+    'DOBLÒ', 'PUNTO', 'ARGO', 'CRONOS', 'MOBI', 'TORO', 'IDEA',
+    'TEMPRA', 'MAREA', 'FIORINO'
+  ]},
+
+  { nome: 'FORD', modelos: [
+    'ESCORT', 'VERONA', 'FIESTA', 'FOCUS', 'KA', 'ECOSPORT',
+    'RANGER', 'FUSION', 'MAVERICK (2022+)', 'EDGE'
+  ]},
+
+  { nome: 'HYUNDAI', modelos: [
+    'HB20', 'HB20S', 'CRETA', 'AZERA', 'SONATA', 'ELANTRA', 'IX35', 'TUCSON'
+  ]},
+
+  { nome: 'TOYOTA', modelos: [
+    'COROLLA', 'COROLLA CROSS', 'HILUX', 'SW4', 'ETIOS', 'YARIS', 'CAMRY'
+  ]},
+
+  { nome: 'HONDA', modelos: [
+    'CIVIC', 'CIVIC SI', 'FIT', 'HR-V', 'CR-V', 'CITY', 'WR-V'
+  ]},
+
+  { nome: 'NISSAN', modelos: [
+    'MARCH', 'VERSA', 'KICKS', 'SENTRA', 'FRONTIER', 'LIVINA'
+  ]},
+
+  { nome: 'RENAULT', modelos: [
+    'CLIO', 'SANDERO', 'LOGAN', 'STEPWAY', 'DUSTER', 'OROCH', 'KWID'
+  ]},
+
+  { nome: 'PEUGEOT', modelos: [
+    '205', '206', '207', '208', '2008', '306', '307', '308', '408', '3008'
+  ]},
+
+  { nome: 'CITROËN', modelos: [
+    'C3', 'C4', 'C4 LOUNGE', 'C4 CACTUS', 'XSARA', 'AIRCROSS'
+  ]},
+
+  { nome: 'JEEP', modelos: [
+    'RENEGADE', 'COMPASS', 'COMMANDER', 'CHEROKEE', 'WRANGLER'
+  ]},
+
+  { nome: 'MITSUBISHI', modelos: [
+    'L200', 'PAJERO', 'OUTLANDER', 'ASX', 'ECLIPSE CROSS'
+  ]},
+
+  { nome: 'MERCEDES-BENZ', modelos: [
+    'CLASSE A', 'CLASSE C', 'CLASSE E', 'GLA', 'GLC', 'GLE'
+  ]},
+
+  { nome: 'BMW', modelos: [
+    'SERIE 1', 'SERIE 3', 'SERIE 5', 'X1', 'X3', 'X5'
+  ]},
+
+  { nome: 'AUDI', modelos: [
+    'A3', 'A4', 'A6', 'Q3', 'Q5'
+  ]},
+
+  { nome: 'KIA', modelos: [
+    'SPORTAGE', 'CERATO', 'SOUL', 'BONGO'
+  ]},
+
+  { nome: 'CHERY / CAOA CHERY', modelos: [
+    'TIGGO 2', 'TIGGO 3X', 'TIGGO 5X', 'TIGGO 7', 'TIGGO 8', 'ARRIZO 5'
+  ]},
+
+  { nome: 'JAC MOTORS', modelos: [
+    'T40', 'T50', 'T60', 'J3', 'J5', 'E-JS1'
+  ]},
+
+  { nome: 'SUZUKI', modelos: [
+    'VITARA', 'GRAND VITARA', 'JIMNY', 'SWIFT'
+  ]}
+];
+
+
+const listaMontadorasNomes = listaMontadorasCompleta.map(m => m.nome);
 
 const form = reactive({
   nome: '', 
-  marca: '', 
-  modelo: '', 
+  marca: '',
+  modelo: '',
+  montadora: '',
   ano: '', 
   preco: undefined, 
   quantidade: 1, 
   estado: '', 
-  localizacao: '' as string,
+  localizacao: '',
   detalhes: ''
 })
 
 const { data, status } = await useFetch(`/api/pecas/${id}`, { key: `edit-${id}` })
 
+const modelosFiltrados = computed(() => {
+  if (!form.montadora) return []
+  const montadoraSelecionada = listaMontadorasCompleta.find(m => m.nome === form.montadora)
+  return montadoraSelecionada ? montadoraSelecionada.modelos : []
+})
+
 watchEffect(() => {
   if (data.value) {
     const p: any = data.value
+    const preco = Number(p.preco) || undefined
+    
+    let montadoraEncontrada = ''
+    if (p.modelo) {
+      montadoraEncontrada = listaMontadorasCompleta.find(m => m.modelos.includes(p.modelo))?.nome || ''
+    }
+
     form.nome = p.nome || ''
     form.marca = p.marca || 'LADO DIREITO'
     form.modelo = p.modelo || ''
+    form.montadora = montadoraEncontrada
     form.ano = p.ano || ''
-    form.preco = p.preco
+    form.preco = preco
     form.quantidade = p.quantidade || 1
     form.estado = p.estado || 'SEM-DETALHE'
     form.localizacao = p.localizacao || ''
@@ -352,85 +447,74 @@ watchEffect(() => {
   }
 })
 
-// Formatar ano automaticamente (20182020 -> 2018/2020)
+watch(() => form.montadora, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    form.modelo = ''
+  }
+})
+
 function formatarAno(event: Event) {
   const input = event.target as HTMLInputElement
-  let valor = input.value.replace(/\D/g, '') // Remove tudo que não é número
+  let valor = input.value.replace(/\D/g, '')
   
   if (valor.length > 4) {
-    // Adiciona a barra após os 4 primeiros dígitos
     valor = valor.slice(0, 4) + '/' + valor.slice(4, 8)
   }
   
   form.ano = valor
 }
 
-// Formatar código (A1001 -> A-1-001)
 function formatarCodigo(event: Event) {
   const target = event.target as HTMLInputElement
   
   let valor2 = target.value.toUpperCase()
-
   valor2 = valor2.replace(/[^A-Z0-9]/g, '')
 
-  let formatado = '';
-  // Posição 1: Letra do Setor
-  if (valor2.length >= 1) {
-        formatado += valor2.substring(0, 1);
-    }
+  let formatado = ''
 
-  // Posição 2: Estante (2 dígitos)
-  if (valor2.length >= 2) {
-      formatado += '-' + valor2.substring(1, 3);
-  }
+  if (valor2.length >= 1) formatado += valor2.substring(0, 1)
+  if (valor2.length >= 2) formatado += '-' + valor2.substring(1, 3)
+  if (valor2.length >= 4) formatado += '-' + valor2.substring(3, 5)
+  if (valor2.length >= 6) formatado += '-' + valor2.substring(5, 7)
 
-  // Posição 3: Andar (2 dígitos)
-  if (valor2.length >= 4) {
-      formatado += '-' + valor2.substring(3, 5);
-  }
+  form.localizacao = formatado
 
-  // Posição 4: Posição da Peça (2 dígitos)
-  if (valor2.length >= 6) {
-      formatado += '-' + valor2.substring(5, 7);
-  }
-
-  // 3. Atualizar o modelo de dados
-  form.localizacao = formatado;
-
-  // 4. Manter o cursor no final (Importante para UX)
   nextTick(() => {
-      target.value = formatado;
-      target.setSelectionRange(formatado.length, formatado.length);
-  });
+    target.value = formatado
+    target.setSelectionRange(formatado.length, formatado.length)
+  })
 }
 
 async function salvar() {
   if (!form.nome || !form.preco) {
-    alert('⚠️ Por favor, preencha o Nome e o Preço da peça.')
+    toast.add({ title: 'Atenção', description: 'Por favor, preencha o Nome e o Preço da peça.', color: 'red' })
     return
   }
 
-  // Validação do formato de ano (aceita: 2020 OU 2015/2018)
+  if (!form.montadora || !form.modelo) {
+    toast.add({ title: 'Atenção', description: 'Selecione a Montadora e o Modelo.', color: 'red' })
+    return
+  }
+
   if (form.ano && !/^\d{4}(\/\d{4})?$/.test(form.ano)) {
-    alert('⚠️ Formato de ano inválido. Use: 2020 ou 2015/2018')
+    toast.add({ title: 'Atenção', description: 'Formato de ano inválido. Use: 2020 ou 2015/2018', color: 'red' })
     return
   }
 
-saving.value = true
+  saving.value = true
   try {
-    // Garante que tudo salva em maiúscula
     const payload = {
       ...form,
       nome: form.nome.toUpperCase(),
-      modelo: form.modelo.toUpperCase(),
-      detalhes: form.detalhes.toUpperCase()
+      detalhes: form.detalhes.toUpperCase() || null,
+      localizacao: form.localizacao.toUpperCase() || null
     }
 
     await $fetch(`/api/pecas/${id}`, { method: 'PATCH', body: payload })
-    alert('✅ Peça atualizada com sucesso!')
+    toast.add({ title: 'Sucesso', description: 'Peça atualizada com sucesso!', color: 'green' })
     router.push('/estoque')
   } catch (e) { 
-    alert('❌ Erro ao atualizar peça. Tente novamente.')
+    toast.add({ title: 'Erro', description: 'Erro ao atualizar peça. Tente novamente.', color: 'red' })
     console.error(e)
   } finally { 
     saving.value = false 

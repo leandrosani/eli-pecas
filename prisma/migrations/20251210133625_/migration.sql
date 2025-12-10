@@ -63,6 +63,7 @@ CREATE TABLE "Peca" (
     "caixaId" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "localizacao" TEXT,
 
     CONSTRAINT "Peca_pkey" PRIMARY KEY ("id")
 );

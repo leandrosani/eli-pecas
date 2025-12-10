@@ -1,8 +1,5 @@
-// Arquivo: server/api/pecas/[id].patch.ts
-import { PrismaClient } from '@prisma/client'
-import { getUserSession } from '../../utils/session'
-
 import { prisma } from '../../utils/prisma'
+import { getUserSession } from '../../utils/session'
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
@@ -12,24 +9,40 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
   if (!id) throw createError({ statusCode: 400, message: 'ID obrigatório' })
-
+  
   try {
-    const atualizado = await prisma.peca.update({
+    // 1. CONVERSÃO DE TIPOS
+    const precoFinal = body.preco ? parseFloat(String(body.preco).replace(',', '.')) : undefined
+    const quantidadeFinal = body.quantidade ? parseInt(String(body.quantidade)) : undefined
+    const anoFinal = body.ano ? String(body.ano) : null
+    
+    // CAMPOS NOVOS/AJUSTADOS
+    const localizacaoFinal = body.localizacao || null 
+    const detalhesFinal = body.detalhes || null
+    const modeloFinal = body.modelo || null
+    const ladoFinal = body.lado || null
+
+    const pecaAtualizada = await prisma.peca.update({
       where: { id },
       data: {
         nome: body.nome,
-        marca: body.marca,
-        modelo: body.modelo,
-        ano: body.ano || null, // ✅ CORRIGIDO - salva como string
-        preco: parseFloat(body.preco),
-        quantidade: parseInt(body.quantidade),
+        lado: ladoFinal,          
         estado: body.estado,
-        localizacao: body.localizacao || null,
+        modelo: modeloFinal,        
+        ano: anoFinal,
+        preco: precoFinal,
+        quantidade: quantidadeFinal,
+        detalhes: detalhesFinal,    
+        localizacao: localizacaoFinal, 
+        updatedAt: new Date()
       }
     })
-    return { success: true, peca: atualizado }
+    
+    // 2. RETORNO CORRIGIDO: Retorna apenas o ID para evitar JSON Circular.
+    return { success: true, id: pecaAtualizada.id }
+
   } catch (error) {
-    console.error('Erro ao atualizar:', error)
-    throw createError({ statusCode: 500, message: 'Erro ao salvar alterações' })
+    console.error('❌ Erro FATAL no PATCH da Peça:', error)
+    throw createError({ statusCode: 500, message: 'Falha ao processar a atualização. Verifique os logs do servidor.' })
   }
 })

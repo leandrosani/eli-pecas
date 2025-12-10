@@ -20,7 +20,8 @@ export default defineEventHandler(async (event) => {
       OR: busca ? [
         { nome: { contains: busca, mode: 'insensitive' } },
         { marca: { contains: busca, mode: 'insensitive' } },
-        { modelo: { contains: busca, mode: 'insensitive' } }
+        { modelo: { contains: busca, mode: 'insensitive' } },
+        { lado: { contains: busca, mode: 'insensitive' } }
       ] : undefined
     },
     orderBy: { createdAt: 'desc' }
