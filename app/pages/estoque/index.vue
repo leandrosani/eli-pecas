@@ -207,6 +207,7 @@
               <!--btns Mobille-->
               <div class="flex flex-col gap-2">
                 <UButton 
+                  v-if="row.quantidade > 0"
                   variant="soft" 
                   icon="i-heroicons-currency-dollar" 
                   size="xl" 
@@ -214,6 +215,7 @@
                   class="flex items-center justify-center w-8 h-8 !bg-green-100 !text-green-600 hover:!bg-green-200 shadow-sm rounded-lg transition-all hover:shadow-md" 
                   @click="abrirVenda(row)"
                 />
+
                 
                 <UButton 
                   :to="`/estoque/editar/${row.id}`" 

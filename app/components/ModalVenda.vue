@@ -198,9 +198,32 @@ function fechar() {
   setTimeout(() => { quantidade.value = 1 }, 300)
 }
 
-function confirmar() {
-  emit('confirmado', { quantidade: quantidade.value })
+async function confirmar() {
+  if (!props.peca) return
+  processando.value = true
+
+  try {
+    const res = await fetch(`/api/pecas/${props.peca.id}/vender`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ quantidade: quantidade.value })
+    })
+
+    if (!res.ok) {
+      const error = await res.json()
+      throw new Error(error.message || 'Erro ao registrar venda')
+    }
+
+    // Sucesso
+    emit('confirmado')
+    fechar()
+  } catch (err: any) {
+    alert(err.message || 'Erro ao registrar venda')
+  } finally {
+    processando.value = false
+  }
 }
+
 
 // Formata moeda
 function formatarDinheiro(val: number) { 
