@@ -50,10 +50,10 @@
           @click.stop
         >
           <!-- Header Compacto -->
-          <div class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shrink-0">
+          <div class="bg-gray-800 border-b border-gray-200 px-4 py-3 flex items-center justify-between shrink-0">
             <div class="flex-1">
-              <h3 class="font-bold text-gray-900 text-base">Filtros</h3>
-              <p class="text-xs text-gray-500 mt-0.5">
+              <h3 class="font-bold text-white text-xl">Filtros</h3>
+              <p class="text-base text-gray-200 mt-0.5">
                 {{ totalFiltros > 0 ? `${totalFiltros} ativos` : 'Nenhum ativo' }}
               </p>
             </div>
@@ -84,25 +84,6 @@
                 />
               </div>
 
-              <!-- Lado (Marca no seu caso) -->
-              <div class="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
-                <label for="marca-select" class="text-xs font-bold text-gray-700 mb-1.5 block">
-                  Lado
-                  <span v-if="internalFilters.marca" class="text-blue-600 font-normal text-[11px] ml-1">({{ internalFilters.marca }})</span>
-                </label>
-                <select 
-                  id="marca-select"
-                  v-model="internalFilters.marca" 
-                  :disabled="!opcoesFiltradasDinamicamente.marcas.length"
-                  class="w-full h-10 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3 cursor-pointer uppercase font-semibold disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors duration-150"
-                >
-                  <option value="">Todas</option>
-                  <option v-for="m in opcoesFiltradasDinamicamente.marcas" :key="m" :value="m">
-                    {{ m }}
-                  </option>
-                </select>
-              </div>
-
               <!-- Marca (Modelo no seu caso) -->
               <div class="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
                 <label for="modelo-select" class="text-xs font-bold text-gray-700 mb-1.5 block">
@@ -117,6 +98,25 @@
                 >
                   <option value="">Todos</option>
                   <option v-for="m in opcoesFiltradasDinamicamente.modelos" :key="m" :value="m">
+                    {{ m }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Lado (Marca no seu caso) -->
+              <div class="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
+                <label for="marca-select" class="text-xs font-bold text-gray-700 mb-1.5 block">
+                  Lado
+                  <span v-if="internalFilters.marca" class="text-blue-600 font-normal text-[11px] ml-1">({{ internalFilters.marca }})</span>
+                </label>
+                <select 
+                  id="marca-select"
+                  v-model="internalFilters.marca" 
+                  :disabled="!opcoesFiltradasDinamicamente.marcas.length"
+                  class="w-full h-10 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3 cursor-pointer uppercase font-semibold disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors duration-150"
+                >
+                  <option value="">Todas</option>
+                  <option v-for="m in opcoesFiltradasDinamicamente.marcas" :key="m" :value="m">
                     {{ m }}
                   </option>
                 </select>
