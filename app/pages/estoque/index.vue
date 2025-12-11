@@ -292,7 +292,7 @@
           <!-- Header do Card -->
           <div class="bg-gray-600 p-4 gap-2 flex items-center justify-between">
             <!-- Nome -->
-            <div>  
+            <div>
               <h3 class="font-bold text-white text-base">{{ row.nome }}</h3>
               <h3 class="font-bold text-white text-base">{{ row.modelo }}</h3>
             </div>
