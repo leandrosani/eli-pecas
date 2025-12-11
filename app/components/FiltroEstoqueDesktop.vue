@@ -14,6 +14,7 @@
         <label class="text-xs font-bold text-gray-700 mb-1 block">🔍 Buscar</label>
         <input
           v-model="internalFilters.busca"
+          @input="emitChanges"
           type="text"
           placeholder="Buscar..."
           class="w-full h-9 bg-white border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-2 focus:ring-blue-500 px-2"
@@ -29,7 +30,8 @@
         Somente disponíveis
         <input 
           type="checkbox" 
-          v-model="somenteDisponiveis" 
+          v-model="somenteDisponiveis"
+          @change="emitChanges"
           class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
         />
       </label>
@@ -44,7 +46,7 @@
             <button
               v-for="m in opcoesFiltradasDinamicamente.modelos"
               :key="m"
-              @click="internalFilters.modelo = internalFilters.modelo === m ? '' : m"
+              @click="setModelo(m)"
               :class="[
                 'px-2.5 py-1 rounded-md text-xs font-medium border transition-all',
                 internalFilters.modelo === m
@@ -62,6 +64,7 @@
 
         <!-- PEÇA -->
         <div 
+          v-if="internalFilters.modelo"
           class="flex flex-col transition-opacity duration-200" 
           :class="{ 'opacity-50 pointer-events-none': !internalFilters.modelo }"
         >
@@ -70,7 +73,7 @@
             <button
               v-for="p in pecasDisponiveis"
               :key="p"
-              @click="internalFilters.peca = internalFilters.peca === p ? '' : p"
+              @click="setPeca(p)"
               :disabled="!internalFilters.modelo"
               :class="[
                 'px-2.5 py-1 rounded-md text-xs font-medium border transition-all',
@@ -89,6 +92,7 @@
 
         <!-- LADO -->
         <div 
+          v-if="internalFilters.modelo && internalFilters.peca && ladosDisponiveis.length"
           class="flex flex-col transition-opacity duration-200" 
           :class="{ 'opacity-50 pointer-events-none': !internalFilters.peca || !ladosDisponiveis.length }"
         >
@@ -97,7 +101,7 @@
             <button
               v-for="lado in ladosDisponiveis"
               :key="lado"
-              @click="internalFilters.lado = internalFilters.lado === lado ? '' : lado"
+              @click="setLado(lado)"
               :disabled="!internalFilters.peca || !ladosDisponiveis.length"
               :class="[
                 'px-2.5 py-1 rounded-md text-xs font-medium border transition-all',
@@ -124,7 +128,7 @@
             <button
               v-for="estado in estadosDisponiveis"
               :key="estado"
-              @click="internalFilters.estado = internalFilters.estado === estado ? '' : estado"
+              @click="setEstado(estado)"
               :disabled="!estadosDisponiveis.length"
               :class="[
                 'px-2.5 py-1 rounded-md text-xs font-medium border transition-all',
@@ -168,7 +172,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue';
 
 const props = defineProps({
   options: { type: Object, required: true },
@@ -183,10 +187,19 @@ const somenteDisponiveis = ref(true);
 const internalFilters = ref({
   busca: props.modelValue.busca || '',
   modelo: props.modelValue.modelo || '',
-  peca: props.modelValue.peca || '', 
+  peca: props.modelValue.peca || '',
   lado: props.modelValue.lado || '',
   estado: props.modelValue.estado || ''
 });
+
+const emitChanges = async () => {
+  await nextTick();
+  const payload = {
+    ...internalFilters.value,
+    somenteDisponiveis: somenteDisponiveis.value
+  };
+  emit('update:modelValue', payload);
+};
 
 const totalFiltros = computed(() => {
   return Object.values(internalFilters.value).filter(val => val && val !== '').length;
@@ -248,7 +261,7 @@ const ladosDisponiveis = computed(() => {
     itens = itens.filter((i: any) => i.modelo === internalFilters.value.modelo);
   }
   if (internalFilters.value.peca) {
-    itens = itens.filter((i: any) => i.nome === internalFilters.value.peca); 
+    itens = itens.filter((i: any) => i.nome === internalFilters.value.peca);
   }
   const lados = new Set<string>();
   itens.forEach((item: any) => {
@@ -267,22 +280,50 @@ const estadosDisponiveis = computed(() => {
   return Array.from(estados).sort();
 });
 
+const setModelo = async (modelo: string) => {
+  internalFilters.value.modelo = internalFilters.value.modelo === modelo ? '' : modelo;
+  internalFilters.value.peca = '';
+  internalFilters.value.lado = '';
+  await emitChanges();
+};
+
+const setPeca = async (peca: string) => {
+  internalFilters.value.peca = internalFilters.value.peca === peca ? '' : peca;
+  internalFilters.value.lado = '';
+  await emitChanges();
+};
+
+const setLado = async (lado: string) => {
+  internalFilters.value.lado = internalFilters.value.lado === lado ? '' : lado;
+  await emitChanges();
+};
+
+const setEstado = async (estado: string) => {
+  internalFilters.value.estado = internalFilters.value.estado === estado ? '' : estado;
+  await emitChanges();
+};
+
 const aplicarFiltros = () => {
-  emit('update:modelValue', { ...internalFilters.value, somenteDisponiveis: somenteDisponiveis.value });
   isOpen.value = false;
 };
 
-const limparFiltros = () => {
-  internalFilters.value = { busca: '', modelo: '', peca: '', lado: '' , estado: '' };
+const limparFiltros = async () => {
+  internalFilters.value = { busca: '', modelo: '', peca: '', lado: '', estado: '' };
   somenteDisponiveis.value = false;
-  emit('update:modelValue', { ...internalFilters.value, somenteDisponiveis: somenteDisponiveis.value });
+  await emitChanges();
   isOpen.value = false;
 };
 
-watch(() => props.modelValue, (newVal) => {
-  internalFilters.value = { ...newVal };
-  if (newVal.somenteDisponiveis !== undefined) {
-    somenteDisponiveis.value = newVal.somenteDisponiveis;
+onMounted(() => {
+  internalFilters.value = {
+    busca: props.modelValue.busca || '',
+    modelo: props.modelValue.modelo || '',
+    peca: props.modelValue.peca || '',
+    lado: props.modelValue.lado || '',
+    estado: props.modelValue.estado || ''
+  };
+  if (props.modelValue.somenteDisponiveis !== undefined) {
+    somenteDisponiveis.value = props.modelValue.somenteDisponiveis;
   }
-}, { deep: true, immediate: true });
+});
 </script>

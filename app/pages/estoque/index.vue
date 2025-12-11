@@ -308,7 +308,7 @@
     </div>
 
     <!-- SIDEBAR LATERAL DIREITA - DESKTOP APENAS -->
-    <aside class="ml-3.5 hidden md:block mt-4 w-60 h-[87vh] border-l border-gray-200 rounded-2xl bg-white shadow-xl overflow-hidden">
+    <aside class="ml-3.5 hidden md:block mt-4 w-65 h-[87vh] border-l border-gray-200 rounded-2xl bg-white shadow-xl overflow-hidden">
       <FiltroEstoqueDesktop 
         v-model="filtrosAtivos"
         :options="opcoesUnicas"
@@ -351,9 +351,11 @@ const filtrosAtivos = ref({
   lado: '',
   procedencia: '',
   modelo: '',
+  peca: '',  // ← ADICIONEI AQUI
   ano: '',
   estado: '',
   localizacao: '',
+  somenteDisponiveis: false  // ← ADICIONEI AQUI TAMBÉM
 })
 
 const modalVendaAberto = ref(false)
@@ -399,36 +401,44 @@ const opcoesUnicas = computed(() => {
 })
 
 const linhasFiltradas = computed(() => {
-  const lista = estoqueCompleto.value || []
+  let lista = estoqueCompleto.value || []
   const filtros = filtrosAtivos.value
   
-  return lista.filter((row: any) => {
-    if (filtros.busca) {
-      const buscaLower = filtros.busca.toLowerCase()
+  console.log('🔍 PAI - Filtrando com:', filtros)  // ← DEBUG
+  
+  // Filtro de somente disponíveis
+  if (filtros.somenteDisponiveis) {
+    lista = lista.filter((row: any) => row.quantidade > 0)
+  }
+  
+  // Filtro de busca
+  if (filtros.busca) {
+    const buscaLower = filtros.busca.toLowerCase()
+    lista = lista.filter((row: any) => {
       const nome = (row.nome || '').toLowerCase()
       const marca = (row.marca || '').toLowerCase()
       const lado = (row.lado || '').toLowerCase()
       const observacoes = (row.observacoes || '').toLowerCase()
       const detalhes = (row.detalhes || '').toLowerCase()
       
-      const encontrou = nome.includes(buscaLower) || 
-                       marca.includes(buscaLower) || 
-                       observacoes.includes(buscaLower) ||
-                       lado.includes(buscaLower) ||
-                       detalhes.includes(buscaLower)
-      
-      if (!encontrou) return false
-    }
+      return nome.includes(buscaLower) || 
+             marca.includes(buscaLower) || 
+             observacoes.includes(buscaLower) ||
+             lado.includes(buscaLower) ||
+             detalhes.includes(buscaLower)
+    })
+  }
 
-    if (filtros.lado && row.lado !== filtros.lado) return false
-    if (filtros.marca && row.marca !== filtros.marca) return false
-    if (filtros.modelo && row.modelo !== filtros.modelo) return false
-    if (filtros.ano && row.ano !== filtros.ano) return false
-    if (filtros.estado && row.estado !== filtros.estado) return false
-    if (filtros.localizacao && row.localizacao !== filtros.localizacao) return false
-
-    return true
-  })
+  // Filtros específicos
+  if (filtros.modelo) lista = lista.filter((row: any) => row.modelo === filtros.modelo)
+  if (filtros.peca) lista = lista.filter((row: any) => row.nome === filtros.peca)  // ← ADICIONEI AQUI
+  if (filtros.lado) lista = lista.filter((row: any) => row.lado === filtros.lado)
+  if (filtros.marca) lista = lista.filter((row: any) => row.marca === filtros.marca)
+  if (filtros.ano) lista = lista.filter((row: any) => row.ano === filtros.ano)
+  if (filtros.estado) lista = lista.filter((row: any) => row.estado === filtros.estado)
+  if (filtros.localizacao) lista = lista.filter((row: any) => row.localizacao === filtros.localizacao)
+  
+  return lista
 })
 
 function abrirVenda(row: any) {
