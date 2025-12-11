@@ -3,16 +3,14 @@
     <!-- Botão de Filtro Compacto (Irá ser usado apenas no Mobile) -->
     <div 
       @click="isOpen = true"
-      class="bg-white p-4 rounded-xl border border-gray-300 shadow-sm hover:shadow-md cursor-pointer select-none flex items-center justify-between transition-shadow duration-200"
+      class="-mb-5 bg-white items-center justify-end transition-shadow duration-200 rounded-xl"
     >
-      <div class="flex items-center gap-3">
-        <UIicon name="i-heroicons-funnel" class="w-5 h-5 text-blue-600" />
-        <span class="font-bold text-gray-900 text-base">Filtros</span>
+      <div class="flex items-center justify-center gap-3 rounded-xl border border-gray-300 shadow-sm py-2 px-3">
+        <span class="font-bold text-blue-600 text-base">Filtros</span>
         <span v-if="totalFiltros > 0" class="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-full min-w-[24px] text-center">
           {{ totalFiltros }}
         </span>
       </div>
-      <UIicon name="i-heroicons-adjustments-horizontal" class="w-5 h-5 text-gray-500" />
     </div>
 
     <!-- Overlay e Modal (Mobile Only) -->

@@ -4,7 +4,7 @@
     <!-- LOADING STATE -->
     <div v-if="status === 'pending'" class="text-center py-16">
       <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <UIicon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-gray-600" />
+        <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-gray-600" />
       </div>
       <p class="text-sm text-gray-600 font-medium">Carregando dados da peça...</p>
       <p class="text-xs text-gray-400 mt-1">Aguarde um momento</p>
@@ -20,7 +20,7 @@
           size="md"
           class="flex bg-gray-600 text-white hover:bg-gray-500 transition-all font-semibold rounded-xl border-2 border-gray-300 hover:border-gray-400"
         >
-          <UIicon name="i-heroicons-arrow-left" class="w-5 h-5" />
+          <UIcon name="i-heroicons-arrow-left" class="w-5 h-5" />
           <span class="hidden sm:inline">Voltar</span>
         </UButton>
 
@@ -37,7 +37,7 @@
         <!-- HEADER DO CARD -->
         <div class="px-4 md:px-6 py-4 md:py-5 border-b-2 border-gray-200 bg-gray-600 flex items-center gap-3">
           <div class="bg-white/25 backdrop-blur-sm p-2 md:p-2.5 rounded-xl border border-white/30">
-            <UIicon name="i-heroicons-cube" class="w-5 h-5 md:w-6 md:h-6 text-white" />
+            <UIcon name="i-heroicons-cube" class="w-5 h-5 md:w-6 md:h-6 text-white" />
           </div>
           <div>
             <h2 class="font-bold text-base md:text-lg text-white">Identificação da Peça</h2>
@@ -52,7 +52,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-tag" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-tag" class="w-4 h-4 text-gray-600" />
                 Nome da Peça 
                 <span class="text-red-500">*</span>
               </label>
@@ -71,12 +71,12 @@
 
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-arrows-right-left" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-arrows-right-left" class="w-4 h-4 text-gray-600" />
                 Lado 
                 <span class="text-red-500">*</span>
               </label>
               <select 
-                v-model="form.marca" 
+                v-model="form.lado" 
                 class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-gray-600 px-4 transition-all hover:border-gray-400 cursor-pointer uppercase"
               >
                 <option v-for="opt in listaLados" :key="opt" :value="opt">
@@ -92,7 +92,7 @@
             <!-- Montadora -->
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-truck" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-truck" class="w-4 h-4 text-gray-600" />
                 Montadora
               </label>
               <select 
@@ -109,7 +109,7 @@
             <!-- Modelo -->
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-wrench-screwdriver" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-wrench-screwdriver" class="w-4 h-4 text-gray-600" />
                 Modelo
               </label>
               <select 
@@ -127,7 +127,7 @@
             <!-- Condição -->
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-shield-check" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-shield-check" class="w-4 h-4 text-gray-600" />
                 Condição
               </label>
               <select 
@@ -145,7 +145,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-currency-dollar" class="w-4 h-4 text-green-600" />
+                <UIcon name="i-heroicons-currency-dollar" class="w-4 h-4 text-green-600" />
                 Preço (R$) 
                 <span class="text-red-500">*</span>
               </label>
@@ -167,7 +167,7 @@
 
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-cube-transparent" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-cube-transparent" class="w-4 h-4 text-gray-600" />
                 Quantidade em Estoque
               </label>
               <UInput 
@@ -184,7 +184,7 @@
 
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-calendar" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-calendar" class="w-4 h-4 text-gray-600" />
                 Ano
               </label>
               <UInput 
@@ -209,8 +209,8 @@
             <!-- Localização -->
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-map-pin" class="w-4 h-4 text-orange-600" />
-                Localização (A-01-04-06)
+                <UIcon name="i-heroicons-map-pin" class="w-4 h-4 text-orange-600" />
+                Localização
               </label>
               <div class="relative">
                 <UInput
@@ -218,7 +218,7 @@
                   @input="formatarCodigo"
                   size="lg" 
                   placeholder="A-01-04-06"
-                  maxlength="9"
+                  maxlength="10"
                   class="w-full"
                   :ui="{ 
                     base: 'h-12 focus:ring-2 border-2 focus:ring-orange-500 border-gray-300 rounded-xl font-bold text-gray-900 placeholder:text-gray-400 uppercase tracking-widest'
@@ -230,7 +230,7 @@
             <!-- Observações -->
             <div class="space-y-2 flex-col flex-1">
               <label class="mb-2 text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-chat-bubble-left" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-chat-bubble-left" class="w-4 h-4 text-gray-600" />
                 Observações:
               </label>
               <div class="relative">
@@ -262,7 +262,7 @@
           :disabled="saving"
           class="w-full md:w-auto flex items-center cursor-pointer bg-gray-600 hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
         >
-          <UIicon v-if="!saving" name="i-heroicons-check-circle" class="w-5 h-5" />
+          <UIcon v-if="!saving" name="i-heroicons-check-circle" class="w-5 h-5" />
           {{ saving ? 'Salvando...' : 'Salvar Alterações' }}
         </UButton>
 
@@ -274,7 +274,7 @@
           size="lg" 
           class="w-full md:w-auto flex justify-center items-center hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-transparent hover:border-red-200"
         >
-          <UIicon name="i-heroicons-x-mark" class="w-5 h-5" />
+          <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
           Cancelar
         </UButton>
       </div>
@@ -284,7 +284,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, watch, nextTick } from 'vue';
+import { reactive, ref, computed, watch } from 'vue';
 
 definePageMeta({ layout: 'default' })
 const route = useRoute()
@@ -400,12 +400,11 @@ const listaMontadorasCompleta = [
   ]}
 ];
 
-
 const listaMontadorasNomes = listaMontadorasCompleta.map(m => m.nome);
 
 const form = reactive({
   nome: '', 
-  marca: '',
+  lado: '',  // ✅ CORRIGIDO
   modelo: '',
   montadora: '',
   ano: '', 
@@ -435,13 +434,13 @@ watchEffect(() => {
     }
 
     form.nome = p.nome || ''
-    form.marca = p.marca || 'LADO DIREITO'
+    form.lado = p.lado || 'LADO DIREITO'  // ✅ CORRIGIDO
     form.modelo = p.modelo || ''
     form.montadora = montadoraEncontrada
     form.ano = p.ano || ''
     form.preco = preco
     form.quantidade = p.quantidade || 1
-    form.estado = p.estado || 'SEM-DETALHE'
+    form.estado = p.estado || 'SEM DETALHE'  // ✅ CORRIGIDO
     form.localizacao = p.localizacao || ''
     form.detalhes = p.detalhes || ''
   }
@@ -478,11 +477,6 @@ function formatarCodigo(event: Event) {
   if (valor2.length >= 6) formatado += '-' + valor2.substring(5, 7)
 
   form.localizacao = formatado
-
-  nextTick(() => {
-    target.value = formatado
-    target.setSelectionRange(formatado.length, formatado.length)
-  })
 }
 
 async function salvar() {

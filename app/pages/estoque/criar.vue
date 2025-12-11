@@ -251,7 +251,7 @@
           :disabled="loading"
           class="w-full md:w-auto flex items-center cursor-pointer bg-gray-600 hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
         >
-          <UIicon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
+          <UIcon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
           {{ loading ? 'Salvando...' : 'Salvar Peça no Estoque' }}
         </UButton>
 
