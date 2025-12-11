@@ -258,7 +258,7 @@ const aplicarFiltros = () => {
 
 const limparFiltros = () => {
   internalFilters.value = { busca: '', modelo: '', peca: '', lado: '' };
-  somenteDisponiveis.value = true;
+  somenteDisponiveis.value = false;
   emit('update:modelValue', { ...internalFilters.value, somenteDisponiveis: somenteDisponiveis.value });
   isOpen.value = false;
 };
