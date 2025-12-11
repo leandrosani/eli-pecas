@@ -308,7 +308,7 @@
     </div>
 
     <!-- SIDEBAR LATERAL DIREITA - DESKTOP APENAS -->
-    <aside class="hidden md:block mt-4 w-60 h-[90vh] border-l border-gray-200 rounded-2xl bg-white shadow-xl overflow-hidden">
+    <aside class="ml-3.5 hidden md:block mt-4 w-60 h-[87vh] border-l border-gray-200 rounded-2xl bg-white shadow-xl overflow-hidden">
       <FiltroEstoqueDesktop 
         v-model="filtrosAtivos"
         :options="opcoesUnicas"
