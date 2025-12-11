@@ -5,11 +5,12 @@
       @click="isOpen = true"
       class="-mb-5 bg-white items-center justify-end transition-shadow duration-200 rounded-xl"
     >
-      <div class="flex items-center justify-center gap-3 rounded-xl border border-gray-300 shadow-sm py-2 px-3">
+      <div class="flex items-center justify-end gap-3 rounded-xl border border-gray-300 shadow-sm py-2 px-3">
         <span class="font-bold text-blue-600 text-base">Filtros</span>
         <span v-if="totalFiltros > 0" class="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-full min-w-[24px] text-center">
           {{ totalFiltros }}
         </span>
+        <UIcon name="i-heroicons-funnel" class="w-5 h-5 text-blue-600" />
       </div>
     </div>
 
@@ -52,12 +53,12 @@
               </p>
             </div>
             <button @click="isOpen = false" class="ml-3 w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
-              <UIicon name="i-heroicons-x-mark" class="w-5 h-5 text-gray-500" />
+              <UIcon name="i-heroicons-x-mark" class="w-5 h-5 text-gray-500" />
             </button>
           </div>
 
           <!-- Body -->
-          <div class="flex-1 overflow-y-auto bg-gray-50 p-4 space-y-4">
+          <div class="flex-1 overflow-y-auto bg-gray-50 p-4 space-y-4 max-h-100">
             
             <!-- Busca -->
             <div>

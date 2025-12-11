@@ -26,7 +26,7 @@
         <!-- HEADER DO CARD -->
         <div class="px-4 md:px-6 py-4 md:py-5 border-b-2 border-gray-200 bg-gray-600 flex items-center gap-3">
           <div class="bg-white/25 backdrop-blur-sm p-2 md:p-2.5 rounded-xl border border-white/30">
-            <UIicon name="i-heroicons-cube" class="w-5 h-5 md:w-6 md:h-6 text-white" />
+            <UIcon name="i-heroicons-cube" class="w-5 h-5 md:w-6 md:h-6 text-white" />
           </div>
           <div>
             <h2 class="font-bold text-base md:text-lg text-white">Identificação da Peça</h2>
@@ -41,7 +41,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-tag" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-tag" class="w-4 h-4 text-gray-600" />
                 Nome da Peça 
                 <span class="text-red-500">*</span>
               </label>
@@ -60,7 +60,7 @@
 
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-arrows-right-left" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-arrows-right-left" class="w-4 h-4 text-gray-600" />
                 Lado 
                 <span class="text-red-500">*</span>
               </label>
@@ -81,7 +81,7 @@
             <!-- Montadora (Select) -->
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-truck" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-truck" class="w-4 h-4 text-gray-600" />
                 Montadora
               </label>
               <select 
@@ -98,7 +98,7 @@
             <!-- Modelo (Select FILTRADO) -->
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-wrench-screwdriver" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-wrench-screwdriver" class="w-4 h-4 text-gray-600" />
                 Modelo
               </label>
               <select 
@@ -116,7 +116,7 @@
             <!-- Condição -->
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-shield-check" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-shield-check" class="w-4 h-4 text-gray-600" />
                 Condição
               </label>
               <select 
@@ -134,7 +134,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-currency-dollar" class="w-4 h-4 text-green-600" />
+                <UIcon name="i-heroicons-currency-dollar" class="w-4 h-4 text-green-600" />
                 Preço (R$) 
                 <span class="text-red-500">*</span>
               </label>
@@ -156,7 +156,7 @@
 
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-cube-transparent" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-cube-transparent" class="w-4 h-4 text-gray-600" />
                 Quantidade
               </label>
               <UInput 
@@ -173,7 +173,7 @@
             
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-calendar" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-calendar" class="w-4 h-4 text-gray-600" />
                 Ano
               </label>
               <UInput 
@@ -198,7 +198,7 @@
             <!-- CAMPO DEDICADO À LOCALIZAÇÃO -->
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-map-pin" class="w-4 h-4 text-orange-600" />
+                <UIcon name="i-heroicons-map-pin" class="w-4 h-4 text-orange-600" />
                 Localização (A-01-04-06)
               </label>
               <div class="relative">
@@ -219,7 +219,7 @@
             <!-- Observações (Texto Livre) -->
             <div class="space-y-2 flex-col flex-1">
               <label class="mb-2 text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIicon name="i-heroicons-chat-bubble-left" class="w-4 h-4 text-gray-600" />
+                <UIcon name="i-heroicons-chat-bubble-left" class="w-4 h-4 text-gray-600" />
                 Observações:
               </label>
               <div class="relative">
@@ -263,7 +263,7 @@
           size="lg" 
           class="w-full md:w-auto flex justify-center items-center hover:bg-red-50 hover:text-red-600 transition-all font-bold rounded-xl border-2 border-transparent hover:border-red-200"
         >
-          <UIicon name="i-heroicons-x-mark" class="w-5 h-5" />
+          <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
           Cancelar
         </UButton>
       </div>

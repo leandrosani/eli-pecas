@@ -149,14 +149,14 @@
                         icon="i-heroicons-currency-dollar" 
                         size="xs" 
                         @click="abrirVenda(row)" 
-                        class="w-20 bg-green-600 hover:bg-green-700 text-white rounded-lg px-2 py-1.5 text-[11px] font-semibold shadow-sm transition-all"
+                        class="flex justify-center items-center w-20 bg-green-600 hover:bg-green-700 text-white rounded-lg px-2 py-1.5 text-[11px] font-semibold shadow-sm transition-all"
                       >
                         Vender
                       </UButton>
 
                       <span 
                         v-else 
-                        class="w-20 text-center px-2 py-1.5 bg-red-50 text-red-600 border border-red-200 rounded-lg text-[11px] font-semibold"
+                        class="flex justify-center items-center w-20 text-center px-2 py-1.5 bg-red-50 text-red-600 border border-red-200 rounded-lg text-[11px] font-semibold"
                       >
                         Esgotado
                       </span>
@@ -165,7 +165,7 @@
                         :to="`/estoque/editar/${row.id}`" 
                         icon="i-heroicons-pencil-square" 
                         size="xs" 
-                        class="w-20 bg-orange-500 hover:bg-orange-600 text-white rounded-lg px-2 py-1.5 text-[11px] font-semibold text-center shadow-sm transition-all"
+                        class="flex justify-center items-center w-20 bg-orange-500 hover:bg-orange-600 text-white rounded-lg px-2 py-1.5 text-[11px] font-semibold text-center shadow-sm transition-all"
                       >
                         Editar
                       </UButton>
@@ -174,7 +174,7 @@
                         icon="i-heroicons-trash" 
                         size="xs" 
                         @click="excluir(row.id)" 
-                        class="w-20 bg-red-600 hover:bg-red-700 text-white rounded-lg px-2 py-1.5 text-[11px] font-semibold shadow-sm transition-all"
+                        class="flex justify-center items-center w-20 bg-red-600 hover:bg-red-700 text-white rounded-lg px-2 py-1.5 text-[11px] font-semibold shadow-sm transition-all"
                       >
                         Excluir
                       </UButton>
@@ -252,28 +252,34 @@
                       icon="i-heroicons-currency-dollar" 
                       size="lg" 
                       square
-                      class="w-9 h-9 !bg-green-100 !text-green-600 hover:!bg-green-200 shadow-sm rounded-lg transition-all hover:shadow-md" 
+                      class="w-9 h-9 flex items-center justify-center 
+                            !bg-green-100 !text-green-600 hover:!bg-green-200 
+                            shadow-sm rounded-lg transition-all hover:shadow-md" 
                       @click="abrirVenda(row)"
                     />
 
-                    
                     <UButton 
                       :to="`/estoque/editar/${row.id}`" 
                       variant="soft" 
                       icon="i-heroicons-pencil-square" 
                       size="lg" 
                       square
-                      class="w-9 h-9 !bg-orange-50 !text-orange-500 hover:!bg-orange-100 shadow-sm rounded-lg transition-all text-center hover:shadow-md"
+                      class="w-9 h-9 flex items-center justify-center
+                            !bg-orange-50 !text-orange-500 hover:!bg-orange-100 
+                            shadow-sm rounded-lg transition-all hover:shadow-md"
                     />
-                    
+
                     <UButton 
                       variant="soft" 
                       icon="i-heroicons-trash" 
                       size="lg" 
                       square
-                      class="w-9 h-9 !bg-red-50 !text-red-600 hover:!bg-red-100 shadow-sm rounded-lg transition-all hover:shadow-md" 
+                      class="w-9 h-9 flex items-center justify-center
+                            !bg-red-50 !text-red-600 hover:!bg-red-100 
+                            shadow-sm rounded-lg transition-all hover:shadow-md" 
                       @click="excluir(row.id)" 
                     />
+
                   </div>
 
                 </div>
