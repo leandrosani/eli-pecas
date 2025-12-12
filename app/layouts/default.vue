@@ -7,7 +7,7 @@
       :class="sidebarAberta ? 'md:pl-64' : 'md:pl-20'"
       style="padding-bottom: calc(4rem + env(safe-area-inset-bottom))"
     >
-      <div class="p-4 md:p-8 max-w-7xl mx-auto min-h-full">
+      <div class="md:p-8 max-w-7xl mx-auto min-h-full">
         <slot />
       </div>
     </main>

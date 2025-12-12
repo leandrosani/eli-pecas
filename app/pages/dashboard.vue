@@ -1,5 +1,5 @@
 <template>
-  <div class="pb-24 relative">
+  <div class="p-4 pb-24 relative">
 
     <!-- =================================================== -->
     <!-- CABEÇALHO: BEM-VINDO(A) E FILTRO DE MÊS -->

@@ -2,7 +2,7 @@
   <div class="flex h-screen overflow-hidden">
     
     <!-- CONTEÚDO PRINCIPAL -->
-    <div class="flex-1 overflow-y-auto pb-20">
+    <div class="flex-1 overflow-y-auto p-2 pb-20">
       <div class="max-w-full mx-auto p-2">
 
         <!-- HEADER + AÇÕES -->

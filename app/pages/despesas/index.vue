@@ -1,5 +1,5 @@
 <template>
-  <div class="pb-20 relative">
+  <div class="p-4 pb-20 relative">
 
     <!-- CABEÇALHO EM CARD -->
     <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 mb-6 flex flex-col gap-4">
