@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     .filter(p => p.quantidade <= 3)
     .sort((a, b) => a.quantidade - b.quantidade)
     .slice(0, 5)
-    .map(p => ({ id: p.id, nome: p.nome, quantidade: p.quantidade }))
+    .map(p => ({ id: p.id, nome: p.nome, quantidade: p.quantidade, modelo: p.modelo, lado: p.lado }))
 
   // 2. Movimentações
   const historicoMes = await prisma.historicoMovimentacao.findMany({
@@ -45,13 +45,15 @@ export default defineEventHandler(async (event) => {
 
   // 5. Ranking de Vendas (ATUALIZADO COM ANO E MARCA/LADO)
   // Adicionei 'ano' e 'marca' na tipagem e no objeto
-  const rankingVendas: Record<string, { nome: string, marca: string, ano: string | null, qtd: number, total: number }> = {}
+  const rankingVendas: Record<string, { nome: string, marca: string, ano: string, modelo: string, lado: string | null, qtd: number, total: number }> = {}
   
   vendas.forEach(venda => {
     const id = venda.pecaId
     if (!rankingVendas[id]) {
       rankingVendas[id] = { 
-        nome: venda.peca.nome, 
+        nome: venda.peca.nome,
+        modelo: venda.peca.modelo,
+        lado: venda.peca.lado,
         marca: venda.peca.marca, // No seu sistema, isso é o Lado
         ano: venda.peca.ano,     // Ano do carro
         qtd: 0, 

@@ -404,8 +404,6 @@ const linhasFiltradas = computed(() => {
   let lista = estoqueCompleto.value || []
   const filtros = filtrosAtivos.value
   
-  console.log('🔍 PAI - Filtrando com:', filtros)  // ← DEBUG
-  
   // Filtro de somente disponíveis
   if (filtros.somenteDisponiveis) {
     lista = lista.filter((row: any) => row.quantidade > 0)

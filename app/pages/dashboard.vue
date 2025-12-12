@@ -335,9 +335,14 @@
 
                       <!-- Infos -->
                       <div>
-                        <p class="text-sm font-bold text-gray-900 leading-tight">
-                          {{ prod.nome }}
-                        </p>
+                        <div class="flex gap-1">
+                          <p class="text-sm font-bold text-gray-900 leading-tight">
+                            {{ prod.modelo }}
+                          </p>
+                          <p class="text-sm font-bold text-gray-900 leading-tight">
+                            {{ prod.nome }}
+                          </p>
+                        </div>
 
                         <div class="flex flex-wrap gap-1 mt-0.5">
                           <span
@@ -444,8 +449,6 @@
                 :key="mov.id"
                 class="hover:bg-gray-50 transition-colors"
               >
-
-              <div >
                 <td class="py-3 pl-3 px-1 font-medium text-gray-900">
                   {{ mov.peca?.nome || mov.descricao }}
                 </td>
@@ -453,8 +456,6 @@
                 <td class="py-3 font-medium text-gray-900">
                   {{ mov.peca?.modelo || mov.descricao }}
                 </td>
-              </div>
-                
 
                 <td class="py-3 px-4">
                   <span
@@ -481,6 +482,7 @@
                   {{ formatarDinheiro(getValor(mov)) }}
                 </td>
               </tr>
+
 
               <tr v-if="!historicoFiltrado.length">
                 <td colspan="5" class="py-16 text-center text-gray-400">
