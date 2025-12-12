@@ -3,7 +3,7 @@
     
     <!-- CONTEÚDO PRINCIPAL -->
     <div class="flex-1 overflow-y-auto pb-20">
-      <div class="max-w-full mx-auto p-4">
+      <div class="max-w-full mx-auto p-2">
 
         <!-- HEADER + AÇÕES -->
         <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 flex flex-col mb-2">

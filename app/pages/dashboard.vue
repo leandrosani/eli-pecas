@@ -337,10 +337,10 @@
                       <div>
                         <div class="flex gap-1">
                           <p class="text-sm font-bold text-gray-900 leading-tight">
-                            {{ prod.modelo }}
+                            {{ prod.nome }}
                           </p>
                           <p class="text-sm font-bold text-gray-900 leading-tight">
-                            {{ prod.nome }}
+                            {{ prod.modelo }}
                           </p>
                         </div>
 
