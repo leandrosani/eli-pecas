@@ -266,8 +266,8 @@
 
                 <!-- Nome -->
                 <div class="min-w-0 flex-1">  
-                  <h3 class="font-bold text-white text-base truncate">{{ row.nome }}</h3>
-                  <h3 class="font-bold text-white text-base truncate">{{ row.modelo }}</h3>
+                  <h3 class="font-bold text-white text-base">{{ row.nome }}</h3>
+                  <h3 class="font-bold text-white text-base">{{ row.modelo }}</h3>
                 </div>
 
                 <!-- Quantidade -->
@@ -317,6 +317,12 @@
                       class="w-9 h-9 flex items-center justify-center !bg-green-100 !text-green-600 hover:!bg-green-200 shadow-sm rounded-lg transition-all hover:shadow-md" 
                       @click="abrirVenda(row)"
                     />
+                    <span
+                      v-else
+                      class="flex justify-center items-center w-9 h-9 bg-red-50 text-red-600 border border-red-200 rounded-lg"
+                    >
+                      <UIcon name="i-heroicons-archive-box-x-mark" class="w-4 h-4 text-gray-400" />
+                    </span>
 
                     
                     <UButton 
@@ -418,7 +424,7 @@ const filtrosAtivos = ref({
   ano: '',
   estado: '',
   localizacao: '',
-  somenteDisponiveis: false 
+  somenteDisponiveis: true 
 })
 
 const modalVendaAberto = ref(false)
