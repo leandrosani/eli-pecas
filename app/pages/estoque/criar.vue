@@ -37,6 +37,122 @@
         <!-- CORPO DO FORMULÁRIO -->
         <div class="p-4 md:p-6 space-y-5 md:space-y-6">
           
+          <!-- ✨ NOVO: UPLOAD DE FOTO COM DRAG & DROP PROFISSIONAL -->
+          <div class="space-y-3 border-b-2 pb-5 border-gray-100">
+            <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
+              <UIcon name="i-heroicons-photo" class="w-4 h-4 text-blue-600" />
+              Foto da Peça (Capa)
+            </label>
+            
+            <!-- ÁREA DE DRAG & DROP -->
+            <div 
+              @dragover.prevent="handleDragOver"
+              @dragleave.prevent="handleDragLeave"
+              @drop.prevent="handleDrop"
+              @click="triggerFileInput"
+              :class="[
+                'relative border-2 border-dashed rounded-xl transition-all cursor-pointer overflow-hidden',
+                isDragging ? 'border-blue-500 bg-blue-50 scale-[1.02]' : 'border-gray-300 hover:border-gray-400 bg-gray-50',
+                uploading ? 'pointer-events-none opacity-60' : ''
+              ]"
+              class="min-h-[180px] md:min-h-[200px] flex items-center justify-center"
+            >
+              <!-- INPUT OCULTO -->
+              <input 
+                ref="fileInput"
+                type="file" 
+                @change="handleFileUpload"
+                :disabled="uploading"
+                accept="image/*"
+                class="hidden"
+              />
+
+              <!-- ESTADO: SEM FOTO -->
+              <div v-if="!form.fotoUrl && !uploading" class="text-center p-6">
+                <div 
+                  :class="[
+                    'w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 rounded-full flex items-center justify-center transition-all',
+                    isDragging ? 'bg-blue-100 scale-110' : 'bg-gray-200'
+                  ]"
+                >
+                  <UIcon 
+                    :name="isDragging ? 'i-heroicons-arrow-down-tray' : 'i-heroicons-photo'" 
+                    :class="[
+                      'transition-all',
+                      isDragging ? 'w-10 h-10 text-blue-600 animate-bounce' : 'w-8 h-8 md:w-10 md:h-10 text-gray-500'
+                    ]" 
+                  />
+                </div>
+                
+                <p 
+                  :class="[
+                    'font-bold mb-1 transition-colors',
+                    isDragging ? 'text-blue-600 text-lg' : 'text-gray-700 text-sm md:text-base'
+                  ]"
+                >
+                  {{ isDragging ? '📂 Solte a foto aqui!' : '📸 Arraste uma foto ou clique para selecionar' }}
+                </p>
+                
+                <p class="text-xs md:text-sm text-gray-500 mt-2">
+                  Formatos aceitos: JPG, PNG, WEBP (máx. 10MB)
+                </p>
+              </div>
+
+              <!-- ESTADO: ENVIANDO -->
+              <div v-else-if="uploading" class="text-center p-6">
+                <div class="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center animate-pulse">
+                  <UIcon name="i-heroicons-arrow-path" class="w-10 h-10 text-blue-600 animate-spin" />
+                </div>
+                <p class="font-bold text-blue-600 text-sm md:text-base mb-1">
+                  Enviando para a nuvem...
+                </p>
+                <p class="text-xs text-gray-500">Aguarde alguns instantes</p>
+              </div>
+
+              <!-- ESTADO: FOTO CARREGADA -->
+              <div v-else-if="form.fotoUrl" class="relative w-full h-full min-h-[180px] md:min-h-[200px] group">
+                <img 
+                  :src="form.fotoUrl" 
+                  alt="Preview da foto" 
+                  class="w-full h-full object-cover"
+                />
+                
+                <!-- OVERLAY COM BOTÕES -->
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    @click.stop="triggerFileInput"
+                    class="px-4 py-2 bg-white text-gray-900 rounded-lg font-semibold text-sm flex items-center gap-2 hover:bg-gray-100 transition-all shadow-lg active:scale-95"
+                  >
+                    <UIcon name="i-heroicons-arrow-path" class="w-4 h-4" />
+                    Trocar
+                  </button>
+                  
+                  <button
+                    type="button"
+                    @click.stop="removerFoto"
+                    class="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold text-sm flex items-center gap-2 hover:bg-red-700 transition-all shadow-lg active:scale-95"
+                  >
+                    <UIcon name="i-heroicons-trash" class="w-4 h-4" />
+                    Remover
+                  </button>
+                </div>
+
+                <!-- BADGE DE SUCESSO -->
+                <div class="absolute top-3 left-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-lg">
+                  <UIcon name="i-heroicons-check-circle" class="w-4 h-4" />
+                  Foto carregada
+                </div>
+              </div>
+            </div>
+
+            <!-- FEEDBACK VISUAL ADICIONAL -->
+            <div v-if="uploadError" class="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-200">
+              <UIcon name="i-heroicons-exclamation-triangle" class="w-5 h-5 flex-shrink-0" />
+              <span class="font-medium">{{ uploadError }}</span>
+            </div>
+          </div>
+          
           <!-- Linha 1: Nome e Lado -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
             <div class="space-y-2">
@@ -247,12 +363,12 @@
         <UButton 
           type="submit" 
           size="lg" 
-          :loading="loading" 
-          :disabled="loading"
+          :loading="loading || uploading" 
+          :disabled="loading || uploading"
           class="w-full md:w-auto flex items-center cursor-pointer bg-gray-600 hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all font-bold rounded-xl px-8 active:scale-[0.98] disabled:opacity-50 justify-center"
         >
-          <UIcon v-if="!loading" name="i-heroicons-check-circle" class="w-5 h-5" />
-          {{ loading ? 'Salvando...' : 'Salvar Peça no Estoque' }}
+          <UIcon v-if="!loading && !uploading" name="i-heroicons-check-circle" class="w-5 h-5" />
+          {{ loading ? 'Salvando...' : uploading ? 'Enviando Foto...' : 'Salvar Peça no Estoque' }}
         </UButton>
 
         <!-- BOTÃO CANCELAR -->
@@ -274,34 +390,43 @@
 
 <script setup lang="ts">
 import { reactive, ref, computed, watch, nextTick } from 'vue';
+import { useRouter } from 'vue-router';
 
-// Define o layout padrão
 definePageMeta({ layout: 'default' })
 
+const router = useRouter()
 const loading = ref(false)
+const uploading = ref(false)
+const isDragging = ref(false)
+const uploadError = ref('')
+const fileInput = ref<HTMLInputElement | null>(null)
 const toast = useToast()
 
+// ✅ CONFIGURAÇÕES CLOUDINARY
+const CLOUD_NAME = 'dhlllqld0'; 
+const UPLOAD_PRESET = 'Eli pecas'; 
+
 // ===================================================
-// DADOS FIXOS E FILTRAGEM (Montadora, Modelo, Lado, Condição)
+// DADOS FIXOS E FILTRAGEM (mantidos iguais)
 // ===================================================
 
 const listaLados = [
-  "LADO DIREITO",
-  "LADO ESQUERDO",
-  "DIANTEIRO",
-  "TRASEIRO",
-  "DIANTEIRO DIREITO",
-  "TRASEIRO ESQUERDO",
+  "LADO DIREITO",
+  "LADO ESQUERDO",
+  "DIANTEIRO",
+  "TRASEIRO",
+  "DIANTEIRO DIREITO",
+  "TRASEIRO ESQUERDO",
 ]
 
 const listaCondicao = [
-  "NOVO",
-  "SEM DETALHE",
-  "1 GARRA RECUPERADA",
-  "DETALHE NA LENTE",
-  "2 GARRAS RECUPERADAS",
-  "3 GARRAS RECUPERADAS",
-  "TODAS GARRAS RECUPERADAS"
+  "NOVO",
+  "SEM DETALHE",
+  "1 GARRA RECUPERADA",
+  "DETALHE NA LENTE",
+  "2 GARRAS RECUPERADAS",
+  "3 GARRAS RECUPERADAS",
+  "TODAS GARRAS RECUPERADAS"
 ]
 
 const listaMontadorasCompleta = [
@@ -393,111 +518,236 @@ const listaMontadorasCompleta = [
   ]}
 ];
 
-
-// Extrai apenas os nomes das montadoras para o SELECT principal
 const listaMontadorasNomes = listaMontadorasCompleta.map(m => m.nome);
-const router = useRouter()
 
-
-// Estado inicial do formulário
 const form = reactive({
   nome: '',
   marca: '',
-  modelo: '', // O Modelo do Carro
+  modelo: '',
   lado: 'LADO DIREITO',
   ano: '',
   preco: undefined,
   quantidade: 1,
   estado: 'SEM DETALHE',
-  localizacao: '', // Campo de Endereçamento A-01-04-06
-  detalhes: '', // Campo de Observações Livres
+  localizacao: '', 
+  detalhes: '', 
+  fotoUrl: null as string | null,
 })
 
-// Computed para filtrar modelos com base na montadora selecionada (form.montadora)
 const modelosFiltrados = computed(() => {
   if (!form.marca) return []
   const montadoraSelecionada = listaMontadorasCompleta.find(m => m.nome === form.marca)
   return montadoraSelecionada ? montadoraSelecionada.modelos : []
 })
 
-// Observa a mudança da Montadora. Se a montadora mudar, reseta o modelo.
-watch(() => form.marca, (newMontadora, oldMontadora) => {
-  if (newMontadora !== oldMontadora) {
+watch(() => form.marca, (newMarca, oldMarca) => {
+  if (newMarca !== oldMarca) {
     form.modelo = ''
   }
 })
 
+// ===================================================
+// 🎯 FUNÇÕES DE DRAG & DROP
+// ===================================================
 
-// Lógica de formatação do código de endereçamento (A010406 -> A-01-04-06)
-function formatarCodigo(event: Event) {
-    const target = event.target as HTMLInputElement;
-    let valor = target.value.toUpperCase();
-    
-    // 1. Permitir apenas A-Z e 0-9
-    valor = valor.replace(/[^A-Z0-9]/g, '');
-
-    // 2. Aplicar o padrão A-01-01-01 (1-2-2-2)
-    let formatado = '';
-    if (valor.length >= 1) formatado += valor.substring(0, 1);           // A
-    if (valor.length >= 2) formatado += '-' + valor.substring(1, 3);    // 01
-    if (valor.length >= 4) formatado += '-' + valor.substring(3, 5);    // 01
-    if (valor.length >= 6) formatado += '-' + valor.substring(5, 7);    // 01  <-- CORRETO: usa valor[5..7]
-
-    // 3. Atualizar o v-model e manter cursor no final
-    form.localizacao = formatado;
-
-    nextTick(() => {
-        target.value = formatado;
-        target.setSelectionRange(formatado.length, formatado.length);
-    });
+function handleDragOver(event: DragEvent) {
+  event.preventDefault()
+  isDragging.value = true
 }
 
+function handleDragLeave(event: DragEvent) {
+  event.preventDefault()
+  isDragging.value = false
+}
 
-// Formatar ano automaticamente (20182020 -> 2018/2020)
+function handleDrop(event: DragEvent) {
+  event.preventDefault()
+  isDragging.value = false
+  
+  const files = event.dataTransfer?.files
+  if (files && files.length > 0) {
+    processFile(files[0])
+  }
+}
+
+function triggerFileInput() {
+  if (!uploading.value && fileInput.value) {
+    fileInput.value.click()
+  }
+}
+
+function handleFileUpload(event: Event) {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  
+  if (file) {
+    processFile(file)
+  }
+}
+
+function removerFoto() {
+  form.fotoUrl = null
+  uploadError.value = ''
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
+}
+
+// ===================================================
+// 📤 PROCESSAMENTO E UPLOAD
+// ===================================================
+
+async function processFile(file: File) {
+  if (uploading.value) return
+
+  // Validações
+  const maxSize = 10 * 1024 * 1024 // 10MB
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+
+  if (!allowedTypes.includes(file.type)) {
+    uploadError.value = 'Formato não suportado. Use JPG, PNG ou WEBP.'
+    toast.add({ title: 'Formato inválido', description: uploadError.value, color: 'red', timeout: 4000 })
+    return
+  }
+
+  if (file.size > maxSize) {
+    uploadError.value = 'Arquivo muito grande. Máximo: 10MB.'
+    toast.add({ title: 'Arquivo grande demais', description: uploadError.value, color: 'red', timeout: 4000 })
+    return
+  }
+
+  uploadError.value = ''
+  uploading.value = true
+  form.fotoUrl = null
+
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('upload_preset', UPLOAD_PRESET)
+
+  try {
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    )
+    
+    if (!response.ok) {
+      throw new Error(`Cloudinary error: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    
+    if (data.secure_url) {
+      form.fotoUrl = data.secure_url
+      toast.add({ 
+        title: '✅ Upload concluído!', 
+        description: 'Foto enviada com sucesso para a nuvem.', 
+        color: 'green', 
+        timeout: 3000 
+      })
+    } else {
+      throw new Error('URL de imagem não recebida.')
+    }
+
+  } catch (error) {
+    console.error('Erro de Upload:', error)
+    uploadError.value = 'Falha ao enviar. Tente novamente.'
+    toast.add({ 
+      title: 'Erro no upload', 
+      description: 'Não foi possível enviar a foto. Verifique sua conexão.', 
+      color: 'red', 
+      timeout: 5000 
+    })
+  } finally {
+    uploading.value = false
+    if (fileInput.value) {
+      fileInput.value.value = ''
+    }
+  }
+}
+
+// ===================================================
+// FUNÇÕES AUXILIARES (mantidas)
+// ===================================================
+
+function formatarCodigo(event: Event) {
+  const target = event.target as HTMLInputElement
+  let valor = target.value.toUpperCase()
+  
+  valor = valor.replace(/[^A-Z0-9]/g, '')
+
+  let formatado = ''
+  if (valor.length >= 1) formatado += valor.substring(0, 1)
+  if (valor.length >= 2) formatado += '-' + valor.substring(1, 3)
+  if (valor.length >= 4) formatado += '-' + valor.substring(3, 5)
+  if (valor.length >= 6) formatado += '-' + valor.substring(5, 7)
+  
+  form.localizacao = formatado
+
+  nextTick(() => {
+    target.value = formatado
+    target.setSelectionRange(formatado.length, formatado.length)
+  })
+}
+
 function formatarAno(event: Event) {
   const input = event.target as HTMLInputElement
-  let valor = input.value.replace(/\D/g, '') // Remove tudo que não é número
+  let valor = input.value.replace(/\D/g, '')
   
   if (valor.length > 4) {
-    // Adiciona a barra após os 4 primeiros dígitos
     valor = valor.slice(0, 4) + '/' + valor.slice(4, 8)
   }
   
   form.ano = valor
 }
 
-
 async function salvar() {
+  if (loading.value || uploading.value) return
+
   if (!form.nome || !form.preco || !form.marca || !form.modelo) {
-    alert('⚠️ Por favor, preencha o Nome, Lado, Montadora e o Preço da peça.')
+    toast.add({ 
+      title: 'Erro de validação', 
+      description: 'Preencha Nome, Montadora, Modelo e Preço.', 
+      color: 'red' 
+    })
     return
   }
   
   loading.value = true
   try {
-    // Garante que tudo salva em maiúscula
     const payload = {
-      // Campos do DB (modelos, marca(lado), nome, etc)
       nome: form.nome.toUpperCase(),
       marca: form.marca.toUpperCase(),
       lado: form.lado.toUpperCase(),
-      modelo: form.modelo.toUpperCase(), // Modelo Filtrado
+      modelo: form.modelo.toUpperCase(),
       ano: form.ano || null,
       preco: Number(form.preco),
       quantidade: Number(form.quantidade),
       estado: form.estado,
-      
-      // Novos campos
       localizacao: form.localizacao.toUpperCase() || null, 
       detalhes: form.detalhes.toUpperCase() || null,
+      fotoUrl: form.fotoUrl,
     }
     
     await $fetch('/api/pecas', { method: 'POST', body: payload })
-    alert('✅ Peça cadastrada com sucesso!')
-    router.push('/estoque')
-  } catch (e) {
-    alert('❌ Erro ao salvar peça. Tente novamente.')
-    console.error(e)
+    
+    toast.add({ 
+      title: 'Sucesso!', 
+      description: 'Peça adicionada ao estoque!', 
+      color: 'green' 
+    })
+    
+    await navigateTo('/estoque')
+
+  } catch (e: any) {
+    console.error('Erro ao salvar peça:', e)
+    toast.add({ 
+      title: 'Erro ao Salvar', 
+      description: e.statusMessage || 'Erro inesperado.', 
+      color: 'red' 
+    })
   } finally {
     loading.value = false
   }

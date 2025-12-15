@@ -21,19 +21,22 @@ export default defineEventHandler(async (event) => {
     const detalhesFinal = body.detalhes || null
     const modeloFinal = body.modelo || null
     const ladoFinal = body.lado || null
-
+    const fotoUrlFinal = body.fotoUrl || null // ✅ INCLUÍDO AQUI
+    
     const pecaAtualizada = await prisma.peca.update({
       where: { id },
       data: {
         nome: body.nome,
-        lado: ladoFinal,          
+        marca: body.marca,          // Montadora
+        lado: ladoFinal,            // Lado da Peça
         estado: body.estado,
-        modelo: modeloFinal,        
+        modelo: modeloFinal,        // Modelo do carro
         ano: anoFinal,
         preco: precoFinal,
         quantidade: quantidadeFinal,
-        detalhes: detalhesFinal,    
+        detalhes: detalhesFinal,    // Observações
         localizacao: localizacaoFinal, 
+        fotoUrl: fotoUrlFinal,      // ✅ SALVA A NOVA URL DA FOTO
         updatedAt: new Date()
       }
     })

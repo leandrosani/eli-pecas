@@ -46,9 +46,6 @@
               Adicionar Peça
             </UButton>
           </div>
-
-          
-
         </div>
         
         <!-- PAINEL DE FILTROS MOBILE -->
@@ -76,27 +73,50 @@
 
               <thead class="bg-gray-600">
                 <tr>
-                  <th class="py-4 px-4 text-xs uppercase font-bold text-white">Peça</th>
-                  <th class="py-4 px-3 text-xs text-center uppercase font-bold text-white">Aplicação</th>
-                  <th class="py-4 px-3 text-xs text-center uppercase font-bold text-white">Localização</th>
-                  <th class="py-4 px-3 text-xs uppercase font-bold text-white text-center">Preço</th>
-                  <th class="py-4 px-3 text-xs uppercase font-bold text-white text-center">Ações</th>
+                  <th class="py-4 px-3 text-xs uppercase font-bold text-white w-[50px]">Foto</th>
+                  <th class="py-4 px-4 text-xs uppercase font-bold text-white w-3/12">Peça</th>
+                  <th class="py-4 px-3 text-xs text-center uppercase font-bold text-white w-2/12">Aplicação</th>
+                  <th class="py-4 px-3 text-xs text-center uppercase font-bold text-white w-2/12">Localização</th>
+                  <th class="py-4 px-3 text-xs uppercase font-bold text-white text-center w-2/12">Preço</th>
+                  <th class="py-4 px-3 text-xs uppercase font-bold text-white text-center w-1/12">Ações</th>
                 </tr>
               </thead>
 
               <tbody class="divide-y divide-gray-200">
 
                 <tr v-for="row in linhasFiltradas" :key="row.id" class="hover:bg-gray-50 transition-all">
+                  
+                  <!-- FOTO + QUANTIDADE (MESMA COLUNA) -->
+                  <td class="py-3 px-3">
+                    <div class="flex flex-col gap-2">
+
+                      <!-- FOTO -->
+                      <div 
+                        v-if="row.fotoUrl"
+                        @click="abrirFoto(row.fotoUrl)"
+                        class="w-22 h-22 rounded-lg overflow-hidden border border-gray-300 shadow-sm flex items-center justify-center bg-gray-100 cursor-pointer hover:shadow-md transition-shadow active:scale-[0.98]"
+                        title="Clique para ampliar"
+                      >
+                        <img 
+                          :src="row.fotoUrl" 
+                          alt="Foto da Peça" 
+                          class="w-full h-full object-cover"
+                          @error="(e) => e.target.src = 'https://placehold.co/44x44/CCCCCC/333333?text=S%2F+FOTO'" 
+                        />
+                      </div>
+
+                      <div 
+                        v-else
+                        class="w-22 h-22 rounded-lg border border-gray-200 flex items-center justify-center bg-gray-50"
+                      >
+                        <UIcon name="i-heroicons-photo" class="w-5 h-5 text-gray-400" />
+                      </div>
+                    </div>
+                  </td>
+
                   <!-- NOME + MARCA + ESTADO -->
                   <td class="py-3 px-4">
                     <div class="flex items-center gap-3">
-
-                      <!-- Quantidade -->
-                      <div class="w-11 h-11 rounded-xl bg-gray-200 flex flex-col items-center justify-center shadow-sm border border-gray-300 flex-shrink-0">
-                        <span class="text-xl font-bold text-gray-800 leading-none">{{ row.quantidade }}</span>
-                        <span class="text-[7px] font-bold text-gray-600 uppercase tracking-wide">un.</span>
-                      </div>
-
                       <!-- Texto -->
                       <div class="min-w-0 flex-1">
                         <div class="font-bold text-gray-900 text-sm mb-0.5 truncate">{{ row.nome }}</div>
@@ -136,9 +156,22 @@
                   </td>
 
                   <!-- PREÇO -->
-                  <td class="py-3 px-3 text-center">
-                    <div class="font-bold text-gray-800 text-sm">{{ formatarPreco(row) }}</div>
+                  <td class="py-3 px-3 text-center align-middle">
+                    <div class="flex flex-col items-center justify-center h-full gap-1">
+                      
+                      <!-- QUANTIDADE -->
+                      <span class="text-sm font-bold text-gray-800 leading-none">
+                        <span>Qnt: </span>{{ row.quantidade }}
+                      </span>
+
+                      <!-- PREÇO -->
+                      <div class="font-bold text-gray-800 text-sm">
+                        {{ formatarPreco(row) }}
+                      </div>
+
+                    </div>
                   </td>
+
 
                   <!-- AÇÕES -->
                   <td class="py-3 px-3">
@@ -198,16 +231,45 @@
           <!-- CARDS MOBILE -->
           <div class="block md:hidden space-y-4">
             
-            <!-- Card Individual -->
+            <!-- Card Individual (versão mobile melhorada - OPCIONAL) -->
             <div v-for="row in linhasFiltradas" :key="row.id" class="bg-white border-2 border-gray-200 rounded-xl shadow-sm overflow-hidden">
               
               <!-- Header do Card -->
-              <div class="bg-gray-600 p-4 gap-2 flex items-center justify-between">
+              <div class="bg-gray-600 p-2 gap-2 flex items-center justify-between">
+                
+                <!-- Foto Mobile com indicador de clique -->
+                <div 
+                  v-if="row.fotoUrl"
+                  @click="abrirFoto(row.fotoUrl)"
+                  class="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-500 shadow-md shrink-0 cursor-pointer hover:scale-110 transition-transform active:scale-95"
+                  title="Clique para ampliar"
+                >
+                  <img 
+                    :src="row.fotoUrl" 
+                    alt="Foto" 
+                    class="w-full h-full object-cover" 
+                    onerror="this.style.display='none'"
+                  />
+                  <!-- Ícone de zoom sobre a foto -->
+                  <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                    <UIcon name="i-heroicons-magnifying-glass-plus" class="w-5 h-5 text-white" />
+                  </div>
+                </div>
+
+                <!-- Ícone quando não há foto -->
+                <div 
+                  v-else
+                  class="w-16 h-16 rounded-lg bg-gray-700 flex items-center justify-center shrink-0"
+                >
+                  <UIcon name="i-heroicons-photo" class="w-5 h-5 text-gray-400" />
+                </div>
+
                 <!-- Nome -->
                 <div class="min-w-0 flex-1">  
                   <h3 class="font-bold text-white text-base truncate">{{ row.nome }}</h3>
                   <h3 class="font-bold text-white text-base truncate">{{ row.modelo }}</h3>
                 </div>
+
                 <!-- Quantidade -->
                 <div class="min-w-[36px] h-6 flex flex-col gap-1 items-center justify-center flex-shrink-0">
                   <span class="text-base font-bold text-white leading-none">{{ row.quantidade }}</span>
@@ -219,7 +281,7 @@
               <div class="p-4 space-y-3">
                 
                 <!-- Marca + Procedência + Estado -->
-                 <div class="flex justify-between gap-3">
+                <div class="flex justify-between gap-3">
                   <div class="flex flex-col gap-2 min-w-0 flex-1">
                     <div class="flex gap-1.5 flex-col border-b pb-2 border-gray-200">
                       <span class="text-sm font-bold uppercase tracking-wide text-gray-900">
@@ -252,34 +314,28 @@
                       icon="i-heroicons-currency-dollar" 
                       size="lg" 
                       square
-                      class="w-9 h-9 flex items-center justify-center 
-                            !bg-green-100 !text-green-600 hover:!bg-green-200 
-                            shadow-sm rounded-lg transition-all hover:shadow-md" 
+                      class="w-9 h-9 flex items-center justify-center !bg-green-100 !text-green-600 hover:!bg-green-200 shadow-sm rounded-lg transition-all hover:shadow-md" 
                       @click="abrirVenda(row)"
                     />
 
+                    
                     <UButton 
                       :to="`/estoque/editar/${row.id}`" 
                       variant="soft" 
                       icon="i-heroicons-pencil-square" 
                       size="lg" 
                       square
-                      class="w-9 h-9 flex items-center justify-center
-                            !bg-orange-50 !text-orange-500 hover:!bg-orange-100 
-                            shadow-sm rounded-lg transition-all hover:shadow-md"
+                      class="w-9 h-9 flex items-center justify-center !bg-orange-50 !text-orange-500 hover:!bg-orange-100 shadow-sm rounded-lg transition-all hover:shadow-md"
                     />
-
+                    
                     <UButton 
                       variant="soft" 
                       icon="i-heroicons-trash" 
                       size="lg" 
                       square
-                      class="w-9 h-9 flex items-center justify-center
-                            !bg-red-50 !text-red-600 hover:!bg-red-100 
-                            shadow-sm rounded-lg transition-all hover:shadow-md" 
+                      class="w-9 h-9 flex items-center justify-center !bg-red-50 !text-red-600 hover:!bg-red-100 shadow-sm rounded-lg transition-all hover:shadow-md" 
                       @click="excluir(row.id)" 
                     />
-
                   </div>
 
                 </div>
@@ -329,6 +385,12 @@
         />
       </div>
     </div>
+    
+    <!-- MODAL DE FOTO (NOVO) -->
+    <ModalFoto 
+        v-model="modalFotoAberto" 
+        :foto-url="fotoAmpliadaUrl"
+    />
 
   </div>
 </template>
@@ -339,7 +401,8 @@
 import FiltroEstoqueMobille from '~/components/FiltroEstoqueMobille.vue'
 import FiltroEstoqueDesktop from '~/components/FiltroEstoqueDesktop.vue'
 import ModalVenda from '~/components/ModalVenda.vue'
-import { ref, computed } from 'vue'
+import ModalFoto from '~/components/ModalFoto.vue' 
+import { ref, computed, watch } from 'vue'
 
 definePageMeta({ layout: 'default' })
 
@@ -351,15 +414,19 @@ const filtrosAtivos = ref({
   lado: '',
   procedencia: '',
   modelo: '',
-  peca: '',  // ← ADICIONEI AQUI
+  peca: '', 
   ano: '',
   estado: '',
   localizacao: '',
-  somenteDisponiveis: false  // ← ADICIONEI AQUI TAMBÉM
+  somenteDisponiveis: false 
 })
 
 const modalVendaAberto = ref(false)
 const pecaSelecionada = ref<any>(null)
+
+// NOVO ESTADO PARA VISUALIZAÇÃO DE FOTO
+const modalFotoAberto = ref(false) 
+const fotoAmpliadaUrl = ref<string | null>(null)
 
 const { data: estoqueCompleto, status, refresh } = await useFetch('/api/pecas', {
   lazy: true,
@@ -429,7 +496,7 @@ const linhasFiltradas = computed(() => {
 
   // Filtros específicos
   if (filtros.modelo) lista = lista.filter((row: any) => row.modelo === filtros.modelo)
-  if (filtros.peca) lista = lista.filter((row: any) => row.nome === filtros.peca)  // ← ADICIONEI AQUI
+  if (filtros.peca) lista = lista.filter((row: any) => row.nome === filtros.peca) 
   if (filtros.lado) lista = lista.filter((row: any) => row.lado === filtros.lado)
   if (filtros.marca) lista = lista.filter((row: any) => row.marca === filtros.marca)
   if (filtros.ano) lista = lista.filter((row: any) => row.ano === filtros.ano)
@@ -442,6 +509,12 @@ const linhasFiltradas = computed(() => {
 function abrirVenda(row: any) {
   pecaSelecionada.value = { ...row }
   modalVendaAberto.value = true
+}
+
+// NOVO: Função para abrir a foto ampliada
+function abrirFoto(url: string) {
+    fotoAmpliadaUrl.value = url;
+    modalFotoAberto.value = true;
 }
 
 async function handleVendaConfirmada() {
