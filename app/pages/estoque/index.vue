@@ -148,11 +148,19 @@
                   <td class="py-3 px-3 text-center">
                     <div 
                       v-if="row.localizacao" 
-                      class="inline-flex items-center gap-1.5 bg-purple-200/20 px-2.5 py-1 rounded-md shadow-sm border border-purple-200 max-w-full"
+                      class=" inline-flex items-center gap-1.5 bg-purple-200/20 px-2.5 py-1 rounded-md shadow-sm border border-purple-200 max-w-full"
                     >
                       <UIcon name="i-heroicons-map-pin" class="w-3.5 h-3.5 text-purple-800 flex-shrink-0" />
                       <span class="text-xs font-bold text-purple-800 truncate">{{ row.localizacao }}</span>
                     </div>
+
+                    <button
+                        v-if="row.detalhes"
+                        @click="copyToClipboard(row.detalhes, row.id)"
+                        class="mt-2 inline-flex items-center gap-1.5 bg-purple-200/20 px-2.5 py-1 rounded-md shadow-sm border border-purple-200 max-w-full hover:bg-purple-300/40 transition duration-150 cursor-pointer"
+                    >
+                        <UIcon :name="getCopyIcon(row.id)" class="w-3.5 h-3.5 text-purple-800 flex-shrink-0" />
+                    </button>
                   </td>
 
                   <!-- PREÇO -->
@@ -409,6 +417,41 @@ import FiltroEstoqueDesktop from '~/components/FiltroEstoqueDesktop.vue'
 import ModalVenda from '~/components/ModalVenda.vue'
 import ModalFoto from '~/components/ModalFoto.vue' 
 import { ref, computed, watch } from 'vue'
+
+// Estado reativo para controlar o ícone de feedback
+const copyStates = ref(new Map());
+
+/**
+ * Função para copiar o texto para a área de transferência.
+ * @param {string} text - O texto a ser copiado.
+ * @param {string} rowId - O ID único da linha.
+ */
+
+const copyToClipboard = async (text, rowId) => {
+    try {
+        await navigator.clipboard.writeText(text);
+
+        // Define o ícone de "copiado" apenas para esta linha
+        copyStates.value.set(rowId, 'i-heroicons-check-circle-solid');
+
+        // Volta ao ícone padrão após 2 segundos
+        setTimeout(() => {
+            copyStates.value.set(rowId, 'i-heroicons-clipboard-document');
+        }, 2000);
+
+    } catch (err) {
+        console.error('Falha ao copiar o texto:', err);
+        alert('Erro ao copiar! Seu navegador pode não suportar esta função.');
+    }
+};
+
+/**
+ * Retorna o ícone correto para a linha específica
+ */
+const getCopyIcon = (rowId) => {
+    return copyStates.value.get(rowId) || 'i-heroicons-clipboard-document';
+};
+
 
 definePageMeta({ layout: 'default' })
 

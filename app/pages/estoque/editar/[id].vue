@@ -342,23 +342,21 @@
               </div>
             </div>
 
-            <!-- Observações -->
+            <!-- Observações (Texto Livre) -->
             <div class="space-y-2 flex-col flex-1">
               <label class="mb-2 text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
                 <UIcon name="i-heroicons-chat-bubble-left" class="w-4 h-4 text-gray-600" />
-                Observações:
+                Endereçamento das fotos:
               </label>
               <div class="relative">
-                <textarea 
+                <UInput 
                   v-model="form.detalhes" 
-                  class="block p-4 w-full text-sm text-gray-900 bg-white rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-gray-500 resize-none transition-all hover:border-gray-400 font-medium uppercase" 
-                  rows="3" 
-                  placeholder="Detalhes sobre avarias, garantias, etc."
-                  maxlength="500"
-                ></textarea>
-                <div class="absolute bottom-3 right-3 text-xs text-gray-400 font-medium">
-                  {{ form.detalhes?.length || 0 }}/500
-                </div>
+                  class="w-full" 
+                  placeholder="G:\Meu Drive\FARÓIS\etc."
+                  :ui="{ 
+                    base: 'h-12 focus:ring-2 border-2 focus:ring-orange-500 border-gray-300 rounded-xl font-bold text-gray-900 placeholder:text-gray-400 uppercase tracking-widest'
+                  }" 
+                />
               </div>
             </div>
           </div>
