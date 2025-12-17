@@ -37,6 +37,9 @@ export default defineEventHandler(async (event) => {
         detalhes: detalhesFinal,    // Observações
         localizacao: localizacaoFinal, 
         fotoUrl: fotoUrlFinal,      // ✅ SALVA A NOVA URL DA FOTO
+        descricao: body.descricao ? body.descricao.toUpperCase() : null,
+        Link: body.Link || null,
+
         updatedAt: new Date()
       }
     })

@@ -7,7 +7,6 @@
 
         <!-- HEADER + AÇÕES -->
         <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 flex flex-col mb-2">
-
           <div class="flex justify-between items-center">
             <!-- Título -->
             <h1 class="text-2xl md:text-4xl font-bold text-gray-900 flex items-center gap-2">
@@ -26,25 +25,49 @@
               <strong class="text-gray-900">{{ linhasFiltradas.length }}</strong>
             </h2>
 
-            <!-- Botão Mobile -->
-            <div class="flex items-center md:hidden">
+            <!-- Botões de Ação (Exportar + Adicionar) -->
+            <div class="flex items-center gap-3">
+              
+              <!-- BOTÃO EXPORTAR SHOPPING (Desktop) -->
+              <UButton
+                icon="i-heroicons-arrow-down-tray"
+                size="lg"
+                @click="exportarParaPlanilha"
+                :disabled="status === 'pending' || linhasFiltradas.length === 0"
+                class="hidden md:flex px-4 py-3 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 active:scale-95 font-bold transition-all"
+              >
+                Exportar Shopping ({{ linhasFiltradas.length }})
+              </UButton>
+              
+              <!-- BOTÃO EXPORTAR SHOPPING (Mobile) -->
+              <UButton
+                icon="i-heroicons-arrow-down-tray"
+                size="xl"
+                @click="exportarParaPlanilha"
+                :disabled="status === 'pending' || linhasFiltradas.length === 0"
+                class="md:hidden w-12 h-12 rounded-full bg-blue-600 text-white shadow-2xl hover:bg-blue-700 active:scale-95 flex items-center justify-center flex-shrink-0"
+              />
+
+              <!-- Botão Mobile Adicionar -->
+              <div class="flex items-center md:hidden">
+                <UButton
+                  to="/estoque/criar"
+                  icon="i-heroicons-plus"
+                  size="xl"
+                  class="w-12 h-12 rounded-full bg-gray-800 text-white shadow-2xl hover:bg-gray-800 active:scale-95 flex items-center justify-center flex-shrink-0"
+                />
+              </div>
+
+              <!-- Botão Desktop Adicionar -->
               <UButton
                 to="/estoque/criar"
                 icon="i-heroicons-plus"
-                size="xl"
-                class="w-12 h-12 rounded-full bg-gray-800 text-white shadow-2xl hover:bg-gray-800 active:scale-95 flex items-center justify-center"
-              />
+                size="lg"
+                class="hidden md:flex px-4 py-3 bg-gray-700 text-white rounded-xl shadow hover:bg-gray-800 active:scale-95 font-bold"
+              >
+                Adicionar Peça
+              </UButton>
             </div>
-
-            <!-- Botão Desktop -->
-            <UButton
-              to="/estoque/criar"
-              icon="i-heroicons-plus"
-              size="lg"
-              class="hidden md:flex px-4 py-3 bg-gray-700 text-white rounded-xl shadow hover:bg-gray-800 active:scale-95 font-bold"
-            >
-              Adicionar Peça
-            </UButton>
           </div>
         </div>
         
@@ -63,7 +86,7 @@
             name="i-heroicons-arrow-path"
             class="w-10 h-10 animate-spin text-blue-500 mx-auto"
           />
-          <p class="text-gray-500 mt-3 text-sm font-medium">Carregando estoque...</p>
+          <p class="text-gray-500 mt-3 text-sm font-medium uppercase">Carregando estoque...</p>
         </div>
 
         <template v-else>
@@ -73,7 +96,7 @@
 
               <thead class="bg-gray-600">
                 <tr>
-                  <th class="py-4 px-3 text-xs uppercase font-bold text-white w-[50px]">Foto</th>
+                  <th class="py-4 px-3 text-xs uppercase font-bold text-white w-[50px] text-center">Foto</th>
                   <th class="py-4 px-4 text-xs uppercase font-bold text-white w-3/12">Peça</th>
                   <th class="py-4 px-3 text-xs text-center uppercase font-bold text-white w-2/12">Aplicação</th>
                   <th class="py-4 px-3 text-xs text-center uppercase font-bold text-white w-2/12">Localização</th>
@@ -86,11 +109,9 @@
 
                 <tr v-for="row in linhasFiltradas" :key="row.id" class="hover:bg-gray-50 transition-all">
                   
-                  <!-- FOTO + QUANTIDADE (MESMA COLUNA) -->
+                  <!-- FOTO -->
                   <td class="py-3 px-3">
                     <div class="flex flex-col gap-2">
-
-                      <!-- FOTO -->
                       <div 
                         v-if="row.fotoUrl"
                         @click="abrirFoto(row.fotoUrl)"
@@ -104,7 +125,6 @@
                           @error="(e) => e.target.src = 'https://placehold.co/44x44/CCCCCC/333333?text=S%2F+FOTO'" 
                         />
                       </div>
-
                       <div 
                         v-else
                         class="w-22 h-22 rounded-lg border border-gray-200 flex items-center justify-center bg-gray-50"
@@ -122,12 +142,12 @@
                         <div class="font-bold text-gray-900 text-sm mb-0.5 truncate">{{ row.nome }}</div>
                         <div class="font-semibold text-gray-700 text-xs mb-1 truncate">{{ row.modelo }}</div>
 
-                        <div class="flex gap-1.5 flex-wrap">
+                        <div class="flex gap-1.5 flex-col">
                           <span class="text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-gray-100 text-orange-800">
                             {{ row.lado }}
                           </span>
 
-                          <span v-if="row.estado" class="text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-orange-100 text-gray-900 truncate max-w-[150px]">
+                          <span v-if="row.estado" class="text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-orange-100 text-gray-900 max-w-[200px]">
                             {{ row.estado }}
                           </span>
                         </div>
@@ -148,7 +168,7 @@
                   <td class="py-3 px-3 text-center">
                     <div 
                       v-if="row.localizacao" 
-                      class=" inline-flex items-center gap-1.5 bg-purple-200/20 px-2.5 py-1 rounded-md shadow-sm border border-purple-200 max-w-full"
+                      class="inline-flex items-center gap-1.5 bg-purple-200/20 px-2.5 py-1 rounded-md shadow-sm border border-purple-200 max-w-full"
                     >
                       <UIcon name="i-heroicons-map-pin" class="w-3.5 h-3.5 text-purple-800 flex-shrink-0" />
                       <span class="text-xs font-bold text-purple-800 truncate">{{ row.localizacao }}</span>
@@ -174,12 +194,11 @@
 
                       <!-- PREÇO -->
                       <div class="font-bold text-gray-800 text-sm">
-                        {{ formatarPreco(row) }}
+                        {{ formatarPreco(row.preco) }}
                       </div>
 
                     </div>
                   </td>
-
 
                   <!-- AÇÕES -->
                   <td class="py-3 px-3">
@@ -239,7 +258,7 @@
           <!-- CARDS MOBILE -->
           <div class="block md:hidden space-y-4">
             
-            <!-- Card Individual (versão mobile melhorada - OPCIONAL) -->
+            <!-- Card Individual -->
             <div v-for="row in linhasFiltradas" :key="row.id" class="bg-white border-2 border-gray-200 rounded-xl shadow-sm overflow-hidden">
               
               <!-- Header do Card -->
@@ -273,9 +292,9 @@
                 </div>
 
                 <!-- Nome -->
-                <div class="min-w-0 flex-1">  
-                  <h3 class="font-bold text-white text-base">{{ row.nome }}</h3>
-                  <h3 class="font-bold text-white text-base">{{ row.modelo }}</h3>
+                <div class="min-w-0 flex-1"> 
+                  <h3 class="font-bold text-white text-base truncate">{{ row.nome }}</h3>
+                  <h3 class="font-bold text-white text-base truncate">{{ row.modelo }}</h3>
                 </div>
 
                 <!-- Quantidade -->
@@ -357,7 +376,7 @@
                 <!-- Preço -->
                 <div class="flex items-center justify-between pt-2 border-t border-gray-200">
                   <span class="text-base font-bold text-gray-900 uppercase">Preço</span>
-                  <span class="text-base font-bold text-gray-900">{{ formatarPreco(row) }}</span>
+                  <span class="text-base font-bold text-gray-900">{{ formatarPreco(row.preco) }}</span>
                 </div>
 
               </div>
@@ -400,7 +419,7 @@
       </div>
     </div>
     
-    <!-- MODAL DE FOTO (NOVO) -->
+    <!-- MODAL DE FOTO -->
     <ModalFoto 
         v-model="modalFotoAberto" 
         :foto-url="fotoAmpliadaUrl"
@@ -426,8 +445,7 @@ const copyStates = ref(new Map());
  * @param {string} text - O texto a ser copiado.
  * @param {string} rowId - O ID único da linha.
  */
-
-const copyToClipboard = async (text, rowId) => {
+const copyToClipboard = async (text: string, rowId: string) => {
     try {
         await navigator.clipboard.writeText(text);
 
@@ -441,14 +459,14 @@ const copyToClipboard = async (text, rowId) => {
 
     } catch (err) {
         console.error('Falha ao copiar o texto:', err);
-        alert('Erro ao copiar! Seu navegador pode não suportar esta função.');
+        toast.add({ title: 'Erro', description: 'Falha ao copiar o texto.', color: 'red' });
     }
 };
 
 /**
  * Retorna o ícone correto para a linha específica
  */
-const getCopyIcon = (rowId) => {
+const getCopyIcon = (rowId: string) => {
     return copyStates.value.get(rowId) || 'i-heroicons-clipboard-document';
 };
 
@@ -517,7 +535,7 @@ const opcoesUnicas = computed(() => {
 })
 
 const linhasFiltradas = computed(() => {
-  let lista = estoqueCompleto.value || []
+  let lista = (estoqueCompleto.value || []).filter((p: any) => p.ativo)
   const filtros = filtrosAtivos.value
   
   // Filtro de somente disponíveis
@@ -560,7 +578,6 @@ function abrirVenda(row: any) {
   modalVendaAberto.value = true
 }
 
-// NOVO: Função para abrir a foto ampliada
 function abrirFoto(url: string) {
     fotoAmpliadaUrl.value = url;
     modalFotoAberto.value = true;
@@ -583,9 +600,7 @@ watch(modalVendaAberto, (isOpen) => {
 })
 
 async function excluir(id: string) {
-  const confirma = confirm('⚠️ Tem certeza que deseja excluir esta peça?\n\nEla será marcada como inativa e não aparecerá mais na listagem.')
-  
-  if (!confirma) return
+  if (!confirm('⚠️ Tem certeza que deseja excluir esta peça?')) return
 
   try {
     await $fetch(`/api/pecas/${id}`, {
@@ -603,26 +618,91 @@ async function excluir(id: string) {
     
   } catch (error: any) {
     console.error('Erro ao excluir:', error)
-    
-    const mensagem = error?.data?.message || 'Não foi possível excluir a peça'
-    
     toast.add({ 
       title: 'Erro ao excluir', 
-      description: mensagem,
+      description: 'Não foi possível excluir a peça',
       color: 'red',
       timeout: 5000
     })
   }
 }
 
-function formatarPreco(row: any) { 
-  return formatarDinheiro(Number(row.preco)) 
+function formatarPreco(valor: any) {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(valor) || 0)
 }
 
-function formatarDinheiro(val: number) { 
-  return new Intl.NumberFormat('pt-BR', { 
-    style: 'currency', 
-    currency: 'BRL' 
-  }).format(val || 0) 
+// ==========================================================
+// 🚀 LÓGICA DE EXPORTAÇÃO PARA O SHOPPING (GOOGLE/FACEBOOK)
+// ==========================================================
+
+function escapeCSV(val: any) {
+  if (!val) return ''
+  // Remove tabulações e quebras de linha para não quebrar o formato TSV
+  let s = String(val).replace(/\t/g, ' ').replace(/\n/g, ' ')
+  return s
+}
+
+function exportarParaPlanilha() {
+  const data = linhasFiltradas.value
+  if (!data.length) {
+    toast.add({ title: 'Atenção', description: 'Nenhum item para exportar.', color: 'yellow' });
+    return;
+  }
+
+  // Cabeçalhos Oficiais do Feed Shopping
+  const headers = [
+    'id', 'title', 'description', 'price', 'availability', 'condition', 'link', 
+    'image_link', 'brand', 'google_product_category', 'fb_product_category', 
+    'quantity_to_sell_on_facebook'
+  ]
+
+  const rows = data.map((row: any) => {
+    // 1. Título Padrão: [PEÇA] [MODELO] [ANO] [LADO]
+    const titulo = `${row.nome || ''} ${row.modelo || ''} ${row.ano || ''} ${row.lado || ''}`
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toUpperCase()
+    
+    // 2. Descrição: Prioriza o novo campo 'descricao' do banco de dados
+    const descricao = row.descricao || titulo
+    
+    // 3. Preço: Formato numérico + Moeda (ex: 250.00 BRL)
+    const precoFormatado = `${Number(row.preco).toFixed(2)} BRL`
+    
+    // 4. Mapeamento de Condição para o padrão Google (new, used, refurbished)
+    let condicaoFeed = 'new' 
+    const est = (row.estado || '').toLowerCase()
+    if (est.includes('usado')) condicaoFeed = 'used'
+    if (est.includes('recondicionado')) condicaoFeed = 'refurbished'
+
+    // 5. Link do Produto (Usa o novo campo 'Link' do banco com L maiúsculo)
+    const linkFinal = row.Link || `https://elipecas.com/peca/${row.id}`
+
+    return [
+      escapeCSV(row.id),
+      escapeCSV(titulo),
+      escapeCSV(descricao),
+      escapeCSV(precoFormatado),
+      escapeCSV(row.quantidade > 0 ? 'in stock' : 'out of stock'),
+      escapeCSV(condicaoFeed),
+      escapeCSV(linkFinal),
+      escapeCSV(row.fotoUrl || ''),
+      escapeCSV('Original'), // Marca fixa como Original conforme solicitado
+      escapeCSV('Peças e acessórios para automóveis > Autopeças e acessórios'),
+      escapeCSV('1250'),
+      escapeCSV(row.quantidade)
+    ].join('\t') // Usamos TAB para evitar conflitos com vírgulas em descrições
+  })
+
+  // Montagem do conteúdo final
+  const content = [headers.join('\t'), ...rows].join('\n')
+  const blob = new Blob([content], { type: 'text/tab-separated-values;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `feed_elipecas_${new Date().toISOString().slice(0,10)}.csv`
+  link.click()
+  
+  toast.add({ title: 'Exportação Concluída', description: `${data.length} itens exportados para o Feed.`, color: 'blue' })
 }
 </script>

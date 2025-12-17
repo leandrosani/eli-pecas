@@ -57,6 +57,8 @@ model Peca {
   ano           String?
   estado        String
   detalhes      String?
+  descricao     String?                 @db.Text
+  Link          String?                 @db.Text
   preco         Decimal                 @db.Decimal(10, 2)
   quantidade    Int                     @default(1)
   fotoUrl       String?

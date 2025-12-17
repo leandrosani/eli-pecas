@@ -32,6 +32,8 @@ export default defineEventHandler(async (event) => {
         quantidade: quantidade,
         ativo: true,
         fotoUrl: body.fotoUrl || null, // ✅ INCLUSÃO DO CAMPO FOTOURL AQUI!
+        descricao: body.descricao || null,
+        Link: body.Link || null,
         
         // ⚠️ O bloco 'movimentacoes' cria o relacionamento circular que causa a falha de serialização
         movimentacoes: {
