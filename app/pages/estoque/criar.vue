@@ -306,6 +306,15 @@ const listaMontadorasCompleta = [
     ]
   },
   {
+    nome: 'FORD',
+    modelos: [
+      'KA', 'KA SEDAN', 'ECOSPORT',
+      'FIESTA', 'FOCUS',
+      'RANGER', 'F-1000',
+      'CORCEL', 'DEL REY', 'PAMPA'
+    ]
+  },
+  {
     nome: 'TOYOTA',
     modelos: [
       'COROLLA', 'HILUX', 'ETIOS', 'YARIS',
@@ -342,15 +351,6 @@ const listaMontadorasCompleta = [
       'CIVIC', 'CITY', 'FIT',
       'HR-V', 'WR-V', 'CR-V',
       'ACCORD'
-    ]
-  },
-  {
-    nome: 'FORD',
-    modelos: [
-      'KA', 'KA SEDAN', 'ECOSPORT',
-      'FIESTA', 'FOCUS',
-      'RANGER', 'F-1000',
-      'CORCEL', 'DEL REY'
     ]
   },
   {
