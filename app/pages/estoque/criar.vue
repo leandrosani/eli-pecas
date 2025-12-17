@@ -277,15 +277,115 @@ const listaCondicao = [
 
 // Mock de montadoras
 const listaMontadorasCompleta = [
-  { nome: 'VOLKSWAGEN', modelos: ['GOL', 'SAVEIRO', 'POLO', 'VIRTUS', 'JETTA', 'AMAROK', 'GOLF', 'FOX', 'T-CROSS', 'UP'] },
-  { nome: 'TOYOTA', modelos: ['COROLLA', 'HILUX', 'ETIOS', 'YARIS', 'SW4', 'COROLLA CROSS', 'CAMRY'] },
-  { nome: 'CHEVROLET', modelos: ['ONIX', 'PRISMA', 'S10', 'TRACKER', 'CRUZE', 'CELTA', 'CORSA', 'SPIN', 'MONTANA'] },
-  { nome: 'FIAT', modelos: ['UNO', 'STRADA', 'ARGO', 'TORO', 'MOBI', 'CRONOS', 'PALIO', 'SIENA', 'PUNTO'] },
-  { nome: 'FORD', modelos: ['KA', 'FIESTA', 'ECOSPORT', 'RANGER', 'FOCUS', 'FUSION'] },
-  { nome: 'HONDA', modelos: ['CIVIC', 'FIT', 'HR-V', 'CITY', 'WR-V', 'CR-V'] },
-  { nome: 'HYUNDAI', modelos: ['HB20', 'HB20S', 'CRETA', 'IX35', 'TUCSON', 'AZERA'] },
-  { nome: 'JEEP', modelos: ['RENEGADE', 'COMPASS', 'COMMANDER'] }
+  {
+    nome: 'FIAT',
+    modelos: [
+      'UNO', 'PALIO', 'STRADA', 'SIENA', 'ARGO', 'CRONOS', 'MOBI',
+      'TORO', 'FIORINO', 'DOBLÒ', 'IDEA', 'PUNTO',
+      'TEMPRA', 'MAREA', 'PREMIO', 'ELBA', '147'
+    ]
+  },
+  {
+    nome: 'VOLKSWAGEN',
+    modelos: [
+      'GOL', 'SAVEIRO', 'VOYAGE', 'POLO', 'VIRTUS',
+      'FOX', 'PARATI', 'GOLF', 'JETTA',
+      'T-CROSS', 'NIVUS', 'TAOS',
+      'AMAROK', 'KOMBI',
+      'SANTANA', 'PASSAT', 'FUSCA', 'BRASILIA', 'POLO SEDAN'
+    ]
+  },
+  {
+    nome: 'CHEVROLET',
+    modelos: [
+      'ONIX', 'PRISMA', 'CELTA', 'CORSA',
+      'CRUZE', 'TRACKER', 'SPIN',
+      'S10', 'MONTANA', 'BLAZER',
+      'VECTRA', 'OMEGA', 'KADETT',
+      'IPANEMA', 'CHEVETTE', 'OPALA'
+    ]
+  },
+  {
+    nome: 'TOYOTA',
+    modelos: [
+      'COROLLA', 'HILUX', 'ETIOS', 'YARIS',
+      'COROLLA CROSS', 'SW4',
+      'CAMRY', 'BANDEIRANTE'
+    ]
+  },
+  {
+    nome: 'HYUNDAI',
+    modelos: [
+      'HB20', 'HB20S', 'CRETA',
+      'TUCSON', 'IX35',
+      'SANTA FE', 'AZERA'
+    ]
+  },
+  {
+    nome: 'JEEP',
+    modelos: [
+      'RENEGADE', 'COMPASS', 'COMMANDER',
+      'CHEROKEE', 'WRANGLER'
+    ]
+  },
+  {
+    nome: 'RENAULT',
+    modelos: [
+      'SANDERO', 'LOGAN', 'KWID',
+      'DUSTER', 'CAPTUR',
+      'MEGANE', 'CLIO', 'SCENIC'
+    ]
+  },
+  {
+    nome: 'HONDA',
+    modelos: [
+      'CIVIC', 'CITY', 'FIT',
+      'HR-V', 'WR-V', 'CR-V',
+      'ACCORD'
+    ]
+  },
+  {
+    nome: 'FORD',
+    modelos: [
+      'KA', 'KA SEDAN', 'ECOSPORT',
+      'FIESTA', 'FOCUS',
+      'RANGER', 'F-1000',
+      'CORCEL', 'DEL REY'
+    ]
+  },
+  {
+    nome: 'NISSAN',
+    modelos: [
+      'KICKS', 'VERSA', 'SENTRA',
+      'MARCH', 'FRONTIER',
+      'ALTIMA'
+    ]
+  },
+  {
+    nome: 'PEUGEOT',
+    modelos: [
+      '208', '207', '206',
+      '2008', '3008',
+      '307', '308', '407'
+    ]
+  },
+  {
+    nome: 'CITROËN',
+    modelos: [
+      'C3', 'C4 CACTUS',
+      'C4', 'AIRCROSS',
+      'XSARA', 'PICASSO'
+    ]
+  },
+  {
+    nome: 'KIA',
+    modelos: [
+      'SPORTAGE', 'CERATO',
+      'SORENTO', 'PICANTO'
+    ]
+  }
 ];
+
 
 const listaMontadorasNomes = listaMontadorasCompleta.map(m => m.nome);
 

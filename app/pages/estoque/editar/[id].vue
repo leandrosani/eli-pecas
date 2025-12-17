@@ -312,7 +312,7 @@ const listaCondicao = [
 const listaMontadorasCompleta = [
   { nome: 'VOLKSWAGEN', modelos: ['GOL', 'PARATI', 'SAVEIRO', 'VOYAGE', 'FUSCA', 'BRASILIA', 'POLO', 'POLO SEDAN', 'GOLF', 'JETTA', 'PASSAT', 'SANTANA', 'VIRTUS', 'T-CROSS', 'TAOS', 'AMAROK', 'KOMBI'] },
   { nome: 'CHEVROLET', modelos: ['CHEVETTE', 'OPALA', 'OMEGA', 'KADETT', 'IPANEMA', 'CORSA', 'CELTA', 'PRISMA', 'ONIX', 'ONIX PLUS', 'CRUZE', 'VECTRA', 'MONTANA', 'S10', 'BLAZER', 'TRACKER', 'SPIN'] },
-  { nome: 'FIAT', modelos: ['147', 'UNO', 'PREMIO', 'ELBA', 'PALIO', 'SIENA', 'STRADA', 'DOBLÒ', 'PUNTO', 'ARGO', 'CRONOS', 'MOBI', 'TORO', 'IDEA', 'TEMPRA', 'MAREA', 'FIORINO'] },
+  { nome: 'FIAT', modelos: ['147', 'UNO', 'PREMIO', 'ELBA', 'PALIO', 'SIENA', 'STRADA', 'DOBLÒ', 'PUNTO', 'ARGO', 'CRONOS', 'MOBI', 'TORO', 'IDEA', 'TEMPRA', 'MAREA', 'FIORINO', 'MAREA'] },
   { nome: 'TOYOTA', modelos: ['COROLLA', 'HILUX', 'ETIOS', 'YARIS', 'SW4', 'COROLLA CROSS', 'CAMRY'] },
   { nome: 'HONDA', modelos: ['CIVIC', 'FIT', 'HR-V', 'CITY', 'WR-V', 'CR-V'] },
   { nome: 'HYUNDAI', modelos: ['HB20', 'HB20S', 'CRETA', 'IX35', 'TUCSON'] }
