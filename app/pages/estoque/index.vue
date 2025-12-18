@@ -114,8 +114,8 @@
                     <div class="flex flex-col gap-2">
                       <div 
                         v-if="row.fotoUrl"
-                        @click="abrirFoto(row.fotoUrl)"
-                        class="w-22 h-22 rounded-lg overflow-hidden border border-gray-300 shadow-sm flex items-center justify-center bg-gray-100 cursor-pointer hover:shadow-md transition-shadow active:scale-[0.98]"
+                        @click="abrirFoto(row)" 
+                        class="relative w-22 h-22 rounded-lg overflow-hidden border border-gray-300 shadow-sm flex items-center justify-center bg-gray-100 cursor-pointer hover:shadow-md transition-shadow active:scale-[0.98]"
                         title="Clique para ampliar"
                       >
                         <img 
@@ -124,6 +124,10 @@
                           class="w-full h-full object-cover"
                           @error="(e) => e.target.src = 'https://placehold.co/44x44/CCCCCC/333333?text=S%2F+FOTO'" 
                         />
+                        <!-- Indicador visual se houver mais fotos -->
+                        <div v-if="row.fotosExtras && row.fotosExtras.length > 0" class="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1.5 rounded-full font-bold">
+                          +{{ row.fotosExtras.length }}
+                        </div>
                       </div>
                       <div 
                         v-else
@@ -267,7 +271,7 @@
                 <!-- Foto Mobile com indicador de clique -->
                 <div 
                   v-if="row.fotoUrl"
-                  @click="abrirFoto(row.fotoUrl)"
+                  @click="abrirFoto(row)"
                   class="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-500 shadow-md shrink-0 cursor-pointer hover:scale-110 transition-transform active:scale-95"
                   title="Clique para ampliar"
                 >
@@ -280,6 +284,10 @@
                   <!-- Ícone de zoom sobre a foto -->
                   <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                     <UIcon name="i-heroicons-magnifying-glass-plus" class="w-5 h-5 text-white" />
+                  </div>
+                  <!-- Indicador de Galeria -->
+                  <div v-if="row.fotosExtras && row.fotosExtras.length > 0" class="absolute bottom-0 right-0 bg-black/70 text-white text-[9px] px-1 rounded-tl-md font-bold">
+                    +{{ row.fotosExtras.length }}
                   </div>
                 </div>
 
@@ -419,16 +427,15 @@
       </div>
     </div>
     
-    <!-- MODAL DE FOTO -->
+    <!-- ✅ MODAL DE FOTO (COM GALERIA) -->
     <ModalFoto 
         v-model="modalFotoAberto" 
         :foto-url="fotoAmpliadaUrl"
+        :fotos="listaFotosGaleria" 
     />
 
   </div>
 </template>
-
-
 
 <script setup lang="ts">
 import FiltroEstoqueMobille from '~/components/FiltroEstoqueMobille.vue'
@@ -437,35 +444,21 @@ import ModalVenda from '~/components/ModalVenda.vue'
 import ModalFoto from '~/components/ModalFoto.vue' 
 import { ref, computed, watch } from 'vue'
 
-// Estado reativo para controlar o ícone de feedback
 const copyStates = ref(new Map());
 
-/**
- * Função para copiar o texto para a área de transferência.
- * @param {string} text - O texto a ser copiado.
- * @param {string} rowId - O ID único da linha.
- */
 const copyToClipboard = async (text: string, rowId: string) => {
     try {
         await navigator.clipboard.writeText(text);
-
-        // Define o ícone de "copiado" apenas para esta linha
         copyStates.value.set(rowId, 'i-heroicons-check-circle-solid');
-
-        // Volta ao ícone padrão após 2 segundos
         setTimeout(() => {
             copyStates.value.set(rowId, 'i-heroicons-clipboard-document');
         }, 2000);
-
     } catch (err) {
         console.error('Falha ao copiar o texto:', err);
         toast.add({ title: 'Erro', description: 'Falha ao copiar o texto.', color: 'red' });
     }
 };
 
-/**
- * Retorna o ícone correto para a linha específica
- */
 const getCopyIcon = (rowId: string) => {
     return copyStates.value.get(rowId) || 'i-heroicons-clipboard-document';
 };
@@ -490,14 +483,35 @@ const filtrosAtivos = ref({
 
 const modalVendaAberto = ref(false)
 const pecaSelecionada = ref<any>(null)
-
-// NOVO ESTADO PARA VISUALIZAÇÃO DE FOTO
 const modalFotoAberto = ref(false) 
 const fotoAmpliadaUrl = ref<string | null>(null)
+// ✅ NOVO ESTADO PARA LISTA DE FOTOS
+const listaFotosGaleria = ref<string[]>([])
 
 const { data: estoqueCompleto, status, refresh } = await useFetch('/api/pecas', {
   lazy: true,
 })
+
+// ✅ FUNÇÃO ATUALIZADA PARA ABRIR GALERIA
+function abrirFoto(row: any) {
+    fotoAmpliadaUrl.value = row.fotoUrl;
+    
+    // Constrói a lista completa: Capa + Extras
+    let extras = row.fotosExtras || [];
+    // Proteção para caso venha como string do backend (JSON)
+    if (typeof extras === 'string') {
+        try { extras = JSON.parse(extras); } catch (e) { extras = []; }
+    }
+    
+    const galeria = [];
+    if (row.fotoUrl) galeria.push(row.fotoUrl);
+    if (Array.isArray(extras)) galeria.push(...extras);
+    
+    // Remove duplicatas e valores nulos
+    listaFotosGaleria.value = [...new Set(galeria)];
+    
+    modalFotoAberto.value = true;
+}
 
 const estadosValidos = [
   'NOVO', 'SEM-DETALHE', '1 GARRA RECUPERADA', 'DETALHE NA LENTE', 
@@ -538,12 +552,10 @@ const linhasFiltradas = computed(() => {
   let lista = (estoqueCompleto.value || []).filter((p: any) => p.ativo)
   const filtros = filtrosAtivos.value
   
-  // Filtro de somente disponíveis
   if (filtros.somenteDisponiveis) {
     lista = lista.filter((row: any) => row.quantidade > 0)
   }
   
-  // Filtro de busca
   if (filtros.busca) {
     const buscaLower = filtros.busca.toLowerCase()
     lista = lista.filter((row: any) => {
@@ -561,7 +573,6 @@ const linhasFiltradas = computed(() => {
     })
   }
 
-  // Filtros específicos
   if (filtros.modelo) lista = lista.filter((row: any) => row.modelo === filtros.modelo)
   if (filtros.peca) lista = lista.filter((row: any) => row.nome === filtros.peca) 
   if (filtros.lado) lista = lista.filter((row: any) => row.lado === filtros.lado)
@@ -576,11 +587,6 @@ const linhasFiltradas = computed(() => {
 function abrirVenda(row: any) {
   pecaSelecionada.value = { ...row }
   modalVendaAberto.value = true
-}
-
-function abrirFoto(url: string) {
-    fotoAmpliadaUrl.value = url;
-    modalFotoAberto.value = true;
 }
 
 async function handleVendaConfirmada() {
@@ -637,7 +643,6 @@ function formatarPreco(valor: any) {
 
 function escapeCSV(val: any) {
   if (!val) return ''
-  // Remove tabulações e quebras de linha para não quebrar o formato TSV
   let s = String(val).replace(/\t/g, ' ').replace(/\n/g, ' ')
   return s
 }
@@ -649,34 +654,45 @@ function exportarParaPlanilha() {
     return;
   }
 
-  // Cabeçalhos Oficiais do Feed Shopping
+  // Cabeçalhos Oficiais do Feed Shopping (Atualizado com additional_image_link)
   const headers = [
     'id', 'title', 'description', 'price', 'availability', 'condition', 'link', 
-    'image_link', 'brand', 'google_product_category', 'fb_product_category', 
+    'image_link', 'additional_image_link', 'brand', 'google_product_category', 'fb_product_category', 
     'quantity_to_sell_on_facebook'
   ]
 
   const rows = data.map((row: any) => {
-    // 1. Título Padrão: [PEÇA] [MODELO] [ANO] [LADO]
+    // 1. Título Padrão
     const titulo = `${row.nome || ''} ${row.modelo || ''} ${row.ano || ''} ${row.lado || ''}`
         .replace(/\s+/g, ' ')
         .trim()
         .toUpperCase()
     
-    // 2. Descrição: Prioriza o novo campo 'descricao' do banco de dados
+    // 2. Descrição
     const descricao = row.descricao || titulo
     
-    // 3. Preço: Formato numérico + Moeda (ex: 250.00 BRL)
+    // 3. Preço
     const precoFormatado = `${Number(row.preco).toFixed(2)} BRL`
     
-    // 4. Mapeamento de Condição para o padrão Google (new, used, refurbished)
+    // 4. Condição
     let condicaoFeed = 'new' 
     const est = (row.estado || '').toLowerCase()
     if (est.includes('usado')) condicaoFeed = 'used'
     if (est.includes('recondicionado')) condicaoFeed = 'refurbished'
 
-    // 5. Link do Produto (Usa o novo campo 'Link' do banco com L maiúsculo)
+    // 5. Link
     const linkFinal = row.Link || `https://elipecas.com/peca/${row.id}`
+
+    // 6. Imagens Extras (Parsing Seguro)
+    let extraImages = [];
+    if (Array.isArray(row.fotosExtras)) {
+        extraImages = row.fotosExtras;
+    } else if (typeof row.fotosExtras === 'string' && row.fotosExtras.trim().startsWith('[')) {
+        try {
+            extraImages = JSON.parse(row.fotosExtras);
+        } catch (e) { console.error('Erro no parse de fotosExtras', e); }
+    }
+    const additionalImagesStr = extraImages.join(',');
 
     return [
       escapeCSV(row.id),
@@ -687,14 +703,14 @@ function exportarParaPlanilha() {
       escapeCSV(condicaoFeed),
       escapeCSV(linkFinal),
       escapeCSV(row.fotoUrl || ''),
-      escapeCSV('Original'), // Marca fixa como Original conforme solicitado
+      escapeCSV(additionalImagesStr), // Coluna de imagens extras
+      escapeCSV('Original'),
       escapeCSV('Peças e acessórios para automóveis > Autopeças e acessórios'),
-      escapeCSV('1250'),
+      escapeCSV('Peças e acessórios para automóveis > Autopeças e acessórios'), // Categoria FB Corrigida
       escapeCSV(row.quantidade)
-    ].join('\t') // Usamos TAB para evitar conflitos com vírgulas em descrições
+    ].join('\t')
   })
 
-  // Montagem do conteúdo final
   const content = [headers.join('\t'), ...rows].join('\n')
   const blob = new Blob([content], { type: 'text/tab-separated-values;charset=utf-8;' })
   const url = URL.createObjectURL(blob)

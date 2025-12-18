@@ -24,8 +24,8 @@
           <span class="hidden sm:inline">Voltar</span>
         </UButton>
 
-        <h1 class="mr-2 hidden md:block text-2xl font-bold text-gray-900 tracking-tight"><span class="text-3xl">✏️ </span>Editar Peça</h1>
         <h1 class="font-semibold md:hidden text-xl text-black"><span class="text-2xl">✏️ </span>Editar Peça</h1>
+        <h1 class="mr-2 hidden md:block text-2xl font-bold text-gray-900 tracking-tight"><span class="text-3xl">✏️ </span>Editar Peça</h1>
       </div>
 
       <div class="mb-6 mt-3 border border-gray-200 shadow-sm w-full"></div>
@@ -47,11 +47,11 @@
         <!-- CORPO DO FORMULÁRIO -->
         <div class="p-4 md:p-6 space-y-5 md:space-y-6">
           
-          <!-- ✨ ÁREA DE DRAG & DROP PROFISSIONAL -->
+          <!-- ✨ UPLOAD DE FOTOS COM DRAG & DROP (ATÉ 6) -->
           <div class="space-y-3 border-b-2 pb-5 border-gray-100">
             <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
               <UIcon name="i-heroicons-photo" class="w-4 h-4 text-blue-600" />
-              Foto da Peça (Capa)
+              Fotos da Peça (até 6)
             </label>
             
             <div 
@@ -60,67 +60,89 @@
               @drop.prevent="handleDrop"
               @click="triggerFileInput"
               :class="[
-                'relative border-2 border-dashed rounded-xl transition-all cursor-pointer overflow-hidden',
+                'relative border-2 border-dashed rounded-xl transition-all cursor-pointer overflow-hidden min-h-[180px] md:min-h-[200px] flex items-center justify-center',
                 isDragging ? 'border-blue-500 bg-blue-50 scale-[1.02]' : 'border-gray-300 hover:border-gray-400 bg-gray-50',
-                uploading || saving ? 'pointer-events-none opacity-60' : ''
+                'bg-gray-50'
               ]"
-              class="min-h-[180px] md:min-h-[200px] flex items-center justify-center"
             >
-              <!-- INPUT OCULTO -->
               <input 
                 ref="fileInput"
                 type="file" 
+                multiple
                 @change="handleFileUpload"
-                :disabled="saving || uploading"
+                :disabled="uploading"
                 accept="image/*"
                 class="hidden"
               />
 
-              <!-- ESTADO: SEM FOTO -->
-              <div v-if="!form.fotoUrl && !uploading" class="text-center p-6">
-                <div :class="['w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 rounded-full flex items-center justify-center transition-all', isDragging ? 'bg-blue-100 scale-110' : 'bg-gray-200']">
-                  <UIcon :name="isDragging ? 'i-heroicons-arrow-down-tray' : 'i-heroicons-photo'" :class="['transition-all', isDragging ? 'w-10 h-10 text-blue-600 animate-bounce' : 'w-8 h-8 md:w-10 md:h-10 text-gray-500']" />
+              <!-- ESTADO: SEM FOTOS -->
+              <div v-if="!previews.length" class="text-center p-6">
+                <div :class="['w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-all', isDragging ? 'bg-blue-100 scale-110' : 'bg-gray-200']">
+                  <UIcon :name="isDragging ? 'i-heroicons-arrow-down-tray' : 'i-heroicons-photo'" :class="['transition-all', isDragging ? 'w-10 text-blue-600 animate-bounce' : 'w-8 text-gray-500']" />
                 </div>
-                <p :class="['font-bold mb-1 transition-colors', isDragging ? 'text-blue-600 text-lg' : 'text-gray-700 text-sm md:text-base']">
-                  {{ isDragging ? '📂 Solte a foto aqui!' : '📸 Arraste uma foto ou clique para selecionar' }}
+                <p :class="['font-bold mb-1 transition-colors', isDragging ? 'text-blue-600 text-lg' : 'text-gray-700 text-sm']">
+                  {{ isDragging ? '📂 Solte as fotos aqui!' : '📸 Arraste fotos ou clique para selecionar' }}
                 </p>
-                <p class="text-xs md:text-sm text-gray-500 mt-2">Formatos aceitos: JPG, PNG, WEBP (máx. 10MB)</p>
+                <p class="text-xs text-gray-500 mt-2">Formatos aceitos: JPG, PNG, WEBP (máx. 10MB) — até 6 fotos</p>
               </div>
 
-              <!-- ESTADO: ENVIANDO -->
-              <div v-else-if="uploading" class="text-center p-6">
-                <div class="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center animate-pulse">
-                  <UIcon name="i-heroicons-arrow-path" class="w-10 h-10 text-blue-600 animate-spin" />
-                </div>
-                <p class="font-bold text-blue-600 text-sm md:text-base mb-1">Enviando para a nuvem...</p>
-                <p class="text-xs text-gray-500">Aguarde alguns instantes</p>
-              </div>
+              <!-- ESTADO: FOTOS CARREGADAS (PREVIEWS) -->
+              <div v-else class="w-full p-4">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div
+                    v-for="(foto, index) in previews"
+                    :key="index"
+                    class="relative group rounded-xl overflow-hidden border border-gray-200"
+                  >
+                    <img :src="foto" alt="Preview" class="w-full h-32 md:h-40 object-cover" />
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <button
+                        type="button"
+                        @click.stop="removerFoto(index)"
+                        class="px-3 py-1 bg-red-600 text-white rounded-lg text-xs font-semibold flex items-center gap-1 shadow-lg active:scale-95"
+                      >
+                        <UIcon name="i-heroicons-trash" class="w-4 h-4" /> Remover
+                      </button>
+                    </div>
+                    <div
+                      v-if="index === 0"
+                      class="absolute top-2 left-2 bg-green-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1 shadow"
+                    >
+                      <UIcon name="i-heroicons-star" class="w-3 h-3" /> Capa
+                    </div>
+                  </div>
 
-              <!-- ESTADO: FOTO CARREGADA -->
-              <div v-else-if="form.fotoUrl" class="relative w-full h-full min-h-[180px] md:min-h-[200px] group">
-                <img :src="form.fotoUrl" alt="Preview da foto" class="w-full h-full object-cover" />
-                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                  <button type="button" @click.stop="triggerFileInput" class="px-4 py-2 bg-white text-gray-900 rounded-lg font-semibold text-sm flex items-center gap-2 hover:bg-gray-100 transition-all shadow-lg active:scale-95">
-                    <UIcon name="i-heroicons-arrow-path" class="w-4 h-4" /> Trocar
-                  </button>
-                  <button type="button" @click.stop="removerFoto" class="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold text-sm flex items-center gap-2 hover:bg-red-700 transition-all shadow-lg active:scale-95">
-                    <UIcon name="i-heroicons-trash" class="w-4 h-4" /> Remover
-                  </button>
-                </div>
-                <div class="absolute top-3 left-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-lg">
-                  <UIcon name="i-heroicons-check-circle" class="w-4 h-4" /> Foto carregada
+                  <!-- CARD PARA ADICIONAR MAIS FOTOS -->
+                  <div
+                    v-if="previews.length < 6"
+                    @click.stop="triggerFileInput"
+                    class="border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors h-32 md:h-40"
+                  >
+                    <div class="text-center p-4">
+                      <UIcon name="i-heroicons-plus-circle" class="w-8 h-8 text-gray-500 mx-auto mb-1" />
+                      <p class="text-xs font-semibold text-gray-600">Adicionar</p>
+                      <p class="text-[10px] text-gray-400">{{ 6 - previews.length }} restantes</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+            
+            <!-- Barra de progresso de upload -->
+            <div v-if="uploading" class="w-full bg-gray-200 rounded-full h-2.5 mt-2 overflow-hidden">
+               <div class="bg-blue-600 h-2.5 rounded-full animate-pulse w-full"></div>
+            </div>
+            <p v-if="uploading" class="text-xs text-center text-blue-600 font-bold mt-1">Enviando fotos para a nuvem...</p>
 
+          </div>
+          
           <!-- Linha 1: Nome e Lado -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
             <div class="space-y-2">
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
                 <UIcon name="i-heroicons-tag" class="w-4 h-4 text-gray-600" /> Nome da Peça *
               </label>
-              <UInput v-model="form.nome" @input="form.nome = form.nome.toUpperCase()" size="lg" placeholder="Ex: FAROL GOL" class="w-full" :ui="{ base: 'h-12 border-2 border-gray-300 rounded-xl font-medium text-gray-900 uppercase' }" />
+              <UInput v-model="form.nome" @input="form.nome = form.nome.toUpperCase()" size="lg" placeholder="EX: FAROL GOL" class="w-full" :ui="{ base: 'h-12 border-2 border-gray-300 rounded-xl font-medium text-gray-900 uppercase' }" />
             </div>
 
             <div class="space-y-2">
@@ -149,7 +171,7 @@
               <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
                 <UIcon name="i-heroicons-wrench-screwdriver" class="w-4 h-4 text-gray-600" /> Modelo
               </label>
-              <select v-model="form.modelo" :disabled="!form.montadora || modelosFiltrados.length === 0" class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-gray-600 px-4 disabled:bg-gray-100 uppercase">
+              <select v-model="form.modelo" :disabled="!form.montadora" class="w-full h-12 appearance-none bg-white border-2 border-gray-300 text-gray-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-gray-600 px-4 disabled:bg-gray-100 uppercase">
                 <option value="">SELECIONE O MODELO</option>
                 <option v-for="modelo in modelosFiltrados" :key="modelo" :value="modelo">{{ modelo }}</option>
               </select>
@@ -205,10 +227,10 @@
                   Link do Produto (Loja/Catálogo)
                 </label>
                 <UInput 
-                  v-model="form.Link"
-                  placeholder="https://..."
-                  size="lg"
-                  :ui="{ base: 'h-12 focus:ring-2 focus:ring-blue-500 border-2 border-blue-200 rounded-xl font-medium text-gray-900' }"
+                  v-model="form.Link" 
+                  placeholder="https://..." 
+                  size="lg" 
+                  :ui="{ base: 'h-12 focus:ring-2 focus:ring-blue-500 border-2 border-blue-200 rounded-xl font-medium text-gray-900' }" 
                 />
               </div>
 
@@ -242,11 +264,10 @@
 
             </div>
 
-            <!-- DESCRIÇÃO (SOZINHA, IGUAL AO TEMPLATE 1) -->
+            <!-- DESCRIÇÃO -->
             <div class="space-y-2 flex flex-col">
               <label class="text-xs md:text-sm font-bold text-blue-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-document-text" class="w-4 h-4" />
-                Descrição Completa (Obrigatório para o Google/Facebook)
+                <UIcon name="i-heroicons-document-text" class="w-4 h-4" /> Descrição Completa (Obrigatório para o Google/Facebook)
               </label>
               <textarea 
                 v-model="form.descricao" 
@@ -268,7 +289,7 @@
       <div class="flex flex-col md:flex-row-reverse gap-3 pt-2 md:pt-4">
         <UButton type="submit" size="lg" :loading="saving || uploading" :disabled="saving || uploading" class="w-full md:w-auto flex items-center bg-gray-600 hover:bg-gray-800 text-white shadow-lg transition-all font-bold rounded-xl px-8 justify-center">
           <UIcon v-if="!saving && !uploading" name="i-heroicons-check-circle" class="w-5 h-5" />
-          {{ saving ? 'Salvando...' : uploading ? 'Enviando Foto...' : 'Salvar Alterações' }}
+          {{ saving ? 'Salvando...' : uploading ? 'Enviando Fotos...' : 'Salvar Alterações' }}
         </UButton>
 
         <UButton to="/estoque" variant="ghost" color="gray" size="lg" class="w-full md:w-auto flex justify-center font-bold rounded-xl border-2 border-transparent hover:bg-red-50 hover:text-red-600 transition-all">
@@ -281,8 +302,8 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, watch, nextTick, watchEffect } from 'vue';
-import { useRouter } from 'vue-router';
+import { reactive, ref, computed, watch, watchEffect } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
 definePageMeta({ layout: 'default' })
 const route = useRoute()
@@ -291,135 +312,53 @@ const id = route.params.id
 const saving = ref(false)
 const uploading = ref(false)
 const isDragging = ref(false)
-const uploadError = ref('')
 const fileInput = ref<HTMLInputElement | null>(null)
 const toast = useToast()
 
-const CLOUD_NAME = 'dhlllqld0'; 
-const UPLOAD_PRESET = 'Eli pecas'; 
+// ✅ CONFIGURAÇÕES CLOUDINARY
+const CLOUD_NAME = 'dhlllqld0'
+const UPLOAD_PRESET = 'Eli pecas'
 
-const listaLados = ["LADO DIREITO", "LADO ESQUERDO", "DIANTEIRO", "TRASEIRO", "DIANTEIRO DIREITO", "TRASEIRO ESQUERDO"]
+const listaLados = [
+  'LADO DIREITO',
+  'LADO ESQUERDO',
+  'DIANTEIRO',
+  'TRASEIRO',
+  'DIANTEIRO DIREITO',
+  'TRASEIRO ESQUERDO',
+  'PAR'
+]
 
-// ✅ NOVA LISTA DE CONDIÇÕES
 const listaCondicao = [
-  "Novo",
-  "Recondicionado",
-  "Usado (estado de novo)",
-  "Usado (boas condições)",
-  "Usado (condições razoáveis)"
+  'Novo',
+  'Recondicionado',
+  'Usado (estado de novo)',
+  'Usado (boas condições)',
+  'Usado (condições razoáveis)'
 ]
 
 const listaMontadorasCompleta = [
-  {
-    nome: 'FIAT',
-    modelos: [
-      'UNO', 'PALIO', 'STRADA', 'SIENA', 'ARGO', 'CRONOS', 'MOBI',
-      'TORO', 'FIORINO', 'DOBLÒ', 'IDEA', 'PUNTO',
-      'TEMPRA', 'MAREA', 'PREMIO', 'ELBA', '147'
-    ]
-  },
-  {
-    nome: 'VOLKSWAGEN',
-    modelos: [
-      'GOL', 'SAVEIRO', 'VOYAGE', 'POLO', 'VIRTUS',
-      'FOX', 'PARATI', 'GOLF', 'JETTA',
-      'T-CROSS', 'NIVUS', 'TAOS',
-      'AMAROK', 'KOMBI',
-      'SANTANA', 'PASSAT', 'FUSCA', 'BRASILIA', 'POLO SEDAN'
-    ]
-  },
-  {
-    nome: 'CHEVROLET',
-    modelos: [
-      'ONIX', 'PRISMA', 'CELTA', 'CORSA',
-      'CRUZE', 'TRACKER', 'SPIN',
-      'S10', 'MONTANA', 'BLAZER',
-      'VECTRA', 'OMEGA', 'KADETT',
-      'IPANEMA', 'CHEVETTE', 'OPALA'
-    ]
-  },
-  {
-    nome: 'FORD',
-    modelos: [
-      'KA', 'KA SEDAN', 'ECOSPORT',
-      'FIESTA', 'FOCUS',
-      'RANGER', 'F-1000',
-      'CORCEL', 'DEL REY', 'PAMPA'
-    ]
-  },
-  {
-    nome: 'TOYOTA',
-    modelos: [
-      'COROLLA', 'HILUX', 'ETIOS', 'YARIS',
-      'COROLLA CROSS', 'SW4',
-      'CAMRY', 'BANDEIRANTE'
-    ]
-  },
-  {
-    nome: 'HYUNDAI',
-    modelos: [
-      'HB20', 'HB20S', 'CRETA',
-      'TUCSON', 'IX35',
-      'SANTA FE', 'AZERA'
-    ]
-  },
-  {
-    nome: 'JEEP',
-    modelos: [
-      'RENEGADE', 'COMPASS', 'COMMANDER',
-      'CHEROKEE', 'WRANGLER'
-    ]
-  },
-  {
-    nome: 'RENAULT',
-    modelos: [
-      'SANDERO', 'LOGAN', 'KWID',
-      'DUSTER', 'CAPTUR',
-      'MEGANE', 'CLIO', 'SCENIC'
-    ]
-  },
-  {
-    nome: 'HONDA',
-    modelos: [
-      'CIVIC', 'CITY', 'FIT',
-      'HR-V', 'WR-V', 'CR-V',
-      'ACCORD'
-    ]
-  },
-  {
-    nome: 'NISSAN',
-    modelos: [
-      'KICKS', 'VERSA', 'SENTRA',
-      'MARCH', 'FRONTIER',
-      'ALTIMA'
-    ]
-  },
-  {
-    nome: 'PEUGEOT',
-    modelos: [
-      '208', '207', '206',
-      '2008', '3008',
-      '307', '308', '407'
-    ]
-  },
-  {
-    nome: 'CITROËN',
-    modelos: [
-      'C3', 'C4 CACTUS',
-      'C4', 'AIRCROSS',
-      'XSARA', 'PICASSO'
-    ]
-  },
-  {
-    nome: 'KIA',
-    modelos: [
-      'SPORTAGE', 'CERATO',
-      'SORENTO', 'PICANTO'
-    ]
-  }
-];
+  { nome: 'FIAT', modelos: ['UNO', 'PALIO', 'STRADA', 'SIENA', 'ARGO', 'CRONOS', 'MOBI', 'TORO', 'FIORINO', 'DOBLÒ', 'IDEA', 'PUNTO', 'TEMPRA', 'MAREA', 'PREMIO', 'ELBA', '147'] },
+  { nome: 'VOLKSWAGEN', modelos: ['GOL', 'SAVEIRO', 'VOYAGE', 'POLO', 'VIRTUS', 'FOX', 'PARATI', 'GOLF', 'JETTA', 'T-CROSS', 'NIVUS', 'TAOS', 'AMAROK', 'KOMBI', 'SANTANA', 'PASSAT', 'FUSCA', 'BRASILIA', 'POLO SEDAN'] },
+  { nome: 'CHEVROLET', modelos: ['ONIX', 'PRISMA', 'CELTA', 'CORSA', 'CRUZE', 'TRACKER', 'SPIN', 'S10', 'MONTANA', 'BLAZER', 'VECTRA', 'OMEGA', 'KADETT', 'IPANEMA', 'CHEVETTE', 'OPALA'] },
+  { nome: 'FORD', modelos: ['KA', 'KA SEDAN', 'ECOSPORT', 'FIESTA', 'FOCUS', 'RANGER', 'F-1000', 'CORCEL', 'DEL REY', 'PAMPA'] },
+  { nome: 'TOYOTA', modelos: ['COROLLA', 'HILUX', 'ETIOS', 'YARIS', 'COROLLA CROSS', 'SW4', 'CAMRY', 'BANDEIRANTE'] },
+  { nome: 'HYUNDAI', modelos: ['HB20', 'HB20S', 'CRETA', 'TUCSON', 'IX35', 'SANTA FE', 'AZERA'] },
+  { nome: 'JEEP', modelos: ['RENEGADE', 'COMPASS', 'COMMANDER', 'CHEROKEE', 'WRANGLER'] },
+  { nome: 'RENAULT', modelos: ['SANDERO', 'LOGAN', 'KWID', 'DUSTER', 'CAPTUR', 'MEGANE', 'CLIO', 'SCENIC'] },
+  { nome: 'HONDA', modelos: ['CIVIC', 'CITY', 'FIT', 'HR-V', 'WR-V', 'CR-V', 'ACCORD'] },
+  { nome: 'NISSAN', modelos: ['KICKS', 'VERSA', 'SENTRA', 'MARCH', 'FRONTIER', 'ALTIMA'] },
+  { nome: 'PEUGEOT', modelos: ['208', '207', '206', '2008', '3008', '307', '308', '407'] },
+  { nome: 'CITROËN', modelos: ['C3', 'C4 CACTUS', 'C4', 'AIRCROSS', 'XSARA', 'PICASSO'] },
+  { nome: 'KIA', modelos: ['SPORTAGE', 'CERATO', 'SORENTO', 'PICANTO'] }
+]
 
-const listaMontadorasNomes = listaMontadorasCompleta.map(m => m.nome);
+const listaMontadorasNomes = listaMontadorasCompleta.map(m => m.nome)
+
+// Estados para controle de arquivos
+const previews = ref<string[]>([]) // URLs para mostrar na tela (mistura de blob: e http:)
+const arquivosParaUpload = ref<{file: File, id: string}[]>([]) // Novos arquivos (blob)
+const fotosParaRemover = ref<string[]>([]) // URLs antigas para deletar do Cloud
 
 const form = reactive({
   nome: '', 
@@ -427,14 +366,13 @@ const form = reactive({
   modelo: '', 
   montadora: '',
   ano: '', 
-  preco: undefined, 
+  preco: undefined as number | undefined, 
   quantidade: 1, 
   estado: '', 
   localizacao: '' as string,
   detalhes: '',
-  fotoUrl: null as string | null,
-  descricao: '', // ✅ NOVO
-  Link: ''      // ✅ NOVO (L Maiúsculo)
+  descricao: '',
+  Link: ''
 })
 
 const { data, status } = await useFetch(`/api/pecas/${id}`, { key: `edit-${id}` })
@@ -448,7 +386,7 @@ const modelosFiltrados = computed(() => {
 watchEffect(() => {
   if (data.value) {
     const p: any = data.value
-    let mFound = listaMontadorasCompleta.find(m => m.modelos.includes(p.modelo))?.nome || ''
+    let mFound = listaMontadorasCompleta.find(m => m.modelos.includes(p.modelo))?.nome || p.marca || ''
 
     form.nome = p.nome || ''
     form.lado = p.lado || 'LADO DIREITO' 
@@ -460,95 +398,169 @@ watchEffect(() => {
     form.estado = p.estado || 'Usado (boas condições)' 
     form.localizacao = p.localizacao || ''
     form.detalhes = p.detalhes || ''
-    form.fotoUrl = p.fotoUrl || null
-    form.descricao = p.descricao || '' // ✅ CARREGA DO BD
-    form.Link = p.Link || ''           // ✅ CARREGA DO BD
+    form.descricao = p.descricao || ''
+    form.Link = p.Link || ''
+    
+    // ✅ CARREGA FOTOS DO BANCO
+    let fotosDoBanco = []
+    if (Array.isArray(p.fotosExtras)) {
+        fotosDoBanco = [...p.fotosExtras]
+    } else if (typeof p.fotosExtras === 'string') {
+        try { fotosDoBanco = JSON.parse(p.fotosExtras) } catch(e) { fotosDoBanco = [] }
+    }
+
+    // Se houver foto principal e ela não estiver nos extras, adiciona no início
+    if (p.fotoUrl && !fotosDoBanco.includes(p.fotoUrl)) {
+        fotosDoBanco.unshift(p.fotoUrl)
+    }
+    
+    // Inicializa previews com as fotos existentes
+    previews.value = fotosDoBanco
   }
 })
 
-watch(() => form.montadora, (newVal, oldVal) => { if (newVal !== oldVal) form.modelo = '' })
+watch(() => form.montadora, (newVal, oldVal) => { 
+  if (newVal !== oldVal) form.modelo = '' 
+})
 
-// HANDLERS DRAG & DROP
+// ✅ HANDLERS DRAG & DROP
 function handleDragOver(e: DragEvent) { e.preventDefault(); isDragging.value = true }
 function handleDragLeave(e: DragEvent) { e.preventDefault(); isDragging.value = false }
-function handleDrop(e: DragEvent) {
-  e.preventDefault(); isDragging.value = false
-  if (e.dataTransfer?.files?.length) processFile(e.dataTransfer.files[0])
-}
-function triggerFileInput() { if (!uploading.value && !saving.value) fileInput.value?.click() }
-function handleFileUpload(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (file) processFile(file)
-}
-function removerFoto() { form.fotoUrl = null; if (fileInput.value) fileInput.value.value = '' }
+function handleDrop(e: DragEvent) { e.preventDefault(); isDragging.value = false; if (e.dataTransfer?.files?.length) processFiles(e.dataTransfer.files) }
+function triggerFileInput() { if (!uploading.value) fileInput.value?.click() }
+function handleFileUpload(e: Event) { const files = (e.target as HTMLInputElement).files; if (files?.length) processFiles(files) }
 
-async function processFile(file: File) {
-  if (uploading.value || saving.value) return
-  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-    toast.add({ title: 'Erro', description: 'Formato inválido.', color: 'red' }); return
-  }
-  uploading.value = true;
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', UPLOAD_PRESET);
-  try {
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
-    const data = await res.json();
-    form.fotoUrl = data.secure_url;
-    toast.add({ title: 'Sucesso', description: 'Foto carregada!', color: 'green' })
-  } catch (e) {
-    toast.add({ title: 'Erro', description: 'Falha no upload.', color: 'red' })
-  } finally { uploading.value = false }
-}
-
-// FORMATADORES
-function formatarCodigo(value: string) {
-  if (!value) {
-    form.localizacao = ''
+async function processFiles(fileList: FileList) {
+  const files = Array.from(fileList)
+  const disponiveis = 6 - previews.value.length
+  
+  if (disponiveis <= 0) {
+    toast.add({ title: 'Limite atingido', description: 'Máximo de 6 fotos.', color: 'red' })
     return
   }
 
-  // remove tudo que não for letra ou número
-  let v = value.toUpperCase().replace(/[^A-Z0-9]/g, '')
+  const selecionados = files.slice(0, disponiveis)
+  
+  for (const file of selecionados) {
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        toast.add({ title: 'Erro', description: 'Formato inválido.', color: 'red' }); continue
+      }
+      
+      // ✅ CRIA PREVIEW LOCAL INSTANTÂNEO
+      const blobUrl = URL.createObjectURL(file)
+      previews.value.push(blobUrl)
+      arquivosParaUpload.value.push({ file, id: blobUrl })
+  }
+}
 
-  // máximo: A010406 → 7 caracteres úteis
-  v = v.slice(0, 7)
+// ✅ REMOVER FOTO (Lógica Híbrida)
+function removerFoto(index: number) {
+  const urlParaRemover = previews.value[index]
+  previews.value.splice(index, 1)
 
-  let f = ''
+  if (urlParaRemover.startsWith('blob:')) {
+    // É uma foto nova que ainda não subiu
+    URL.revokeObjectURL(urlParaRemover)
+    const idxUpload = arquivosParaUpload.value.findIndex(item => item.id === urlParaRemover)
+    if (idxUpload !== -1) arquivosParaUpload.value.splice(idxUpload, 1)
+  } else {
+    // É uma foto antiga do Cloudinary -> Marca para deletar no backend
+    fotosParaRemover.value.push(urlParaRemover)
+  }
+}
 
-  if (v.length >= 1) f += v.substring(0, 1)
+// ✅ FUNÇÃO UPLOAD (Chamada apenas no Salvar)
+async function uploadFotoParaCloudinary(file: File): Promise<string | null> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+    try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+        const data = await res.json();
+        return data.secure_url || null;
+    } catch (e) {
+        console.error('Erro upload', e)
+        return null;
+    }
+}
+
+function formatarCodigo(value: string) {
+  if (!value) { form.localizacao = ''; return }
+  let v = value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 7)
+  let f = v.length >= 1 ? v.substring(0, 1) : ''
   if (v.length >= 2) f += '-' + v.substring(1, 3)
   if (v.length >= 4) f += '-' + v.substring(3, 5)
   if (v.length >= 6) f += '-' + v.substring(5, 7)
-
   form.localizacao = f
 }
-
 function formatarAno(e: any) {
-  let v = e.target.value.replace(/\D/g, '');
-  if (v.length > 4) v = v.slice(0, 4) + '/' + v.slice(4, 8);
-  form.ano = v;
+  let v = e.target.value.replace(/\D/g, '')
+  if (v.length > 4) v = v.slice(0, 4) + '/' + v.slice(4, 8)
+  form.ano = v
 }
 
 async function salvar() {
   if (!form.nome || !form.preco || !form.montadora || !form.modelo) {
     toast.add({ title: 'Atenção', description: 'Preencha os campos obrigatórios.', color: 'red' }); return
   }
+
   saving.value = true
   try {
+    // 1. FAZ O UPLOAD DAS FOTOS NOVAS
+    let novasUrls = []
+    if (arquivosParaUpload.value.length > 0) {
+        uploading.value = true
+        const promises = arquivosParaUpload.value.map(item => uploadFotoParaCloudinary(item.file))
+        novasUrls = (await Promise.all(promises)).filter(url => url !== null)
+        uploading.value = false
+    }
+
+    // 2. RECONSTRÓI O ARRAY FINAL DE FOTOS (Mantendo a ordem visual)
+    const fotosFinais: string[] = []
+    let contadorNovas = 0
+
+    for (const p of previews.value) {
+      if (p.startsWith('blob:')) {
+        if (novasUrls[contadorNovas]) {
+          fotosFinais.push(novasUrls[contadorNovas])
+          contadorNovas++
+        }
+      } else {
+        fotosFinais.push(p) // Mantém as URLs antigas que não foram deletadas
+      }
+    }
+
     const payload = {
       ...form,
       nome: form.nome.toUpperCase(),
-      detalhes: form.detalhes.toUpperCase() || null,
-      localizacao: form.localizacao.toUpperCase() || null,
-      descricao: form.descricao || null, // ✅ ENVIA PRO BACKEND
-      Link: form.Link || null                         // ✅ ENVIA PRO BACKEND (L Maiúsculo)
+      marca: form.montadora.toUpperCase(),
+      lado: form.lado.toUpperCase(),
+      modelo: form.modelo.toUpperCase(),
+      detalhes: form.detalhes ? form.detalhes.toUpperCase() : null,
+      localizacao: form.localizacao ? form.localizacao.toUpperCase() : null,
+      descricao: form.descricao || null,
+      Link: form.Link || null,
+      
+      // Envia lista final de fotos e lista de exclusão para o backend
+      fotosExtras: fotosFinais,
+      fotoUrl: fotosFinais.length > 0 ? fotosFinais[0] : null,
+      fotosParaRemover: fotosParaRemover.value
     }
+    
+    // ✅ CHAMA PATCH PARA ATUALIZAR E DELETAR FOTOS VELHAS
     await $fetch(`/api/pecas/${id}`, { method: 'PATCH', body: payload })
+    
+    // Limpeza
+    previews.value.forEach(url => { if (url.startsWith('blob:')) URL.revokeObjectURL(url) })
+    
     toast.add({ title: 'Sucesso', description: 'Peça atualizada!', color: 'green' })
     router.push('/estoque')
+
   } catch (e) {
     toast.add({ title: 'Erro', description: 'Falha ao salvar.', color: 'red' })
-  } finally { saving.value = false }
+  } finally { 
+    saving.value = false 
+    uploading.value = false
+  }
 }
 </script>

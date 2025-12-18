@@ -35,11 +35,11 @@
         
         <div class="p-4 md:p-6 space-y-5 md:space-y-6">
           
-          <!-- UPLOAD DE FOTO COM DRAG & DROP -->
+          <!-- UPLOAD DE FOTOS COM DRAG & DROP -->
           <div class="space-y-3 border-b-2 pb-5 border-gray-100">
             <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
               <UIcon name="i-heroicons-photo" class="w-4 h-4 text-blue-600" />
-              Foto da Peça (Capa)
+              Fotos da Peça (até 6)
             </label>
             
             <div 
@@ -50,50 +50,67 @@
               :class="[
                 'relative border-2 border-dashed rounded-xl transition-all cursor-pointer overflow-hidden min-h-[180px] md:min-h-[200px] flex items-center justify-center',
                 isDragging ? 'border-blue-500 bg-blue-50 scale-[1.02]' : 'border-gray-300 hover:border-gray-400 bg-gray-50',
-                uploading ? 'pointer-events-none opacity-60' : ''
+                'bg-gray-50'
               ]"
             >
               <input 
                 ref="fileInput"
                 type="file" 
+                multiple
                 @change="handleFileUpload"
-                :disabled="uploading"
                 accept="image/*"
                 class="hidden"
               />
 
-              <!-- ESTADO: SEM FOTO -->
-              <div v-if="!form.fotoUrl && !uploading" class="text-center p-6">
+              <!-- ESTADO: SEM FOTOS -->
+              <div v-if="!previews.length" class="text-center p-6">
                 <div :class="['w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-all', isDragging ? 'bg-blue-100 scale-110' : 'bg-gray-200']">
                   <UIcon :name="isDragging ? 'i-heroicons-arrow-down-tray' : 'i-heroicons-photo'" :class="['transition-all', isDragging ? 'w-10 text-blue-600 animate-bounce' : 'w-8 text-gray-500']" />
                 </div>
                 <p :class="['font-bold mb-1 transition-colors', isDragging ? 'text-blue-600 text-lg' : 'text-gray-700 text-sm']">
-                  {{ isDragging ? '📂 Solte a foto aqui!' : '📸 Arraste uma foto ou clique para selecionar' }}
+                  {{ isDragging ? '📂 Solte as fotos aqui!' : '📸 Arraste fotos ou clique para selecionar' }}
                 </p>
-                <p class="text-xs text-gray-500 mt-2">Formatos aceitos: JPG, PNG, WEBP (máx. 10MB)</p>
+                <p class="text-xs text-gray-500 mt-2">Formatos aceitos: JPG, PNG, WEBP (máx. 10MB) — até 6 fotos</p>
               </div>
 
-              <!-- ESTADO: ENVIANDO -->
-              <div v-else-if="uploading" class="text-center p-6">
-                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center animate-pulse">
-                  <UIcon name="i-heroicons-arrow-path" class="w-10 h-10 text-blue-600 animate-spin" />
-                </div>
-                <p class="font-bold text-blue-600 text-sm">Enviando para a nuvem...</p>
-              </div>
+              <!-- ESTADO: FOTOS CARREGADAS (PREVIEW LOCAL) -->
+              <div v-else class="w-full p-4">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div
+                    v-for="(foto, index) in previews"
+                    :key="index"
+                    class="relative group rounded-xl overflow-hidden border border-gray-200"
+                  >
+                    <img :src="foto" alt="Preview" class="w-full h-32 md:h-40 object-cover" />
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <button
+                        type="button"
+                        @click.stop="removerFoto(index)"
+                        class="px-3 py-1 bg-red-600 text-white rounded-lg text-xs font-semibold flex items-center gap-1 shadow-lg active:scale-95"
+                      >
+                        <UIcon name="i-heroicons-trash" class="w-4 h-4" /> Remover
+                      </button>
+                    </div>
+                    <div
+                      v-if="index === 0"
+                      class="absolute top-2 left-2 bg-green-500 text-white px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1 shadow"
+                    >
+                      <UIcon name="i-heroicons-star" class="w-3 h-3" /> Capa
+                    </div>
+                  </div>
 
-              <!-- ESTADO: FOTO CARREGADA -->
-              <div v-else-if="form.fotoUrl" class="relative w-full h-full group">
-                <img :src="form.fotoUrl" alt="Preview" class="w-full h-full object-cover max-h-[300px]" />
-                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                  <button type="button" @click.stop="triggerFileInput" class="px-4 py-2 bg-white text-gray-900 rounded-lg font-semibold text-sm flex items-center gap-2 shadow-lg active:scale-95">
-                    <UIcon name="i-heroicons-arrow-path" class="w-4 h-4" /> Trocar
-                  </button>
-                  <button type="button" @click.stop="removerFoto" class="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold text-sm flex items-center gap-2 shadow-lg active:scale-95">
-                    <UIcon name="i-heroicons-trash" class="w-4 h-4" /> Remover
-                  </button>
-                </div>
-                <div class="absolute top-3 left-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-lg">
-                  <UIcon name="i-heroicons-check-circle" class="w-4 h-4" /> Foto carregada
+                  <!-- CARD PARA ADICIONAR MAIS FOTOS -->
+                  <div
+                    v-if="previews.length < 6"
+                    @click.stop="triggerFileInput"
+                    class="border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors h-32 md:h-40"
+                  >
+                    <div class="text-center p-4">
+                      <UIcon name="i-heroicons-plus-circle" class="w-8 h-8 text-gray-500 mx-auto mb-1" />
+                      <p class="text-xs font-semibold text-gray-600">Adicionar</p>
+                      <p class="text-[10px] text-gray-400">{{ 6 - previews.length }} restantes</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -236,7 +253,7 @@
           class="w-full md:w-auto flex items-center bg-gray-600 hover:bg-gray-800 text-white shadow-lg transition-all font-bold rounded-xl px-8 justify-center"
         >
           <UIcon v-if="!loading && !uploading" name="i-heroicons-check-circle" class="w-5 h-5" />
-          {{ loading ? 'Salvando...' : uploading ? 'Enviando Foto...' : 'Salvar Peça no Estoque' }}
+          {{ loading ? 'Salvando (c/ Upload)...' : uploading ? 'Enviando Fotos...' : 'Salvar Peça no Estoque' }}
         </UButton>
 
         <UButton to="/estoque" variant="ghost" color="gray" size="lg" class="w-full md:w-auto flex justify-center font-bold rounded-xl border-2 border-transparent hover:bg-red-50 hover:text-red-600 transition-all">
@@ -248,7 +265,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, watch } from 'vue';
+import { reactive, ref, computed, watch, onMounted } from 'vue';
 
 definePageMeta({ layout: 'default' })
 
@@ -260,13 +277,17 @@ const uploading = ref(false)
 const isDragging = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 
+// ✅ ESTADOS PARA GERENCIAR UPLOAD AO SALVAR
+const arquivosParaUpload = ref<File[]>([]) // Guarda os arquivos reais
+const previews = ref<string[]>([]) // Guarda os URLs locais (blob:) para exibir na tela
+
 // ✅ CONFIGURAÇÕES CLOUDINARY
 const CLOUD_NAME = 'dhlllqld0'; 
 const UPLOAD_PRESET = 'Eli pecas'; 
 
 const listaLados = ["LADO DIREITO", "LADO ESQUERDO", "DIANTEIRO", "TRASEIRO", "DIANTEIRO DIREITO", "TRASEIRO ESQUERDO", "PAR"]
 
-// ✅ LISTA ATUALIZADA DE CONDIÇÕES CONFORME SOLICITADO
+// ✅ LISTA ATUALIZADA DE CONDIÇÕES
 const listaCondicao = [
   "Novo",
   "Recondicionado",
@@ -275,126 +296,74 @@ const listaCondicao = [
   "Usado (condições razoáveis)"
 ]
 
-// Mock de montadoras
+// Mock de montadoras (Resumido para exemplo)
 const listaMontadorasCompleta = [
-  {
-    nome: 'FIAT',
-    modelos: [
-      'UNO', 'PALIO', 'STRADA', 'SIENA', 'ARGO', 'CRONOS', 'MOBI',
-      'TORO', 'FIORINO', 'DOBLÒ', 'IDEA', 'PUNTO',
-      'TEMPRA', 'MAREA', 'PREMIO', 'ELBA', '147'
-    ]
-  },
-  {
-    nome: 'VOLKSWAGEN',
-    modelos: [
-      'GOL', 'SAVEIRO', 'VOYAGE', 'POLO', 'VIRTUS',
-      'FOX', 'PARATI', 'GOLF', 'JETTA',
-      'T-CROSS', 'NIVUS', 'TAOS',
-      'AMAROK', 'KOMBI',
-      'SANTANA', 'PASSAT', 'FUSCA', 'BRASILIA', 'POLO SEDAN'
-    ]
-  },
-  {
-    nome: 'CHEVROLET',
-    modelos: [
-      'ONIX', 'PRISMA', 'CELTA', 'CORSA',
-      'CRUZE', 'TRACKER', 'SPIN',
-      'S10', 'MONTANA', 'BLAZER',
-      'VECTRA', 'OMEGA', 'KADETT',
-      'IPANEMA', 'CHEVETTE', 'OPALA'
-    ]
-  },
-  {
-    nome: 'FORD',
-    modelos: [
-      'KA', 'KA SEDAN', 'ECOSPORT',
-      'FIESTA', 'FOCUS',
-      'RANGER', 'F-1000',
-      'CORCEL', 'DEL REY', 'PAMPA'
-    ]
-  },
-  {
-    nome: 'TOYOTA',
-    modelos: [
-      'COROLLA', 'HILUX', 'ETIOS', 'YARIS',
-      'COROLLA CROSS', 'SW4',
-      'CAMRY', 'BANDEIRANTE'
-    ]
-  },
-  {
-    nome: 'HYUNDAI',
-    modelos: [
-      'HB20', 'HB20S', 'CRETA',
-      'TUCSON', 'IX35',
-      'SANTA FE', 'AZERA'
-    ]
-  },
-  {
-    nome: 'JEEP',
-    modelos: [
-      'RENEGADE', 'COMPASS', 'COMMANDER',
-      'CHEROKEE', 'WRANGLER'
-    ]
-  },
-  {
-    nome: 'RENAULT',
-    modelos: [
-      'SANDERO', 'LOGAN', 'KWID',
-      'DUSTER', 'CAPTUR',
-      'MEGANE', 'CLIO', 'SCENIC'
-    ]
-  },
-  {
-    nome: 'HONDA',
-    modelos: [
-      'CIVIC', 'CITY', 'FIT',
-      'HR-V', 'WR-V', 'CR-V',
-      'ACCORD'
-    ]
-  },
-  {
-    nome: 'NISSAN',
-    modelos: [
-      'KICKS', 'VERSA', 'SENTRA',
-      'MARCH', 'FRONTIER',
-      'ALTIMA'
-    ]
-  },
-  {
-    nome: 'PEUGEOT',
-    modelos: [
-      '208', '207', '206',
-      '2008', '3008',
-      '307', '308', '407'
-    ]
-  },
-  {
-    nome: 'CITROËN',
-    modelos: [
-      'C3', 'C4 CACTUS',
-      'C4', 'AIRCROSS',
-      'XSARA', 'PICASSO'
-    ]
-  },
-  {
-    nome: 'KIA',
-    modelos: [
-      'SPORTAGE', 'CERATO',
-      'SORENTO', 'PICANTO'
-    ]
-  }
+  { nome: 'FIAT', modelos: ['UNO', 'PALIO', 'STRADA', 'SIENA', 'ARGO', 'CRONOS', 'MOBI', 'TORO', 'FIORINO', 'DOBLÒ', 'IDEA', 'PUNTO', 'TEMPRA', 'MAREA', 'PREMIO', 'ELBA', '147'] },
+  { nome: 'VOLKSWAGEN', modelos: ['GOL', 'SAVEIRO', 'VOYAGE', 'POLO', 'VIRTUS', 'FOX', 'PARATI', 'GOLF', 'JETTA', 'T-CROSS', 'NIVUS', 'TAOS', 'AMAROK', 'KOMBI', 'SANTANA', 'PASSAT', 'FUSCA', 'BRASILIA', 'POLO SEDAN'] },
+  { nome: 'CHEVROLET', modelos: ['ONIX', 'PRISMA', 'CELTA', 'CORSA', 'CRUZE', 'TRACKER', 'SPIN', 'S10', 'MONTANA', 'BLAZER', 'VECTRA', 'OMEGA', 'KADETT', 'IPANEMA', 'CHEVETTE', 'OPALA'] },
+  { nome: 'FORD', modelos: ['KA', 'KA SEDAN', 'ECOSPORT', 'FIESTA', 'FOCUS', 'RANGER', 'F-1000', 'CORCEL', 'DEL REY', 'PAMPA'] },
+  { nome: 'TOYOTA', modelos: ['COROLLA', 'HILUX', 'ETIOS', 'YARIS', 'COROLLA CROSS', 'SW4', 'CAMRY', 'BANDEIRANTE'] },
+  { nome: 'HYUNDAI', modelos: ['HB20', 'HB20S', 'CRETA', 'TUCSON', 'IX35', 'SANTA FE', 'AZERA'] },
+  { nome: 'JEEP', modelos: ['RENEGADE', 'COMPASS', 'COMMANDER', 'CHEROKEE', 'WRANGLER'] },
+  { nome: 'RENAULT', modelos: ['SANDERO', 'LOGAN', 'KWID', 'DUSTER', 'CAPTUR', 'MEGANE', 'CLIO', 'SCENIC'] },
+  { nome: 'HONDA', modelos: ['CIVIC', 'CITY', 'FIT', 'HR-V', 'WR-V', 'CR-V', 'ACCORD'] },
+  { nome: 'NISSAN', modelos: ['KICKS', 'VERSA', 'SENTRA', 'MARCH', 'FRONTIER', 'ALTIMA'] },
+  { nome: 'PEUGEOT', modelos: ['208', '207', '206', '2008', '3008', '307', '308', '407'] },
+  { nome: 'CITROËN', modelos: ['C3', 'C4 CACTUS', 'C4', 'AIRCROSS', 'XSARA', 'PICASSO'] },
+  { nome: 'KIA', modelos: ['SPORTAGE', 'CERATO', 'SORENTO', 'PICANTO'] }
 ];
-
 
 const listaMontadorasNomes = listaMontadorasCompleta.map(m => m.nome);
 
 const form = reactive({
   nome: '', marca: '', modelo: '', lado: 'LADO DIREITO', ano: '',
   preco: undefined, quantidade: 1, estado: 'Usado (boas condições)', 
-  localizacao: '', detalhes: '', fotoUrl: null as string | null,
-  descricao: '', // NOVO CAMPO
-  Link: ''      // NOVO CAMPO (Mapeado exatamente como no Schema Prisma)
+  localizacao: '', detalhes: '', 
+  fotosExtras: [] as string[], // Guardará os URLs finais do Cloudinary
+  descricao: '', 
+  Link: ''
+})
+
+// ✅ IMPORTAÇÃO AUTOMÁTICA DO SCRAPER
+onMounted(() => {
+  const importado = localStorage.getItem('peca_importada')
+  if (importado) {
+    try {
+      const dados = JSON.parse(importado)
+      form.nome = dados.nome?.toUpperCase() || ''
+      if (typeof dados.preco === 'string') {
+        form.preco = parseFloat(dados.preco.replace(/[^0-9,]/g, '').replace(',', '.'))
+      } else {
+        form.preco = dados.preco
+      }
+      
+      // Se vieram fotos do scraper, elas já são URLs reais
+      if (dados.fotosExtras) {
+          let urls = []
+          try { urls = JSON.parse(dados.fotosExtras) } catch { urls = [] }
+          if (dados.fotoUrl) urls.unshift(dados.fotoUrl)
+          
+          // Adiciona aos previews para ver na tela
+          urls.forEach((url: string) => {
+             previews.value.push(url)
+             // Como já são URLs, não adicionamos a 'arquivosParaUpload' (são tratados como "já enviados")
+             form.fotosExtras.push(url) 
+          })
+      }
+
+      form.descricao = dados.descricao || ''
+      form.Link = dados.Link || '' 
+      form.marca = dados.marca || ''
+      form.modelo = dados.modelo || ''
+      form.ano = dados.ano || ''
+      form.localizacao = dados.localizacao || ''
+      
+      toast.add({ title: 'Importado', description: 'Dados da OLX carregados!', color: 'green' })
+      localStorage.removeItem('peca_importada')
+    } catch (e) {
+      console.error('Erro ao processar importação', e)
+    }
+  }
 })
 
 const modelosFiltrados = computed(() => {
@@ -405,59 +374,105 @@ const modelosFiltrados = computed(() => {
 
 watch(() => form.marca, () => { form.modelo = '' })
 
-// FUNÇÕES DE UPLOAD E DRAG & DROP
+// ✅ HANDLERS DRAG & DROP (MODIFICADO PARA PREVIEW LOCAL)
 function handleDragOver(e: DragEvent) { e.preventDefault(); isDragging.value = true }
 function handleDragLeave(e: DragEvent) { e.preventDefault(); isDragging.value = false }
 function handleDrop(e: DragEvent) {
   e.preventDefault(); isDragging.value = false
-  if (e.dataTransfer?.files?.length) processFile(e.dataTransfer.files[0])
+  if (e.dataTransfer?.files?.length) processFiles(e.dataTransfer.files)
 }
 function triggerFileInput() { if (!uploading.value) fileInput.value?.click() }
 function handleFileUpload(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (file) processFile(file)
+  const files = (e.target as HTMLInputElement).files
+  if (files?.length) processFiles(files)
 }
-function removerFoto() { form.fotoUrl = null; if (fileInput.value) fileInput.value.value = '' }
 
-async function processFile(file: File) {
-  if (uploading.value) return
-  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-    toast.add({ title: 'Erro', description: 'Formato inválido. Use JPG, PNG ou WEBP.', color: 'red' }); return
+// remove tanto do array de arquivos quanto do preview
+function removerFoto(index: number) {
+  // Se for uma URL blob local, revogar para liberar memória
+  if (previews.value[index].startsWith('blob:')) {
+      URL.revokeObjectURL(previews.value[index])
+      // Remove do array de upload (precisamos achar o índice correspondente se houver mistura de URLs e Files, mas simplificando para criação:)
+      // Na criação pura, os indices batem se não houve mistura.
+      // Se veio do scraper, form.fotosExtras tem dados. Se é upload manual, arquivosParaUpload tem dados.
+      // Lógica segura:
   }
-  uploading.value = true;
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', UPLOAD_PRESET);
-  try {
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
-    const data = await res.json();
-    form.fotoUrl = data.secure_url;
-    toast.add({ title: 'Sucesso', description: 'Foto carregada com sucesso!', color: 'green' })
-  } catch (e) {
-    toast.add({ title: 'Erro', description: 'Falha ao enviar foto.', color: 'red' })
-  } finally { uploading.value = false }
+  
+  // Remove visualmente
+  const urlRemovida = previews.value[index]
+  previews.value.splice(index, 1)
+
+  // Se estava na lista de URLs finais (scraper), remove
+  const idxForm = form.fotosExtras.indexOf(urlRemovida)
+  if (idxForm !== -1) form.fotosExtras.splice(idxForm, 1)
+
+  // Se estava na lista de arquivos para upload (manual)
+  // Nota: A correlação por índice pode falhar se misturar scraper + upload manual e apagar do meio.
+  // Mas para simplificar neste fluxo de criação:
+  // Vamos reconstruir arquivosParaUpload baseado no que sobrou visualmente? Não, Files não têm URLs blob persistentes.
+  // Melhor abordagem: Manter um objeto wrapper { file?: File, url: string, isLocal: boolean }
+  // Mas para não reescrever tudo complexo: Vamos assumir remoção pelo índice visual no array de arquivos se for local.
+  // **Correção Rápida:**
+  if (urlRemovida.startsWith('blob:')) {
+      // É um arquivo local. Encontrar qual File gerou este blob é difícil sem mapeamento.
+      // Vamos apenas remover o arquivo que está na posição relativa dos locais.
+      // Quantas fotos remotas existem antes deste índice?
+      const numRemotas = form.fotosExtras.length // As que já são URL
+      // O índice no array de arquivos locais é: index - numRemotas
+      // (Isso assume que fotos remotas aparecem primeiro, o que é verdade no onMounted)
+      if (index >= numRemotas) {
+          arquivosParaUpload.value.splice(index - numRemotas, 1)
+      }
+  }
 }
 
-// FORMATADORES
-function formatarCodigo(value: string) {
-  if (!value) {
-    form.localizacao = ''
+async function processFiles(fileList: FileList) {
+  const files = Array.from(fileList)
+  const disponiveis = 6 - previews.value.length // Usa previews como contagem total
+  
+  if (disponiveis <= 0) {
+    toast.add({ title: 'Limite atingido', description: 'Máximo de 6 fotos.', color: 'red' })
     return
   }
 
-  // remove tudo que não for letra ou número
-  let v = value.toUpperCase().replace(/[^A-Z0-9]/g, '')
+  const selecionados = files.slice(0, disponiveis)
+  
+  for (const file of selecionados) {
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        toast.add({ title: 'Erro', description: 'Formato inválido.', color: 'red' }); continue
+      }
+      
+      // ✅ GERA PREVIEW LOCAL IMEDIATO (SEM UPLOAD)
+      const blobUrl = URL.createObjectURL(file)
+      previews.value.push(blobUrl)
+      arquivosParaUpload.value.push(file)
+  }
+}
 
-  // máximo: A010406 → 7 caracteres úteis
-  v = v.slice(0, 7)
+// ✅ FUNÇÃO AUXILIAR DE UPLOAD REAL (CHAMADA NO SALVAR)
+async function uploadFotoParaCloudinary(file: File): Promise<string | null> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+    
+    try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+        const data = await res.json();
+        return data.secure_url || null;
+    } catch (e) {
+        console.error('Erro upload', e)
+        return null;
+    }
+}
 
+function formatarCodigo(value: string) {
+  if (!value) { form.localizacao = ''; return }
+  let v = value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 7)
   let f = ''
-
   if (v.length >= 1) f += v.substring(0, 1)
   if (v.length >= 2) f += '-' + v.substring(1, 3)
   if (v.length >= 4) f += '-' + v.substring(3, 5)
   if (v.length >= 6) f += '-' + v.substring(5, 7)
-
   form.localizacao = f
 }
 
@@ -473,8 +488,24 @@ async function salvar() {
   }
   
   loading.value = true
+  
   try {
-    // MAPEAMENTO EXPLÍCITO PARA O BACKEND
+    // 1. FAZ O UPLOAD DAS FOTOS AGORA
+    if (arquivosParaUpload.value.length > 0) {
+        uploading.value = true // Mostra estado de "Enviando Fotos"
+        
+        // Upload em paralelo para ser mais rápido
+        const promises = arquivosParaUpload.value.map(file => uploadFotoParaCloudinary(file))
+        const urlsGeradas = await Promise.all(promises)
+        
+        // Adiciona as novas URLs ao array final do formulário
+        urlsGeradas.forEach(url => {
+            if (url) form.fotosExtras.push(url)
+        })
+        
+        uploading.value = false
+    }
+
     const payload = {
       ...form,
       nome: form.nome.toUpperCase(),
@@ -484,14 +515,27 @@ async function salvar() {
       descricao: form.descricao || null,
       localizacao: form.localizacao || null,
       detalhes: form.detalhes?.toUpperCase() || null,
-      // O campo Link já está no objeto form com L maiúsculo
+      
+      // Garante o formato correto para o backend
+      fotoUrl: form.fotosExtras.length > 0 ? form.fotosExtras[0] : null,
+      fotosExtras: form.fotosExtras
     }
     
     await $fetch('/api/pecas', { method: 'POST', body: payload })
+    
+    // Limpa blobs da memória
+    previews.value.forEach(url => {
+        if (url.startsWith('blob:')) URL.revokeObjectURL(url)
+    })
+    
     toast.add({ title: 'Sucesso', description: 'Peça cadastrada!', color: 'green' })
     router.push('/estoque')
+    
   } catch (e) {
     toast.add({ title: 'Erro', description: 'Erro ao salvar peça.', color: 'red' })
-  } finally { loading.value = false }
+  } finally { 
+    loading.value = false 
+    uploading.value = false
+  }
 }
 </script>

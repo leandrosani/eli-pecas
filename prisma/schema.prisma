@@ -67,6 +67,7 @@ model Peca {
   createdAt     DateTime                @default(now())
   updatedAt     DateTime                @updatedAt
   localizacao   String?
+  fotosExtras   String[]                @default([])
   movimentacoes HistoricoMovimentacao[]
   caixa         Caixa?                  @relation(fields: [caixaId], references: [id])
 }
