@@ -115,7 +115,7 @@
                       <div 
                         v-if="row.fotoUrl"
                         @click="abrirFoto(row)" 
-                        class="relative w-22 h-22 rounded-lg overflow-hidden border border-gray-300 shadow-sm flex items-center justify-center bg-gray-100 cursor-pointer hover:shadow-md transition-shadow active:scale-[0.98]"
+                        class="w-22 h-22 rounded-lg overflow-hidden border border-gray-300 shadow-sm flex items-center justify-center bg-gray-100 cursor-pointer hover:shadow-md transition-shadow active:scale-[0.98]"
                         title="Clique para ampliar"
                       >
                         <img 
@@ -124,8 +124,8 @@
                           class="w-full h-full object-cover"
                           @error="(e) => e.target.src = 'https://placehold.co/44x44/CCCCCC/333333?text=S%2F+FOTO'" 
                         />
-                        <!-- Indicador visual se houver mais fotos -->
-                        <div v-if="row.fotosExtras && row.fotosExtras.length > 0" class="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1.5 rounded-full font-bold">
+                        <!-- Indicador de Galeria (se tiver mais fotos) -->
+                        <div v-if="row.fotosExtras && row.fotosExtras.length > 0" class="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 rounded-full font-bold">
                           +{{ row.fotosExtras.length }}
                         </div>
                       </div>
@@ -654,7 +654,6 @@ function exportarParaPlanilha() {
     return;
   }
 
-  // Cabeçalhos Oficiais do Feed Shopping (Atualizado com additional_image_link)
   const headers = [
     'id', 'title', 'description', 'price', 'availability', 'condition', 'link', 
     'image_link', 'additional_image_link', 'brand', 'google_product_category', 'fb_product_category', 
@@ -662,28 +661,21 @@ function exportarParaPlanilha() {
   ]
 
   const rows = data.map((row: any) => {
-    // 1. Título Padrão
     const titulo = `${row.nome || ''} ${row.modelo || ''} ${row.ano || ''} ${row.lado || ''}`
         .replace(/\s+/g, ' ')
         .trim()
         .toUpperCase()
     
-    // 2. Descrição
     const descricao = row.descricao || titulo
-    
-    // 3. Preço
     const precoFormatado = `${Number(row.preco).toFixed(2)} BRL`
     
-    // 4. Condição
     let condicaoFeed = 'new' 
     const est = (row.estado || '').toLowerCase()
     if (est.includes('usado')) condicaoFeed = 'used'
     if (est.includes('recondicionado')) condicaoFeed = 'refurbished'
 
-    // 5. Link
     const linkFinal = row.Link || `https://elipecas.com/peca/${row.id}`
 
-    // 6. Imagens Extras (Parsing Seguro)
     let extraImages = [];
     if (Array.isArray(row.fotosExtras)) {
         extraImages = row.fotosExtras;
@@ -703,10 +695,10 @@ function exportarParaPlanilha() {
       escapeCSV(condicaoFeed),
       escapeCSV(linkFinal),
       escapeCSV(row.fotoUrl || ''),
-      escapeCSV(additionalImagesStr), // Coluna de imagens extras
+      escapeCSV(additionalImagesStr),
       escapeCSV('Original'),
       escapeCSV('Peças e acessórios para automóveis > Autopeças e acessórios'),
-      escapeCSV('Peças e acessórios para automóveis > Autopeças e acessórios'), // Categoria FB Corrigida
+      escapeCSV('Peças e acessórios para automóveis > Autopeças e acessórios'), 
       escapeCSV(row.quantidade)
     ].join('\t')
   })
