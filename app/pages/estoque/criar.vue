@@ -298,7 +298,7 @@ const listaCondicao = [
 
 // Mock de montadoras (Resumido para exemplo)
 const listaMontadorasCompleta = [
-  { nome: 'FIAT', modelos: ['UNO', 'PALIO', 'STRADA', 'SIENA', 'ARGO', 'CRONOS', 'MOBI', 'TORO', 'FIORINO', 'DOBLÒ', 'IDEA', 'PUNTO', 'TEMPRA', 'MAREA', 'PREMIO', 'ELBA', '147'] },
+  { nome: 'FIAT', modelos: ['UNO', 'PALIO', 'STRADA', 'SIENA', 'ARGO', 'CRONOS', 'MOBI', 'TORO', 'STYLO', 'FIORINO', 'DOBLÒ', 'IDEA', 'PUNTO', 'TEMPRA', 'MAREA', 'PREMIO', 'ELBA', '147'] },
   { nome: 'VOLKSWAGEN', modelos: ['GOL', 'SAVEIRO', 'VOYAGE', 'POLO', 'VIRTUS', 'FOX', 'PARATI', 'GOLF', 'JETTA', 'T-CROSS', 'NIVUS', 'TAOS', 'AMAROK', 'KOMBI', 'SANTANA', 'PASSAT', 'FUSCA', 'BRASILIA', 'POLO SEDAN'] },
   { nome: 'CHEVROLET', modelos: ['ONIX', 'PRISMA', 'CELTA', 'CORSA', 'CRUZE', 'TRACKER', 'SPIN', 'S10', 'MONTANA', 'BLAZER', 'VECTRA', 'OMEGA', 'KADETT', 'IPANEMA', 'CHEVETTE', 'OPALA'] },
   { nome: 'FORD', modelos: ['KA', 'KA SEDAN', 'ECOSPORT', 'FIESTA', 'FOCUS', 'RANGER', 'F-1000', 'CORCEL', 'DEL REY', 'PAMPA'] },
