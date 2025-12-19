@@ -115,7 +115,7 @@
                       <div 
                         v-if="row.fotoUrl"
                         @click="abrirFoto(row)" 
-                        class="w-22 h-22 rounded-lg overflow-hidden border border-gray-300 shadow-sm flex items-center justify-center bg-gray-100 cursor-pointer hover:shadow-md transition-shadow active:scale-[0.98]"
+                        class="relative w-22 h-22 rounded-lg overflow-hidden border border-gray-300 shadow-sm flex items-center justify-center bg-gray-100 cursor-pointer hover:shadow-md transition-shadow active:scale-[0.98]"
                         title="Clique para ampliar"
                       >
                         <img 
@@ -179,11 +179,11 @@
                     </div>
 
                     <button
-                        v-if="row.detalhes"
-                        @click="copyToClipboard(row.detalhes, row.id)"
+                        v-if="row.Link"
+                        @click="openLink(row.Link)"
                         class="mt-2 inline-flex items-center gap-1.5 bg-purple-200/20 px-2.5 py-1 rounded-md shadow-sm border border-purple-200 max-w-full hover:bg-purple-300/40 transition duration-150 cursor-pointer"
                     >
-                        <UIcon :name="getCopyIcon(row.id)" class="w-3.5 h-3.5 text-purple-800 flex-shrink-0" />
+                        <UIcon name="i-heroicons-arrow-top-right-on-square" class="w-3.5 h-3.5 text-purple-800 flex-shrink-0" />
                     </button>
                   </td>
 
@@ -304,6 +304,14 @@
                   <h3 class="font-bold text-white text-base truncate">{{ row.nome }}</h3>
                   <h3 class="font-bold text-white text-base truncate">{{ row.modelo }}</h3>
                 </div>
+
+                <button
+                  v-if="row.Link"
+                  @click="openLink(row.Link)"
+                  class="inline-flex items-center gap-1.5 bg-white px-2.5 py-2.5 rounded-md shadow-sm border border-purple-200 max-w-full"
+                >
+                  <UIcon name="i-heroicons-arrow-top-right-on-square" class="w-3.5 h-3.5 text-gray-800 flex-shrink-0" />
+                </button>
 
                 <!-- Quantidade -->
                 <div class="min-w-[36px] h-6 flex flex-col gap-1 items-center justify-center flex-shrink-0">
@@ -511,6 +519,10 @@ function abrirFoto(row: any) {
     listaFotosGaleria.value = [...new Set(galeria)];
     
     modalFotoAberto.value = true;
+}
+
+const openLink = (link) => {
+  window.open(link, '_blank')
 }
 
 const estadosValidos = [

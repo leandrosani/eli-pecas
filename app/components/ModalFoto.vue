@@ -3,7 +3,7 @@
     v-model:open="isOpen" 
     :ui="{ 
       content: 'max-w-5xl md:max-w-5xl w-full md:w-auto bg-transparent shadow-none ring-0 mx-0 md:mx-auto',
-      overlay: 'backdrop-blur-sm'
+      overlay: 'bg-black/85'
     }"
     :fullscreen="isMobile"
   >
@@ -28,9 +28,15 @@
           <UIcon name="i-heroicons-chevron-left" class="w-8 h-8" />
         </button>
         
-        <!-- Container da imagem -->
-        <div class="relative bg-black/90 md:rounded-xl overflow-hidden w-full h-full md:h-auto flex items-center justify-center">
-          <transition 
+        <!-- Container principal -->
+        <div
+          class="relative bg-black/90 md:rounded-xl overflow-hidden
+                w-full h-[60vh] md:h-[70vh]
+                flex items-center justify-center"
+        >
+
+          <!-- Imagem principal -->
+          <transition
             enter-active-class="transition-opacity duration-200"
             enter-from-class="opacity-0"
             enter-to-class="opacity-100"
@@ -39,45 +45,57 @@
             leave-to-class="opacity-0"
             mode="out-in"
           >
-            <img 
-              v-if="fotoAtual" 
+            <img
+              v-if="fotoAtual"
               :key="fotoAtual"
-              :src="fotoAtual" 
+              :src="fotoAtual"
               alt="Foto ampliada"
-              class="w-full h-auto max-h-screen md:max-h-[85vh] object-contain select-none"
+              class="w-full h-full object-contain select-none"
               @click.stop
             />
           </transition>
-          
+
           <!-- Contador -->
-          <div v-if="temMaisDeUmaFoto" class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 px-3 py-1 rounded-full text-white text-xs font-bold backdrop-blur-sm border border-white/20">
+          <div
+            v-if="temMaisDeUmaFoto"
+            class="absolute bottom-26 left-1/2 -translate-x-1/2
+                  bg-black/40 px-3 py-1 rounded-full
+                  text-white text-xs font-semibold
+                  backdrop-blur-[2px] border border-white/20"
+          >
             {{ indiceAtual + 1 }} / {{ listaFotos.length }}
           </div>
 
-          <!-- ✨ MINIATURAS (THUMBNAILS) -->
-          <div 
-            v-if="temMaisDeUmaFoto && listaFotos.length > 1" 
-            class="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2 p-2 bg-black/60 rounded-lg backdrop-blur-md border border-white/20 max-w-[90vw] overflow-x-auto scrollbar-hide"
+          <!-- Miniaturas -->
+          <div
+            v-if="temMaisDeUmaFoto && listaFotos.length > 1"
+            class="absolute bottom-4 left-1/2 -translate-x-1/2
+                  flex gap-2 px-3 py-2
+                  bg-black/40 rounded-xl
+                  backdrop-blur-sm border border-white/20
+                  max-w-[95vw] overflow-x-auto scrollbar-hide"
           >
             <button
               v-for="(foto, idx) in listaFotos"
               :key="foto"
               @click.stop="indiceAtual = idx"
               :class="[
-                'shrink-0 w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden border-2 transition-all',
-                indiceAtual === idx 
-                  ? 'border-white scale-110 shadow-lg' 
-                  : 'border-white/30 hover:border-white/60 opacity-70 hover:opacity-100'
+                'shrink-0 w-11 h-11 md:w-14 md:h-14 rounded-lg overflow-hidden border-2 transition-all',
+                indiceAtual === idx
+                  ? 'border-white scale-110 shadow-lg'
+                  : 'border-white/30 opacity-70 hover:opacity-100 hover:border-white/60'
               ]"
             >
-              <img 
-                :src="foto" 
-                :alt="`Foto ${idx + 1}`" 
+              <img
+                :src="foto"
+                :alt="`Foto ${idx + 1}`"
                 class="w-full h-full object-cover"
               />
             </button>
           </div>
+
         </div>
+
 
         <!-- Botão Próximo -->
         <button 
