@@ -659,70 +659,27 @@ function escapeCSV(val: any) {
   return s
 }
 
-function exportarParaPlanilha() {
+async function exportarParaPlanilha() {
   const data = linhasFiltradas.value
   if (!data.length) {
-    toast.add({ title: 'Atenção', description: 'Nenhum item para exportar.', color: 'yellow' });
-    return;
+    toast.add({ title: 'Atenção', description: 'Nenhum item para exportar.', color: 'yellow' })
+    return
   }
 
-  const headers = [
-    'id', 'title', 'description', 'price', 'availability', 'condition', 'link', 
-    'image_link', 'additional_image_link', 'brand', 'google_product_category', 'fb_product_category', 
-    'quantity_to_sell_on_facebook'
-  ]
-
-  const rows = data.map((row: any) => {
-    const titulo = `${row.nome || ''} ${row.modelo || ''} ${row.ano || ''} ${row.lado || ''}`
-        .replace(/\s+/g, ' ')
-        .trim()
-        .toUpperCase()
-    
-    const descricao = row.descricao || titulo
-    const precoFormatado = `${Number(row.preco).toFixed(2)} BRL`
-    
-    let condicaoFeed = 'new' 
-    const est = (row.estado || '').toLowerCase()
-    if (est.includes('usado')) condicaoFeed = 'used'
-    if (est.includes('recondicionado')) condicaoFeed = 'refurbished'
-
-    const linkFinal = row.Link || `https://elipecas.com/peca/${row.id}`
-
-    let extraImages = [];
-    if (Array.isArray(row.fotosExtras)) {
-        extraImages = row.fotosExtras;
-    } else if (typeof row.fotosExtras === 'string' && row.fotosExtras.trim().startsWith('[')) {
-        try {
-            extraImages = JSON.parse(row.fotosExtras);
-        } catch (e) { console.error('Erro no parse de fotosExtras', e); }
-    }
-    const additionalImagesStr = extraImages.join(',');
-
-    return [
-      escapeCSV(row.id),
-      escapeCSV(titulo),
-      escapeCSV(descricao),
-      escapeCSV(precoFormatado),
-      escapeCSV(row.quantidade > 0 ? 'in stock' : 'out of stock'),
-      escapeCSV(condicaoFeed),
-      escapeCSV(linkFinal),
-      escapeCSV(row.fotoUrl || ''),
-      escapeCSV(additionalImagesStr),
-      escapeCSV('Original'),
-      escapeCSV('Peças e acessórios para automóveis > Autopeças e acessórios'),
-      escapeCSV('Peças e acessórios para automóveis > Autopeças e acessórios'), 
-      escapeCSV(row.quantidade)
-    ].join('\t')
+  // Envia os objetos completos para o backend
+  const res = await $fetch('/api/exportar-google-sheet', {
+    method: 'POST',
+    body: { rows: data }
   })
 
-  const content = [headers.join('\t'), ...rows].join('\n')
-  const blob = new Blob([content], { type: 'text/tab-separated-values;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = `feed_elipecas_${new Date().toISOString().slice(0,10)}.csv`
-  link.click()
-  
-  toast.add({ title: 'Exportação Concluída', description: `${data.length} itens exportados para o Feed.`, color: 'blue' })
+  if (res.success) {
+    toast.add({ 
+      title: 'Exportação Concluída', 
+      description: `${res.updated} itens atualizados no Google Sheets.`,
+      color: 'blue'
+    })
+  } else {
+    toast.add({ title: 'Erro', description: res.message || 'Falha na exportação', color: 'red' })
+  }
 }
 </script>
