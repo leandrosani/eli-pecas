@@ -168,18 +168,12 @@
     </div>
 
     <!-- FOOTER FIXO -->
-    <div class="bg-white border-t border-gray-200 p-4 shrink-0 grid grid-cols-2 gap-3">
+    <div class="bg-white border-t border-gray-200 p-4 shrink-0 grid grid-cols-1 gap-2">
       <button
         @click="limparFiltros"
         class="h-10 rounded-xl border-2 border-gray-300 text-gray-700 font-bold text-sm hover:bg-gray-50 transition-colors"
       >
         Limpar
-      </button>
-      <button
-        @click="aplicarFiltros"
-        class="h-10 rounded-xl bg-black text-white font-bold text-sm hover:bg-gray-800 transition-colors shadow-lg"
-      >
-        Ver Resultados
       </button>
     </div>
 
