@@ -36,8 +36,8 @@ model Prateleira {
   id     Int     @id @default(autoincrement())
   nome   String
   salaId Int
-  caixas Caixa[]
   sala   Sala    @relation(fields: [salaId], references: [id])
+  caixas Caixa[]
 }
 
 model Caixa {
@@ -60,6 +60,10 @@ model Peca {
   descricao     String?                 @db.Text
   Link          String?                 @db.Text
   preco         Decimal                 @db.Decimal(10, 2)
+  
+  // ✅ NOVO CAMPO: Custo da peça (para cálculo de margem)
+  custo         Decimal                 @default(0) @db.Decimal(10, 2)
+  
   quantidade    Int                     @default(1)
   fotoUrl       String?
   ativo         Boolean                 @default(true)
@@ -74,12 +78,16 @@ model Peca {
 
 model HistoricoMovimentacao {
   id         String   @id @default(uuid())
-  tipo       String
+  tipo       String   // 'ENTRADA' ou 'SAIDA'
   quantidade Int
   observacao String?
   pecaId     String
   userId     String?
   createdAt  DateTime @default(now())
+  
+  // ✅ NOVO CAMPO: Custo no momento da venda (Snapshot)
+  custo      Decimal? @db.Decimal(10, 2)
+
   peca       Peca     @relation(fields: [pecaId], references: [id])
   user       User?    @relation(fields: [userId], references: [id])
 }
