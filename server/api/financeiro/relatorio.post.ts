@@ -5,7 +5,6 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const mesesAtras = Number(body.meses) || 1
   
-  // Agora recebemos um ARRAY de tipos ['SAIDA', 'ENTRADA', 'DESPESA']
   // Se não vier nada, assumimos tudo por padrão
   const tiposFiltro: string[] = Array.isArray(body.tipos) && body.tipos.length > 0 
     ? body.tipos 
@@ -29,7 +28,7 @@ export default defineEventHandler(async (event) => {
       movimentacoes = await prisma.historicoMovimentacao.findMany({
         where: {
           createdAt: { gte: dataInicio, lte: dataFim },
-          tipo: { in: tiposMovimentacao as any } // Filtra pelo array
+          tipo: { in: tiposMovimentacao as any }
         },
         include: {
           peca: { select: { nome: true, modelo: true, preco: true } }
@@ -41,7 +40,6 @@ export default defineEventHandler(async (event) => {
     // 3. Buscar Despesas
     let despesas: any[] = []
     
-    // Só busca despesas se 'DESPESA' estiver na lista solicitada
     if (tiposFiltro.includes('DESPESA')) {
       despesas = await prisma.despesa.findMany({
         where: {
@@ -56,8 +54,8 @@ export default defineEventHandler(async (event) => {
       data: m.createdAt,
       descricao: `${m.peca?.nome || 'Item'} (${m.peca?.modelo || ''})`,
       tipo: m.tipo,
-      // Se for SAIDA, é Receita (+). Se for ENTRADA, é neutro (0) no fluxo de caixa financeiro, mas registramos.
-      valor: m.tipo === 'SAIDA' ? (Number(m.peca?.preco || 0) * m.quantidade) : 0,
+      // ✅ CORREÇÃO: Agora calcula o valor da peça independente se é SAIDA ou ENTRADA
+      valor: (Number(m.peca?.preco || 0) * m.quantidade),
       qtd: m.quantidade
     }))
 
@@ -73,18 +71,32 @@ export default defineEventHandler(async (event) => {
       new Date(b.data).getTime() - new Date(a.data).getTime()
     )
 
-    // Totais
-    const totalEntradas = resultadoFinal.filter(i => i.tipo === 'SAIDA').reduce((acc, i) => acc + i.valor, 0)
-    const totalSaidas = resultadoFinal.filter(i => i.tipo === 'DESPESA').reduce((acc, i) => acc + i.valor, 0)
+    // ✅ CORREÇÃO DOS TOTAIS (Para não somar estoque como dinheiro)
+    
+    // Receita: Soma apenas o que foi VENDIDO ('SAIDA')
+    const totalReceita = resultadoFinal
+      .filter(i => i.tipo === 'SAIDA')
+      .reduce((acc, i) => acc + i.valor, 0)
+      
+    // Despesa: Soma apenas 'DESPESA'
+    const totalDespesas = resultadoFinal
+      .filter(i => i.tipo === 'DESPESA')
+      .reduce((acc, i) => acc + i.valor, 0)
+
+    // Entradas de Estoque (Apenas informativo, não soma no saldo financeiro)
+    const totalEntradasEstoque = resultadoFinal
+      .filter(i => i.tipo === 'ENTRADA')
+      .reduce((acc, i) => acc + i.valor, 0)
 
     return {
       itens: resultadoFinal,
       resumo: {
         inicio: dataInicio,
         fim: dataFim,
-        receita: totalEntradas,
-        despesa: totalSaidas,
-        saldo: totalEntradas - totalSaidas
+        receita: totalReceita,
+        despesa: totalDespesas,
+        saldo: totalReceita - totalDespesas, // Saldo Real (Dinheiro que entrou - Dinheiro que saiu)
+        valorEstoqueEntrada: totalEntradasEstoque // Envia separado caso queira mostrar no PDF
       }
     }
 
