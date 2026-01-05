@@ -164,117 +164,207 @@
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
-          
-          <div v-if="pendingExtrato" class="absolute inset-0 z-50 bg-white/60 backdrop-blur-[1px] flex items-center justify-center transition-all duration-300">
+          <!-- Overlay de loading -->
+          <div
+            v-if="pendingExtrato"
+            class="absolute inset-0 z-50 bg-white/60 backdrop-blur-[1px] flex items-center justify-center transition-all duration-300"
+          >
             <div class="bg-white p-4 rounded-2xl shadow-xl border border-gray-100 flex flex-col items-center gap-3">
               <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 text-blue-600 animate-spin" />
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Atualizando dados...</span>
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                Atualizando dados...
+              </span>
             </div>
           </div>
 
-          <div class="p-6 border-b border-gray-100">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <!-- Cabeçalho -->
+          <div class="p-4 md:p-6 border-b border-gray-100">
+            <div class="flex flex-col gap-4">
+              <!-- Título -->
               <div class="flex items-center gap-3">
                 <div class="bg-gray-900 p-2.5 rounded-xl shadow-lg">
                   <UIcon name="i-heroicons-list-bullet" class="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 class="font-black text-gray-900 text-xl">Extrato Detalhado</h2>
-                  <p class="text-xs text-gray-500 font-medium">Todas as movimentações do período</p>
+                  <h2 class="font-black text-gray-900 text-lg md:text-xl">
+                    Extrato Detalhado
+                  </h2>
+                  <p class="text-xs text-gray-500 font-medium">
+                    Todas as movimentações do período
+                  </p>
                 </div>
               </div>
 
-              <div class="flex flex-col gap-2 items-end justify-end">
-                <div class="flex items-center bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-lg justify-center max-w-68 h-12">
-                  <button 
-                    @click="mudarMes(-1)" 
-                    :disabled="pendingExtrato"
-                    class="px-4 py-3 hover:bg-white/10 rounded-l-xl text-white transition-all disabled:opacity-50 disabled:cursor-wait"
+              <!-- Controles (mês + abas) -->
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <!-- Seletor de mês -->
+                <div class="flex justify-center md:justify-end">
+                  <div
+                    class="flex items-center w-full max-w-xs bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-lg"
                   >
-                    <UIcon name="i-heroicons-chevron-left" class="w-5 h-5" />
-                  </button>
-                  <div class="px-6 py-3 min-w-[140px] text-center">
-                    <div class="text-white font-black text-sm capitalize">{{ nomeMesExtrato }}</div>
+                    <button
+                      @click="mudarMes(-1)"
+                      :disabled="pendingExtrato"
+                      class="px-3 py-3 hover:bg-white/10 rounded-l-xl text-white transition-all disabled:opacity-50 disabled:cursor-wait"
+                    >
+                      <UIcon name="i-heroicons-chevron-left" class="w-5 h-5" />
+                    </button>
+                    <div class="flex-1 px-2 py-3 text-center">
+                      <div class="text-white font-black text-sm capitalize truncate">
+                        {{ nomeMesExtrato }}
+                      </div>
+                    </div>
+                    <button
+                      @click="mudarMes(1)"
+                      :disabled="ehMesFuturo || pendingExtrato"
+                      class="px-3 py-3 hover:bg-white/10 rounded-r-xl text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <UIcon name="i-heroicons-chevron-right" class="w-5 h-5" />
+                    </button>
                   </div>
-                  <button 
-                    @click="mudarMes(1)" 
-                    :disabled="ehMesFuturo || pendingExtrato" 
-                    class="px-4 py-3 hover:bg-white/10 rounded-r-xl text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                  >
-                    <UIcon name="i-heroicons-chevron-right" class="w-5 h-5" />
-                  </button>
                 </div>
-                
-                <div class="flex gap-2 bg-gray-100 p-1.5 rounded-xl shadow-inner">
-                  <button 
-                    v-for="aba in abas" 
-                    :key="aba.value" 
-                    @click="abaAtiva = aba.value" 
-                    class="px-4 py-2 text-sm font-bold rounded-lg transition-all"
-                    :class="abaAtiva === aba.value 
-                      ? 'bg-white shadow-sm text-gray-900' 
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'"
-                  >
-                    {{ aba.label }}
-                  </button>
+
+                <!-- Abas -->
+                <div class="flex justify-center md:justify-end">
+                  <div class="flex flex-wrap gap-2 bg-gray-100 p-1.5 rounded-xl shadow-inner">
+                    <button
+                      v-for="aba in abas"
+                      :key="aba.value"
+                      @click="abaAtiva = aba.value"
+                      class="px-3 py-1.5 text-xs md:text-sm font-bold rounded-lg transition-all"
+                      :class="abaAtiva === aba.value
+                        ? 'bg-white shadow-sm text-gray-900'
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'"
+                    >
+                      {{ aba.label }}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div v-if="statsExtrato" class="bg-gray-50 border-b border-gray-200 grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-200">
+          <!-- Stats -->
+          <div
+            v-if="statsExtrato"
+            class="bg-gray-50 border-b border-gray-200 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-gray-200"
+          >
             <div class="p-4 flex flex-col justify-center">
-              <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-0.5">Período Selecionado</span>
+              <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-0.5">
+                Período Selecionado
+              </span>
               <div class="flex items-center gap-2 text-gray-700 font-bold text-sm">
                 <UIcon name="i-heroicons-calendar" class="w-4 h-4 text-gray-400" />
                 {{ textoPeriodo }}
               </div>
             </div>
             <div class="p-4 flex flex-col justify-center">
-              <span class="text-[10px] uppercase font-bold text-emerald-600/70 tracking-wider mb-0.5">Vendas Brutas</span>
-              <span class="text-lg font-black text-emerald-600">+ {{ formatarDinheiro(resumoExtrato.vendas) }}</span>
+              <span class="text-[10px] uppercase font-bold text-emerald-600/70 tracking-wider mb-0.5">
+                Vendas Brutas
+              </span>
+              <span class="text-base md:text-lg font-black text-emerald-600">
+                + {{ formatarDinheiro(resumoExtrato.vendas) }}
+              </span>
             </div>
             <div class="p-4 flex flex-col justify-center">
-              <span class="text-[10px] uppercase font-bold text-red-600/70 tracking-wider mb-0.5">Despesas Totais</span>
-              <span class="text-lg font-black text-red-600">- {{ formatarDinheiro(resumoExtrato.despesas) }}</span>
+              <span class="text-[10px] uppercase font-bold text-red-600/70 tracking-wider mb-0.5">
+                Despesas Totais
+              </span>
+              <span class="text-base md:text-lg font-black text-red-600">
+                - {{ formatarDinheiro(resumoExtrato.despesas) }}
+              </span>
             </div>
             <div class="p-4 flex flex-col justify-center bg-gray-100/50">
-              <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider mb-0.5">Resultado Líquido</span>
-              <span class="text-lg font-black" :class="resumoExtrato.lucro >= 0 ? 'text-gray-900' : 'text-red-600'">{{ formatarDinheiro(resumoExtrato.lucro) }}</span>
+              <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider mb-0.5">
+                Resultado Líquido
+              </span>
+              <span
+                class="text-base md:text-lg font-black"
+                :class="resumoExtrato.lucro >= 0 ? 'text-gray-900' : 'text-red-600'"
+              >
+                {{ formatarDinheiro(resumoExtrato.lucro) }}
+              </span>
             </div>
           </div>
 
+          <!-- Tabela -->
           <div class="border-t border-gray-100">
             <div class="max-h-[500px] overflow-y-auto overflow-x-auto custom-scrollbar">
-              <table class="w-full relative border-collapse">
+              <table class="w-full relative border-collapse min-w-[480px]">
                 <thead class="bg-gray-50 sticky top-0 z-10 shadow-sm">
                   <tr>
-                    <th class="py-4 px-6 text-left text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50">Data</th>
-                    <th class="py-4 px-6 text-left text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50">Descrição</th>
-                    <th class="py-4 px-6 text-center text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50">Categoria</th>
-                    <th class="py-4 px-6 text-right text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50">Valor</th>
+                    <th
+                      class="py-3 md:py-4 px-3 md:px-6 text-left text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50"
+                    >
+                      Data
+                    </th>
+                    <th
+                      class="py-3 md:py-4 px-3 md:px-6 text-left text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50"
+                    >
+                      Descrição
+                    </th>
+                    <th
+                      class="py-3 md:py-4 px-3 md:px-6 text-center text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50"
+                    >
+                      Categoria
+                    </th>
+                    <th
+                      class="py-3 md:py-4 px-3 md:px-6 text-right text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50"
+                    >
+                      Valor
+                    </th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50 bg-white">
-                  <tr v-for="mov in historicoFiltrado" :key="mov.id" class="hover:bg-gray-50 transition-colors group">
-                    <td class="py-4 px-6">
-                      <span class="text-sm text-gray-500 font-medium whitespace-nowrap group-hover:text-gray-900 transition-colors">{{ new Date(mov.data).toLocaleDateString('pt-BR') }}</span>
+                  <tr
+                    v-for="mov in historicoFiltrado"
+                    :key="mov.id"
+                    class="hover:bg-gray-50 transition-colors group"
+                  >
+                    <td class="py-3 md:py-4 px-3 md:px-6">
+                      <span
+                        class="text-xs md:text-sm text-gray-500 font-medium whitespace-nowrap group-hover:text-gray-900 transition-colors"
+                      >
+                        {{ new Date(mov.data).toLocaleDateString('pt-BR') }}
+                      </span>
                     </td>
-                    <td class="py-4 px-6">
-                      <div class="font-bold text-gray-900">{{ mov.descricao || mov.peca?.nome }}</div>
-                      <div v-if="mov.peca?.modelo" class="text-xs text-gray-500 font-medium mt-0.5">{{ mov.peca.modelo }}</div>
+                    <td class="py-3 md:py-4 px-3 md:px-6">
+                      <div class="font-bold text-gray-900 text-sm md:text-base">
+                        {{ mov.descricao || mov.peca?.nome }}
+                      </div>
+                      <div
+                        v-if="mov.peca?.modelo"
+                        class="text-[11px] md:text-xs text-gray-500 font-medium mt-0.5"
+                      >
+                        {{ mov.peca.modelo }}
+                      </div>
                     </td>
-                    <td class="py-4 px-6 text-center">
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wide border" :class="getBadgeClass(mov.tipo)">{{ getLabelTipo(mov.tipo) }}</span>
+                    <td class="py-3 md:py-4 px-3 md:px-6 text-center">
+                      <span
+                        class="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] md:text-[10px] font-black uppercase tracking-wide border"
+                        :class="getBadgeClass(mov.tipo)"
+                      >
+                        {{ getLabelTipo(mov.tipo) }}
+                      </span>
                     </td>
-                    <td class="py-4 px-6 text-right">
-                      <span class="text-sm font-black whitespace-nowrap" :class="getValorClass(mov.tipo)">{{ getSinal(mov.tipo) }} {{ formatarDinheiro(mov.valor) }}</span>
+                    <td class="py-3 md:py-4 px-3 md:px-6 text-right">
+                      <span
+                        class="text-sm md:text-base font-black whitespace-nowrap"
+                        :class="getValorClass(mov.tipo)"
+                      >
+                        {{ getSinal(mov.tipo) }} {{ formatarDinheiro(mov.valor) }}
+                      </span>
                     </td>
                   </tr>
                   <tr v-if="!historicoFiltrado.length">
-                    <td colspan="4" class="py-16 text-center">
-                      <UIcon name="i-heroicons-inbox" class="w-16 h-16 text-gray-200 mx-auto mb-4" />
-                      <p class="text-gray-400 font-medium">Nenhum registro encontrado</p>
+                    <td colspan="4" class="py-12 md:py-16 text-center">
+                      <UIcon
+                        name="i-heroicons-inbox"
+                        class="w-12 h-12 md:w-16 md:h-16 text-gray-200 mx-auto mb-4"
+                      />
+                      <p class="text-gray-400 font-medium text-sm md:text-base">
+                        Nenhum registro encontrado
+                      </p>
                     </td>
                   </tr>
                 </tbody>
