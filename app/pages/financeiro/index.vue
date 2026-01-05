@@ -1,7 +1,6 @@
 <template>
   <div class="p-4 pb-24 max-w-7xl mx-auto space-y-6">
     
-    <!-- HEADER COM CONTROLES DE DATA -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
         <h1 class="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-2">
@@ -11,7 +10,6 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
-        <!-- Seletor de Mês -->
         <div class="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm h-9">
           <button @click="mudarMes(-1)" class="px-2 h-full hover:bg-gray-100 rounded-l-lg text-gray-600 border-r border-gray-100">
             <UIcon name="i-heroicons-chevron-left" class="w-4 h-4" />
@@ -26,22 +24,20 @@
 
         <UButton icon="i-heroicons-arrow-path" color="gray" variant="soft" :loading="pending" @click="refresh" square />
         
-        <UButton icon="i-heroicons-document-text" color="black" @click="abrirModalRelatorios">Relatórios</UButton>
+        <UButton icon="i-heroicons-document-arrow-down" color="black" @click="abrirModalRelatorios">
+          Baixar PDF
+        </UButton>
       </div>
     </div>
 
-    <!-- LOADING -->
     <div v-if="pending" class="py-20 text-center text-gray-400">
       <UIcon name="i-heroicons-arrow-path" class="w-10 h-10 animate-spin mb-2" />
       <p>Calculando a rota do dinheiro...</p>
     </div>
 
-    <!-- CONTEÚDO PRINCIPAL -->
     <template v-else-if="stats">
       
-      <!-- 🎯 BLOCO 1: META MENSAL (EDITÁVEL) -->
       <div class="bg-gray-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group">
-        <!-- Botão de Editar Meta -->
         <button 
           @click="abrirModalMeta"
           class="absolute top-4 right-4 bg-white/10 hover:bg-white/20 p-2 rounded-lg backdrop-blur-sm transition-all z-20 cursor-pointer border border-white/10"
@@ -50,29 +46,27 @@
           <UIcon name="i-heroicons-pencil-square" class="w-5 h-5 text-white" />
         </button>
 
-        <!-- Efeito de Fundo -->
         <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500 rounded-full blur-[80px] opacity-20 -mr-16 -mt-16 pointer-events-none"></div>
 
         <div class="relative z-10">
-          <div class="flex justify-between items-end mb-4">
+          <div class="flex flex-col md:flex-row justify-between items-end mb-4 gap-4">
             <div>
               <h2 class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
                 Meta de Lucro ({{ nomeMesAtual }})
               </h2>
               <div class="flex items-baseline gap-2">
-                <span class="text-4xl font-black">{{ formatarDinheiro(stats.meta.atual) }}</span>
+                <span class="text-3xl md:text-4xl font-black">{{ formatarDinheiro(stats.meta.atual) }}</span>
                 <span class="text-gray-400 font-medium">/ {{ formatarDinheiro(stats.meta.alvo) }}</span>
               </div>
             </div>
-            <div class="text-right pr-12"> 
-              <span class="text-3xl font-bold" :class="stats.meta.progresso >= 100 ? 'text-green-400' : 'text-blue-400'">
-                {{ stats.meta.progresso.toFixed(0) }}%
-              </span>
+            
+            <div class="bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-md">
+              <p class="text-[10px] text-gray-300 uppercase tracking-wider font-bold mb-0.5">Saldo Disponível (Caixa)</p>
+              <p class="text-2xl font-black text-emerald-400">{{ formatarDinheiro(stats.saldoCaixa) }}</p>
             </div>
           </div>
 
-          <!-- Barra de Progresso -->
-          <div class="w-full bg-gray-700 h-4 rounded-full overflow-hidden mb-4">
+          <div class="w-full bg-gray-700 h-4 rounded-full overflow-hidden mb-4 relative">
             <div 
               class="h-full rounded-full transition-all duration-1000 ease-out relative"
               :class="stats.meta.progresso >= 100 ? 'bg-green-500' : 'bg-blue-500'"
@@ -80,9 +74,11 @@
             >
               <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
             </div>
+            <div class="absolute top-0 right-2 h-full flex items-center text-[10px] font-bold text-white drop-shadow-md">
+               {{ stats.meta.progresso.toFixed(0) }}%
+            </div>
           </div>
 
-          <!-- Indicadores de Ação -->
           <div class="flex flex-wrap gap-3 text-sm font-medium">
             <div v-if="stats.meta.ehMesAtual && stats.meta.falta > 0" class="bg-orange-500/20 px-3 py-1.5 rounded-lg border border-orange-500/30 flex items-center gap-2">
               <UIcon name="i-heroicons-bolt" class="w-4 h-4 text-orange-400" />
@@ -93,19 +89,12 @@
               <UIcon name="i-heroicons-check-badge" class="w-4 h-4 text-green-400" />
               <span class="text-green-100 font-bold">Meta Batida! Parabéns!</span>
             </div>
-
-            <div class="bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 ml-auto">
-              <span class="text-gray-400">Caixa Total (Acumulado):</span>
-              <span class="text-emerald-400 ml-1 font-bold">{{ formatarDinheiro(stats.saldoCaixa) }}</span>
-            </div>
           </div>
         </div>
       </div>
 
-      <!-- GRID DE AÇÃO -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        <!-- 🔥 OPORTUNIDADES -->
         <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
           <div class="p-5 border-b border-gray-100 bg-orange-50/50">
             <h3 class="font-bold text-gray-900 flex items-center gap-2">
@@ -128,7 +117,7 @@
                 <tr v-for="item in stats.oportunidades" :key="item.id" class="group hover:bg-orange-50/30 transition-colors">
                   <td class="p-4 py-3">
                     <div class="font-bold text-gray-900">{{ item.nome }}</div>
-                    <div class="text-xs text-gray-500">{{ item.modelo }} • {{ item.estoque }} un em estoque</div>
+                    <div class="text-xs text-gray-500">{{ item.modelo }} • {{ item.estoque }} un</div>
                   </td>
                   <td class="p-4 py-3 text-right">
                     <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-md text-xs font-bold">{{ item.margem.toFixed(0) }}%</span>
@@ -140,7 +129,7 @@
                 </tr>
                 <tr v-if="!stats.oportunidades.length">
                   <td colspan="3" class="p-8 text-center text-gray-400 text-xs">
-                    Sem dados suficientes de venda recente ou cadastro de custo.
+                    Sem dados suficientes para sugerir oportunidades.
                   </td>
                 </tr>
               </tbody>
@@ -148,7 +137,6 @@
           </div>
         </div>
 
-        <!-- 🧊 PROBLEMAS (Estoque Parado) -->
         <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
           <div class="p-5 border-b border-gray-100 bg-blue-50/50">
             <h3 class="font-bold text-gray-900 flex items-center gap-2">
@@ -192,7 +180,6 @@
 
       <div class="mb-3 mt-6 border border-gray-200 shadow-sm w-full"></div>
 
-      <!-- EXTRATO DETALHADO DO MÊS -->
       <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
         <div class="p-3 border-b border-gray-100 bg-gray-50 flex flex-col md:flex-row justify-between items-center gap-3">
           <h2 class="font-bold text-gray-700 flex items-center gap-2">
@@ -200,7 +187,6 @@
             Extrato do Mês
           </h2>
           
-          <!-- Filtro de Abas -->
           <div class="flex gap-1 bg-gray-200/50 p-1 rounded-lg">
             <button 
               v-for="aba in abas" 
@@ -260,7 +246,6 @@
       <UButton size="sm" color="red" variant="soft" class="mt-2" @click="refresh">Tentar novamente</UButton>
     </div>
 
-    <!-- ✅ MODAL MANUAL (HTML/CSS PURO) PARA META -->
     <div v-if="modalMetaAberto" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -292,83 +277,65 @@
       </div>
     </div>
 
-    <!-- ✅ MODAL MANUAL (HTML/CSS PURO) PARA RELATÓRIOS -->
     <div v-if="modalRelatorioAberto" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
           <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <UIcon name="i-heroicons-document-text" class="w-5 h-5 text-gray-500" />
-            Relatórios PDF
+            <UIcon name="i-heroicons-document-arrow-down" class="w-5 h-5 text-gray-700" />
+            Gerar Relatório PDF
           </h3>
-          <button @click="modalRelatorioAberto = false" class="text-gray-400 hover:text-gray-600 p-1 rounded-md">
+          <button @click="modalRelatorioAberto = false" class="text-gray-400 hover:text-gray-600">
             <UIcon name="i-heroicons-x-mark" class="w-6 h-6" />
           </button>
         </div>
-        <div class="p-6 space-y-3">
-          <button @click="imprimirRelatorio('gerencial')" class="w-full p-3 border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-200 flex items-center justify-between group transition-all text-left">
-            <div><p class="font-bold text-gray-900 text-sm">Resumo Gerencial</p><p class="text-xs text-gray-500">Metas, Lucro e Margem.</p></div>
-            <UIcon name="i-heroicons-printer" class="w-5 h-5 text-gray-300 group-hover:text-blue-500" />
+
+        <div class="p-6 space-y-6">
+          
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">📅 Período de Análise</label>
+            <select v-model="periodoRelatorio" class="w-full p-3 border-2 border-gray-200 rounded-xl bg-white font-medium text-gray-900 focus:border-black focus:ring-0">
+              <option v-for="op in opcoesPeriodo" :key="op.value" :value="op.value">
+                {{ op.label }}
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">Filtro por Tipo</label>
+            <div class="space-y-2">
+              <label 
+                v-for="tipo in opcoesTipo" 
+                :key="tipo.value"
+                class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all"
+                :class="tipoRelatorio === tipo.value ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'"
+              >
+                <input type="radio" v-model="tipoRelatorio" :value="tipo.value" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                <span class="text-sm font-medium" :class="tipoRelatorio === tipo.value ? 'text-blue-900' : 'text-gray-700'">
+                  {{ tipo.label }}
+                </span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
+          <button @click="modalRelatorioAberto = false" class="px-4 py-2 text-gray-600 font-bold hover:bg-gray-200 rounded-xl transition-colors text-sm">
+            Cancelar
           </button>
-          <button @click="imprimirRelatorio('extrato')" class="w-full p-3 border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-200 flex items-center justify-between group transition-all text-left">
-            <div><p class="font-bold text-gray-900 text-sm">Extrato Detalhado</p><p class="text-xs text-gray-500">Lista de todas as movimentações.</p></div>
-            <UIcon name="i-heroicons-list-bullet" class="w-5 h-5 text-gray-300 group-hover:text-blue-500" />
+          
+          <button 
+            @click="baixarPDF" 
+            :disabled="gerandoPDF"
+            class="px-6 py-2 bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition-all flex items-center gap-2 text-sm disabled:opacity-70"
+          >
+            <UIcon v-if="gerandoPDF" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
+            <UIcon v-else name="i-heroicons-arrow-down-tray" class="w-4 h-4" />
+            {{ gerandoPDF ? 'Gerando...' : 'Baixar PDF' }}
           </button>
         </div>
-      </div>
-    </div>
 
-    <!-- ÁREA DE IMPRESSÃO (Oculta na tela, visível no Print) -->
-    <div id="print-area" class="hidden print:block bg-white text-black p-8 font-sans">
-      <div class="text-center border-b-2 border-black pb-4 mb-6">
-        <h1 class="text-2xl font-black uppercase tracking-wider">Relatório Financeiro</h1>
-        <p class="text-sm text-gray-600">Período: {{ nomeMesAtual }}</p>
-      </div>
-
-      <!-- Layout Gerencial -->
-      <div v-if="tipoRelatorio === 'gerencial' && stats">
-        <div class="grid grid-cols-2 gap-4 mb-8">
-           <div class="border p-4 rounded"><p class="text-xs uppercase text-gray-500">Faturamento</p><p class="text-xl font-bold">{{ formatarDinheiro(stats.mes.faturamento) }}</p></div>
-           <div class="border p-4 rounded"><p class="text-xs uppercase text-gray-500">Lucro Operacional</p><p class="text-xl font-bold">{{ formatarDinheiro(stats.mes.lucroOperacional) }}</p></div>
-           <div class="border p-4 rounded"><p class="text-xs uppercase text-gray-500">Margem</p><p class="text-xl font-bold">{{ stats.mes.margem.toFixed(1) }}%</p></div>
-           <div class="border p-4 rounded bg-gray-100"><p class="text-xs uppercase text-gray-500">Caixa Atual</p><p class="text-xl font-bold">{{ formatarDinheiro(stats.saldoCaixa) }}</p></div>
-        </div>
-        <h3 class="font-bold border-b mb-2">Produtos de Destaque</h3>
-        <table class="w-full text-xs text-left mb-8">
-           <thead><tr><th>Peça</th><th class="text-right">Margem</th><th class="text-right">Lucro Un.</th></tr></thead>
-           <tbody>
-             <tr v-for="i in stats.oportunidades" :key="i.id" class="border-b">
-               <td class="py-2">{{ i.nome }} ({{ i.modelo }})</td>
-               <td class="text-right">{{ i.margem.toFixed(0) }}%</td>
-               <td class="text-right">{{ formatarDinheiro(i.lucroUnit) }}</td>
-             </tr>
-           </tbody>
-        </table>
-      </div>
-
-      <!-- Layout Extrato -->
-      <div v-if="tipoRelatorio === 'extrato' && historicoFiltrado.length">
-         <table class="w-full text-xs border-collapse">
-            <thead>
-              <tr class="border-b-2 border-black">
-                <th class="py-2 text-left">Data</th>
-                <th class="py-2 text-left">Descrição</th>
-                <th class="py-2 text-center">Tipo</th>
-                <th class="py-2 text-right">Valor</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="m in historicoFiltrado" :key="m.id" class="border-b border-gray-200">
-                 <td class="py-2">{{ new Date(m.data).toLocaleDateString() }}</td>
-                 <td class="py-2">{{ m.descricao || m.peca?.nome }}</td>
-                 <td class="py-2 text-center uppercase font-bold text-[10px]">{{ getLabelTipo(m.tipo) }}</td>
-                 <td class="py-2 text-right">{{ getSinal(m.tipo) }} {{ formatarDinheiro(m.valor) }}</td>
-              </tr>
-            </tbody>
-         </table>
-      </div>
-      
-      <div class="mt-8 pt-4 border-t text-center text-[10px] text-gray-400">
-        Gerado automaticamente pelo sistema Eli Peças em {{ new Date().toLocaleString() }}
       </div>
     </div>
 
@@ -377,9 +344,14 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
+
 definePageMeta({ layout: 'default' })
 
-// Data e Navegação
+// ----------------------------------------------------
+// NAVEGAÇÃO E DATA
+// ----------------------------------------------------
 const dataAtual = ref(new Date())
 const nomeMesAtual = computed(() => dataAtual.value.toLocaleString('pt-BR', { month: 'long', year: 'numeric' }))
 const ehMesFuturo = computed(() => {
@@ -399,10 +371,14 @@ const params = computed(() => ({
   ano: dataAtual.value.getFullYear()
 }))
 
-// Fetch Data
+// ----------------------------------------------------
+// FETCH DE DADOS (KPIs)
+// ----------------------------------------------------
 const { data: stats, pending, refresh, error } = await useFetch('/api/financeiro/stats', { query: params, lazy: true })
 
-// Extrato Unificado
+// ----------------------------------------------------
+// TABELA DO EXTRATO (FRONTEND FILTER)
+// ----------------------------------------------------
 const abas = [
   { label: 'Todos', value: 'todos' },
   { label: 'Vendas', value: 'saida' },
@@ -431,56 +407,160 @@ const historicoFiltrado = computed(() => {
   return lista.sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
 })
 
-// Modal Meta
+// ----------------------------------------------------
+// MODAL META
+// ----------------------------------------------------
 const modalMetaAberto = ref(false)
 const novaMeta = ref('')
 const salvandoMeta = ref(false)
+
 function abrirModalMeta() {
   if (stats.value) novaMeta.value = String(stats.value.meta.alvo)
   modalMetaAberto.value = true
 }
+
 async function salvarMeta() {
   if (!novaMeta.value) return
   salvandoMeta.value = true
   try { await $fetch('/api/financeiro/meta', { method: 'POST', body: { valor: novaMeta.value } }); modalMetaAberto.value = false; refresh() } catch {} finally { salvandoMeta.value = false }
 }
 
-// Relatórios
+// ----------------------------------------------------
+// RELATÓRIO PDF (API + JSPDF)
+// ----------------------------------------------------
 const modalRelatorioAberto = ref(false)
-const tipoRelatorio = ref('')
-const tipoRelatorioTitulo = computed(() => tipoRelatorio.value.toUpperCase())
-function abrirModalRelatorios() { modalRelatorioAberto.value = true }
-function imprimirRelatorio(tipo: string) {
-  tipoRelatorio.value = tipo
-  setTimeout(() => { window.print(); modalRelatorioAberto.value = false }, 300)
+const gerandoPDF = ref(false)
+const periodoRelatorio = ref(1) // Meses
+const tipoRelatorio = ref('todos')
+
+const opcoesPeriodo = Array.from({ length: 12 }, (_, i) => ({
+  label: i === 0 ? 'Mês Atual' : `Últimos ${i + 1} meses`,
+  value: i + 1
+}))
+
+const opcoesTipo = [
+  { label: 'Tudo (Extrato Completo)', value: 'todos' },
+  { label: 'Apenas Vendas', value: 'saida' },
+  { label: 'Apenas Entradas de Estoque', value: 'entrada' },
+  { label: 'Apenas Despesas', value: 'despesa' }
+]
+
+function abrirModalRelatorios() {
+  modalRelatorioAberto.value = true
 }
 
-// Helpers
+async function baixarPDF() {
+  gerandoPDF.value = true
+  try {
+    // 1. CHAMA A API QUE CRIAMOS PARA PEGAR DADOS DE X MESES
+    const dados = await $fetch('/api/financeiro/relatorio', {
+      method: 'POST',
+      body: {
+        meses: periodoRelatorio.value,
+        tipo: tipoRelatorio.value
+      }
+    })
+
+    // 2. GERA O PDF NO CLIENTE
+    const doc = new jsPDF()
+    
+    // Cabeçalho
+    doc.setFontSize(18)
+    doc.text('Relatório Financeiro - Eli Peças', 14, 15)
+    
+    doc.setFontSize(10)
+    doc.setTextColor(100)
+    doc.text(`Gerado em: ${new Date().toLocaleString()}`, 14, 22)
+    doc.text(`Período de Análise: Últimos ${periodoRelatorio.value} meses`, 14, 27)
+
+    doc.setDrawColor(200);
+    doc.line(14, 32, 196, 32); // Linha separadora
+
+    // Resumo Financeiro
+    doc.setFontSize(12)
+    doc.setTextColor(0)
+    doc.text('Resumo do Período:', 14, 40)
+    
+    doc.setFontSize(10)
+    doc.setTextColor(0, 128, 0) // Verde Escuro
+    doc.text(`Receita/Vendas: ${formatarDinheiro(dados.resumo.receita)}`, 14, 48)
+    
+    doc.setTextColor(180, 0, 0) // Vermelho
+    doc.text(`Despesas Totais: ${formatarDinheiro(dados.resumo.despesa)}`, 80, 48)
+    
+    const corSaldo = dados.resumo.saldo >= 0 ? [0, 0, 0] : [220, 0, 0]
+    doc.setTextColor(corSaldo[0], corSaldo[1], corSaldo[2])
+    doc.setFont("helvetica", "bold");
+    doc.text(`Saldo Líquido: ${formatarDinheiro(dados.resumo.saldo)}`, 140, 48)
+
+    // Tabela
+    const colunas = ["Data", "Descrição", "Tipo", "Valor (R$)"]
+    const linhas = dados.itens.map((item: any) => [
+      new Date(item.data).toLocaleDateString('pt-BR'),
+      item.descricao,
+      item.tipo === 'SAIDA' ? 'VENDA' : (item.tipo === 'ENTRADA' ? 'ENTRADA' : 'DESPESA'),
+      formatarDinheiro(item.valor)
+    ])
+
+    autoTable(doc, {
+      startY: 55,
+      head: [colunas],
+      body: linhas,
+      theme: 'grid',
+      headStyles: { fillColor: [40, 40, 40] }, // Cabeçalho preto
+      styles: { fontSize: 8 },
+      columnStyles: {
+        3: { halign: 'right', fontStyle: 'bold' } // Coluna Valor alinhada a direita
+      },
+      didParseCell: function (data) {
+        // Pinta valores de despesa de vermelho na tabela
+        if (data.section === 'body' && data.column.index === 3) {
+          const rawRow = dados.itens[data.row.index];
+          if (rawRow.tipo === 'DESPESA') {
+            data.cell.styles.textColor = [180, 0, 0];
+          } else {
+            data.cell.styles.textColor = [0, 128, 0];
+          }
+        }
+      }
+    })
+
+    // Download
+    doc.save(`relatorio_eli_pecas_${new Date().toISOString().split('T')[0]}.pdf`)
+    modalRelatorioAberto.value = false
+
+  } catch (e) {
+    alert('Erro ao gerar PDF. Verifique sua conexão.')
+    console.error(e)
+  } finally {
+    gerandoPDF.value = false
+  }
+}
+
+// ----------------------------------------------------
+// HELPERS
+// ----------------------------------------------------
 function formatarDinheiro(val: number) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0) }
+
 function getBadgeClass(tipo: string) {
   if (tipo === 'SAIDA') return 'bg-emerald-100 text-emerald-700 border-emerald-200'
   if (tipo === 'ENTRADA') return 'bg-blue-100 text-blue-700 border-blue-200'
   return 'bg-red-100 text-red-700 border-red-200'
 }
+
 function getLabelTipo(tipo: string) {
   if (tipo === 'SAIDA') return 'Venda'
   if (tipo === 'ENTRADA') return 'Estoque'
   return 'Despesa'
 }
+
 function getValorClass(tipo: string) {
   if (tipo === 'SAIDA' || tipo === 'ENTRADA') return 'text-emerald-600'
   return 'text-red-600'
 }
+
 function getSinal(tipo: string) {
   if (tipo === 'DESPESA') return '-'
   return '+'
 }
 </script>
-
-<style>
-@media print {
-  body * { visibility: hidden; }
-  #print-area, #print-area * { visibility: visible; }
-  #print-area { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block !important; padding: 20px; }
-}
-</style>
