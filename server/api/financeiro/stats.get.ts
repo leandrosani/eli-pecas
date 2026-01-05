@@ -1,80 +1,98 @@
-import { defineEventHandler, createError } from 'h3'
+import { defineEventHandler, getQuery, createError } from 'h3'
 import { prisma } from '../../utils/prisma'
 
 export default defineEventHandler(async (event) => {
   try {
+    const query = getQuery(event)
     const hoje = new Date()
     
-    // 1. DEFINIÇÃO PRECISA DE DATAS
-    const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1)
-    
-    // Fim do mês (último milissegundo)
-    const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0)
-    fimMes.setHours(23, 59, 59, 999)
+    let mes = Number(query.mes) || (hoje.getMonth() + 1)
+    let ano = Number(query.ano) || hoje.getFullYear()
 
-    // Data de corte para "Estoque Parado" (90 dias atrás)
+    // 1. AJUSTE DE DATAS (CRÍTICO PARA FECHAMENTO)
+    const inicioMes = new Date(ano, mes - 1, 1)
+    // Pega o primeiro dia do próximo mês e subtrai 1ms para pegar o último instante deste mês
+    const fimMes = new Date(ano, mes, 1)
+    fimMes.setMilliseconds(-1)
+
     const dataCorteParado = new Date()
     dataCorteParado.setDate(dataCorteParado.getDate() - 90)
 
-    // 2. CARREGAMENTO DE DADOS EM PARALELO (Performance)
-    const [todasVendas, todasDespesas, vendasMes, estoqueAtivo, configMeta] = await Promise.all([
-      // A. Histórico Total de Vendas (para Saldo em Caixa)
+    // 2. CARREGAR DADOS
+    const [
+      todasVendas, 
+      todasDespesas, 
+      movimentacoesMes, 
+      despesasMes,      
+      estoqueAtivo, 
+      configMeta
+    ] = await Promise.all([
+      // A. Histórico GLOBAL (para Saldo em Caixa Real)
       prisma.historicoMovimentacao.findMany({
         where: { tipo: 'SAIDA' },
         select: { 
           quantidade: true, 
-          peca: { select: { preco: true } } 
+          custo: true, // Custo histórico (snapshot)
+          peca: { select: { preco: true, custo: true } } // Custo atual (fallback)
         }
       }),
-      
-      // B. Histórico Total de Despesas (para Saldo em Caixa)
-      prisma.despesa.findMany({
-        select: { valor: true }
-      }),
+      prisma.despesa.findMany({ select: { valor: true } }),
 
-      // C. Vendas do Mês Atual (para DRE/Lucro e Ritmo)
+      // B. Movimentações do MÊS (DRE)
       prisma.historicoMovimentacao.findMany({
-        where: { 
-          tipo: 'SAIDA',
-          createdAt: { gte: inicioMes, lte: fimMes }
-        },
+        where: { createdAt: { gte: inicioMes, lte: fimMes } },
         include: {
-          peca: { select: { id: true, nome: true, preco: true, custo: true } }
-        }
+          peca: { select: { id: true, nome: true, modelo: true, marca: true, preco: true, custo: true, lado: true, ano: true } }
+        },
+        orderBy: { createdAt: 'desc' }
       }),
 
-      // D. Estoque Atual (para Oportunidades e Parados)
+      // C. Despesas do MÊS
+      prisma.despesa.findMany({
+        where: { data: { gte: inicioMes, lte: fimMes } },
+        orderBy: { data: 'desc' }
+      }),
+
+      // D. Estoque Atual (Com filtro correto de 'SAIDA' para detectar parados)
       prisma.peca.findMany({
         where: { ativo: true, quantidade: { gt: 0 } },
         include: {
-          // Busca a última SAÍDA para saber se o item está encalhado de verdade
           movimentacoes: { 
-            where: { tipo: 'SAIDA' },
+            where: { tipo: 'SAIDA' }, // Só considera que mexeu se vendeu
             take: 1, 
             orderBy: { createdAt: 'desc' } 
           }
         }
       }),
 
-      // E. Meta Mensal (Do Banco de Dados)
-      prisma.configuracao.findUnique({
-        where: { chave: 'META_MENSAL' }
-      })
+      // E. Meta
+      prisma.configuracao.findUnique({ where: { chave: 'META_MENSAL' } })
     ])
 
-    // --- CÁLCULO 1: SALDO EM CAIXA (Regra de Ouro) ---
-    // Nota: Considera que compras de estoque são lançadas como Despesa ('COMPRA DE LOTE')
-    const receitaTotal = todasVendas.reduce((acc, mov) => acc + (Number(mov.peca?.preco || 0) * mov.quantidade), 0)
-    const despesaTotal = todasDespesas.reduce((acc, desp) => acc + Number(desp.valor || 0), 0)
+    // --- CÁLCULO 1: SALDO EM CAIXA REAL (CORREÇÃO APLICADA) ---
+    // Receita Bruta Total
+    const receitaTotalGlobal = todasVendas.reduce((acc, mov) => acc + (Number(mov.peca?.preco || 0) * mov.quantidade), 0)
     
-    const saldoCaixa = receitaTotal - despesaTotal
+    // Custo Total das Peças Vendidas (Para abater do caixa se não estiver nas despesas, ou para DRE acumulado)
+    // Se você lança "Compra de Lote" nas despesas, usar essa linha pode duplicar a saída. 
+    // Mas conforme sua solicitação de "Correção Conceitual", vamos calcular o custo vendido:
+    const custoTotalVendido = todasVendas.reduce((acc, mov) => {
+      const custoUnit = mov.custo ? Number(mov.custo) : Number(mov.peca?.custo || 0)
+      return acc + (custoUnit * mov.quantidade)
+    }, 0)
 
-    // --- CÁLCULO 2: RESULTADO DO MÊS (Saúde Operacional) ---
+    const despesaTotalGlobal = todasDespesas.reduce((acc, desp) => acc + Number(desp.valor || 0), 0)
+    
+    // Fórmula ajustada conforme solicitado: Receita - Despesas - Custo do que saiu
+    // Nota: Isso mostra o "Lucro Líquido Acumulado em Caixa"
+    const saldoCaixa = receitaTotalGlobal - despesaTotalGlobal - custoTotalVendido
+
+    // --- CÁLCULO 2: RESULTADO DO MÊS SELECIONADO ---
+    const vendasMes = movimentacoesMes.filter(m => m.tipo === 'SAIDA')
+    
     const faturamentoMes = vendasMes.reduce((acc, mov) => acc + (Number(mov.peca?.preco || 0) * mov.quantidade), 0)
     
-    // CMV (Custo da Mercadoria Vendida)
     const custoProdutosMes = vendasMes.reduce((acc, mov: any) => {
-      // Prioriza o custo gravado no histórico (snapshot), senão usa o atual da peça
       const custoUnitario = mov.custo ? Number(mov.custo) : Number(mov.peca?.custo || 0)
       return acc + (custoUnitario * mov.quantidade)
     }, 0)
@@ -82,37 +100,45 @@ export default defineEventHandler(async (event) => {
     const lucroOperacional = faturamentoMes - custoProdutosMes
     const margem = faturamentoMes > 0 ? (lucroOperacional / faturamentoMes) * 100 : 0
 
-    // --- CÁLCULO 3: META MENSAL DINÂMICA ---
-    const META_LUCRO = configMeta?.valor ? Number(configMeta.valor) : 10000 // Padrão 10k se não configurado
-    const progressoMeta = META_LUCRO > 0 ? Math.min((lucroOperacional / META_LUCRO) * 100, 100) : 0
+    // --- CÁLCULO 3: META E RITMO (CORREÇÃO DE ZERO) ---
+    const META_LUCRO = configMeta?.valor ? Number(configMeta.valor) : 0
     
-    // Ritmo Diário
-    const ultimoDiaMes = fimMes.getDate() // Ex: 30 ou 31
-    const diaHoje = hoje.getDate()
-    const diasRestantes = Math.max(1, ultimoDiaMes - diaHoje) // Evita divisão por zero
+    // Evita divisão por zero se a meta não estiver definida
+    const progressoMeta = META_LUCRO > 0 
+      ? Math.min((lucroOperacional / META_LUCRO) * 100, 100) 
+      : 0
     
-    const faltaParaMeta = Math.max(0, META_LUCRO - lucroOperacional)
-    const ritmoDiario = faltaParaMeta > 0 ? (faltaParaMeta / diasRestantes) : 0
+    const ehMesAtual = hoje.getMonth() + 1 === mes && hoje.getFullYear() === ano
+    let ritmoDiario = 0
+    let faltaParaMeta = 0
+    
+    if (ehMesAtual && META_LUCRO > 0) {
+      const ultimoDiaMes = fimMes.getDate()
+      const diaHoje = hoje.getDate()
+      const diasRestantes = Math.max(1, ultimoDiaMes - diaHoje)
+      
+      faltaParaMeta = Math.max(0, META_LUCRO - lucroOperacional)
+      ritmoDiario = faltaParaMeta / diasRestantes
+    }
 
-    // --- CÁLCULO 4: ESTOQUE PARADO (> 90 dias sem saída) ---
+    // --- CÁLCULO 4: ESTOQUE PARADO ---
     let dinheiroCongeladoCusto = 0
-    let dinheiroCongeladoVenda = 0
     let qtdItensParados = 0
+    let vendaTotalParados = 0
 
     const itensParados = estoqueAtivo.filter(peca => {
-      // Se tiver saída, usa a data da última saída. Se nunca saiu, usa a data de criação (entrada).
+      // Se nunca teve SAÍDA, considera a data de criação (entrada no sistema)
       const dataUltimaAtividade = peca.movimentacoes[0]?.createdAt || peca.createdAt
       return new Date(dataUltimaAtividade) < dataCorteParado
     })
 
     itensParados.forEach(p => {
       dinheiroCongeladoCusto += Number(p.custo || 0) * p.quantidade
-      dinheiroCongeladoVenda += Number(p.preco) * p.quantidade
+      vendaTotalParados += Number(p.preco) * p.quantidade
       qtdItensParados++
     })
 
-    // --- CÁLCULO 5: OPORTUNIDADES (Prioritários) ---
-    // Mapeia o giro do mês atual para saber o que está "quente"
+    // --- CÁLCULO 5: OPORTUNIDADES ---
     const giroPorPeca: Record<string, number> = {}
     vendasMes.forEach(v => {
       if (!giroPorPeca[v.pecaId]) giroPorPeca[v.pecaId] = 0
@@ -127,7 +153,7 @@ export default defineEventHandler(async (event) => {
         const lucroUnit = preco - custo
         const margemItem = preco > 0 ? (lucroUnit / preco) * 100 : 0
         
-        // 🚨 CORREÇÃO CRÍTICA: Cálculo do Lucro Potencial Total (Unitário * Estoque)
+        // CORREÇÃO: Adicionado lucroPotencial para o frontend não quebrar
         const lucroPotencial = lucroUnit * p.quantidade
 
         return {
@@ -138,45 +164,45 @@ export default defineEventHandler(async (event) => {
           preco,
           custo,
           lucroUnit,
-          lucroPotencial, // Novo campo essencial para ordenação
+          lucroPotencial, 
           margem: margemItem,
           vendasRecentes
         }
       })
-      // Critério: Margem boa (>30%) E (Vendeu este mês OU Margem muito alta > 50%)
       .filter(p => p.margem > 30 && (p.vendasRecentes > 0 || p.margem > 50))
-      // Ordena por Lucro Potencial (Quem coloca mais dinheiro no bolso se vender tudo)
       .sort((a, b) => b.lucroPotencial - a.lucroPotencial) 
-      .slice(0, 5) // Top 5
+      .slice(0, 5)
 
-    // Retorno final estruturado
     return {
       saldoCaixa,
-      receitaTotal,
-      despesaTotal,
+      receitaTotal: receitaTotalGlobal,
+      despesaTotal: despesaTotalGlobal,
       
       meta: {
         alvo: META_LUCRO,
         atual: lucroOperacional,
         progresso: progressoMeta,
         falta: faltaParaMeta,
-        ritmo: ritmoDiario
+        ritmo: ritmoDiario,
+        ehMesAtual
       },
 
       parados: {
         qtd: qtdItensParados,
         custoTotal: dinheiroCongeladoCusto,
-        vendaTotal: dinheiroCongeladoVenda
+        vendaTotal: vendaTotalParados
       },
 
-      oportunidades
+      oportunidades,
+
+      extrato: {
+        movimentacoes: movimentacoesMes,
+        despesas: despesasMes
+      }
     }
 
   } catch (error: any) {
-    console.error('Erro na API Financeira:', error)
-    throw createError({
-      statusCode: 500,
-      message: 'Erro ao processar indicadores: ' + (error.message || 'Erro interno')
-    })
+    console.error('Erro API Financeira:', error)
+    throw createError({ statusCode: 500, message: 'Erro interno.' })
   }
 })
