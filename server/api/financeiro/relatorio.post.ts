@@ -4,12 +4,16 @@ import { prisma } from '../../utils/prisma'
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const mesesAtras = Number(body.meses) || 1
-  const filtroTipo = body.tipo || 'todos'
+  
+  // Agora recebemos um ARRAY de tipos ['SAIDA', 'ENTRADA', 'DESPESA']
+  // Se não vier nada, assumimos tudo por padrão
+  const tiposFiltro: string[] = Array.isArray(body.tipos) && body.tipos.length > 0 
+    ? body.tipos 
+    : ['SAIDA', 'ENTRADA', 'DESPESA']
 
   // 1. Calcular datas
   const dataFim = new Date()
   const dataInicio = new Date()
-  
   dataInicio.setMonth(dataInicio.getMonth() - (mesesAtras - 1))
   dataInicio.setDate(1)
   dataInicio.setHours(0, 0, 0, 0)
@@ -18,16 +22,16 @@ export default defineEventHandler(async (event) => {
     // 2. Buscar Movimentações (Vendas e Entradas)
     let movimentacoes: any[] = []
     
-    if (filtroTipo === 'todos' || filtroTipo === 'saida' || filtroTipo === 'entrada') {
-      const tipoFiltro = filtroTipo === 'todos' ? undefined : filtroTipo.toUpperCase()
-      
+    // Filtra apenas se SAIDA ou ENTRADA estiverem na lista solicitada
+    const tiposMovimentacao = tiposFiltro.filter(t => t === 'SAIDA' || t === 'ENTRADA')
+    
+    if (tiposMovimentacao.length > 0) {
       movimentacoes = await prisma.historicoMovimentacao.findMany({
         where: {
           createdAt: { gte: dataInicio, lte: dataFim },
-          tipo: tipoFiltro
+          tipo: { in: tiposMovimentacao as any } // Filtra pelo array
         },
         include: {
-          // ✅ CORREÇÃO: Adicionado 'preco' no select para poder calcular o valor
           peca: { select: { nome: true, modelo: true, preco: true } }
         },
         orderBy: { createdAt: 'desc' }
@@ -37,7 +41,8 @@ export default defineEventHandler(async (event) => {
     // 3. Buscar Despesas
     let despesas: any[] = []
     
-    if (filtroTipo === 'todos' || filtroTipo === 'despesa') {
+    // Só busca despesas se 'DESPESA' estiver na lista solicitada
+    if (tiposFiltro.includes('DESPESA')) {
       despesas = await prisma.despesa.findMany({
         where: {
           data: { gte: dataInicio, lte: dataFim }
@@ -51,8 +56,7 @@ export default defineEventHandler(async (event) => {
       data: m.createdAt,
       descricao: `${m.peca?.nome || 'Item'} (${m.peca?.modelo || ''})`,
       tipo: m.tipo,
-      // Se for ENTRADA (Estoque), o valor monetário para o caixa é 0 (ou custo, se preferir).
-      // Se for SAIDA (Venda), é Preço * Qtd.
+      // Se for SAIDA, é Receita (+). Se for ENTRADA, é neutro (0) no fluxo de caixa financeiro, mas registramos.
       valor: m.tipo === 'SAIDA' ? (Number(m.peca?.preco || 0) * m.quantidade) : 0,
       qtd: m.quantidade
     }))

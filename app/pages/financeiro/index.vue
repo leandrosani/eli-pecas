@@ -131,7 +131,6 @@
           </div>
         </div>
 
-        <!--PATRIMONIO ATIVO-->
         <div class="grid grid-cols-3 gap-4">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-blue-100 flex flex-col justify-between hover:shadow-md transition-all">
                 <div class="flex items-center gap-2 text-gray-500 mb-2">
@@ -499,31 +498,40 @@
           <div>
             <label class="flex items-center gap-2 text-sm font-black text-gray-700 mb-3 uppercase tracking-wide">
               <UIcon name="i-heroicons-funnel" class="w-4 h-4" />
-              Filtro por Categoria
+              Categorias (Marque as desejadas)
             </label>
             <div class="space-y-3">
               <label 
                 v-for="tipo in opcoesTipo" 
                 :key="tipo.value"
-                class="flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all hover:border-gray-300"
-                :class="tipoRelatorio === tipo.value 
+                class="flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all hover:border-gray-300 relative overflow-hidden"
+                :class="filtrosRelatorio.includes(tipo.value) 
                   ? 'border-gray-900 bg-gray-50' 
                   : 'border-gray-200 bg-white'"
               >
                 <input 
-                  type="radio" 
-                  v-model="tipoRelatorio" 
+                  type="checkbox" 
+                  v-model="filtrosRelatorio" 
                   :value="tipo.value" 
-                  class="w-5 h-5 text-gray-900 focus:ring-gray-900 cursor-pointer"
+                  class="w-5 h-5 text-gray-900 rounded focus:ring-gray-900 cursor-pointer border-gray-300"
                 >
                 <span 
                   class="text-sm font-bold flex-1"
-                  :class="tipoRelatorio === tipo.value ? 'text-gray-900' : 'text-gray-600'"
+                  :class="filtrosRelatorio.includes(tipo.value) ? 'text-gray-900' : 'text-gray-600'"
                 >
                   {{ tipo.label }}
                 </span>
+                
+                <UIcon 
+                    v-if="filtrosRelatorio.includes(tipo.value)" 
+                    name="i-heroicons-check-circle" 
+                    class="w-6 h-6 text-gray-900" 
+                />
               </label>
             </div>
+            <p v-if="filtrosRelatorio.length === 0" class="text-xs text-red-500 font-bold mt-2">
+                * Selecione pelo menos uma categoria
+            </p>
           </div>
 
         </div>
@@ -540,7 +548,7 @@
           
           <UButton 
             @click="baixarPDF" 
-            :disabled="gerandoPDF"
+            :disabled="gerandoPDF || filtrosRelatorio.length === 0"
             color="black"
             size="lg"
             :loading="gerandoPDF"
@@ -566,7 +574,6 @@ definePageMeta({ layout: 'default' })
 // ----------------------------------------------------
 // 1. DADOS DO TOPO (KPIs - SEMPRE MÊS ATUAL)
 // ----------------------------------------------------
-// Data fixa de "hoje" para os cards de cima. Não muda com a navegação.
 const dataHoje = new Date()
 
 const paramsPrincipal = {
@@ -574,8 +581,6 @@ const paramsPrincipal = {
   ano: dataHoje.getFullYear()
 }
 
-// Fetch 1: Carrega apenas os dados do topo (Meta, Saldo, Ritmo)
-// key: 'kpi-principal' garante que não misture com o outro fetch
 const { data: statsPrincipal, pending: pendingPrincipal, refresh: refreshPrincipal, error: errorPrincipal } = await useFetch('/api/financeiro/stats', { 
   query: paramsPrincipal,
   key: 'kpi-principal',
@@ -585,14 +590,12 @@ const { data: statsPrincipal, pending: pendingPrincipal, refresh: refreshPrincip
 // ----------------------------------------------------
 // 2. NAVEGAÇÃO E DADOS DO EXTRATO (DINÂMICO)
 // ----------------------------------------------------
-// Data exclusiva para controlar a tabela de baixo
 const dataExtrato = ref(new Date()) 
 
 const nomeMesExtrato = computed(() => dataExtrato.value.toLocaleString('pt-BR', { month: 'long', year: 'numeric' }))
 
 const ehMesFuturo = computed(() => {
   const hoje = new Date()
-  // Compara se o mês do extrato é maior que o mês atual real
   return dataExtrato.value > hoje
 })
 
@@ -600,7 +603,6 @@ function mudarMes(delta: number) {
   const d = new Date(dataExtrato.value)
   d.setMonth(d.getMonth() + delta)
   dataExtrato.value = d
-  // O watch do useFetch abaixo detecta a mudança e recarrega sozinho
 }
 
 const paramsExtrato = computed(() => ({
@@ -608,8 +610,6 @@ const paramsExtrato = computed(() => ({
   ano: dataExtrato.value.getFullYear()
 }))
 
-// Fetch 2: Carrega a tabela e o resumo da barra cinza
-// watch: [paramsExtrato] faz ele recarregar assim que mudar o mês
 const { data: statsExtrato, pending: pendingExtrato, refresh: refreshExtrato } = await useFetch('/api/financeiro/stats', { 
   query: paramsExtrato,
   key: 'extrato-dinamico',
@@ -617,14 +617,13 @@ const { data: statsExtrato, pending: pendingExtrato, refresh: refreshExtrato } =
   watch: [paramsExtrato]
 })
 
-// Função global para atualizar tudo manualmente se precisar
 function refresh() {
   refreshPrincipal()
   refreshExtrato()
 }
 
 // ----------------------------------------------------
-// TABELA DO EXTRATO (Lógica baseada em statsExtrato)
+// TABELA DO EXTRATO
 // ----------------------------------------------------
 const abas = [
   { label: 'Todos', value: 'todos' },
@@ -634,7 +633,6 @@ const abas = [
 ]
 const abaAtiva = ref('todos')
 
-// CÁLCULOS DO RESUMO (Barra Cinza) - Olha para statsExtrato
 const resumoExtrato = computed(() => {
   if (!statsExtrato.value || !statsExtrato.value.extrato) return { vendas: 0, despesas: 0, lucro: 0 }
 
@@ -652,7 +650,6 @@ const resumoExtrato = computed(() => {
   }
 })
 
-// Texto da data (ex: 01 Jan - 31 Jan) baseado na data do extrato
 const textoPeriodo = computed(() => {
   const dt = new Date(dataExtrato.value)
   const primeiroDia = new Date(dt.getFullYear(), dt.getMonth(), 1)
@@ -662,7 +659,6 @@ const textoPeriodo = computed(() => {
   return `${primeiroDia.toLocaleDateString('pt-BR', options)} - ${ultimoDia.toLocaleDateString('pt-BR', options)}`
 })
 
-// Lista da Tabela - Olha para statsExtrato
 const historicoFiltrado = computed(() => {
   if (!statsExtrato.value || !statsExtrato.value.extrato) return []
   
@@ -684,14 +680,13 @@ const historicoFiltrado = computed(() => {
 })
 
 // ----------------------------------------------------
-// MODAL META (Olha para statsPrincipal - Mês Atual)
+// MODAL META
 // ----------------------------------------------------
 const modalMetaAberto = ref(false)
 const novaMeta = ref('')
 const salvandoMeta = ref(false)
 
 function abrirModalMeta() {
-  // Pega a meta do mês ATUAL, não do histórico
   if (statsPrincipal.value) novaMeta.value = String(statsPrincipal.value.meta.alvo)
   modalMetaAberto.value = true
 }
@@ -702,17 +697,19 @@ async function salvarMeta() {
   try { 
       await $fetch('/api/financeiro/meta', { method: 'POST', body: { valor: novaMeta.value } }); 
       modalMetaAberto.value = false; 
-      refreshPrincipal() // Atualiza só o topo
+      refreshPrincipal()
   } catch {} finally { salvandoMeta.value = false }
 }
 
 // ----------------------------------------------------
-// RELATÓRIO PDF (Mantido Intacto)
+// RELATÓRIO PDF (LÓGICA CORRIGIDA)
 // ----------------------------------------------------
 const modalRelatorioAberto = ref(false)
 const gerandoPDF = ref(false)
-const periodoRelatorio = ref(1) // Meses
-const tipoRelatorio = ref('todos')
+const periodoRelatorio = ref(1)
+
+// Array para Múltipla Seleção (Checkbox)
+const filtrosRelatorio = ref(['SAIDA', 'DESPESA']) 
 
 const opcoesPeriodo = Array.from({ length: 12 }, (_, i) => ({
   label: i === 0 ? 'Mês Atual' : `Últimos ${i + 1} meses`,
@@ -720,24 +717,30 @@ const opcoesPeriodo = Array.from({ length: 12 }, (_, i) => ({
 }))
 
 const opcoesTipo = [
-  { label: 'Tudo (Extrato Completo)', value: 'todos' },
-  { label: 'Apenas Vendas', value: 'saida' },
-  { label: 'Apenas Entradas de Estoque', value: 'entrada' },
-  { label: 'Apenas Despesas', value: 'despesa' }
+  { label: 'Vendas (Saídas)', value: 'SAIDA' },
+  { label: 'Despesas', value: 'DESPESA' },
+  { label: 'Entradas de Estoque', value: 'ENTRADA' }
 ]
 
 function abrirModalRelatorios() {
   modalRelatorioAberto.value = true
+  periodoRelatorio.value = 1
+  filtrosRelatorio.value = ['SAIDA', 'DESPESA'] // Reseta para o padrão seguro
 }
 
 async function baixarPDF() {
+  if (filtrosRelatorio.value.length === 0) {
+      alert('Selecione pelo menos uma categoria.')
+      return
+  }
+
   gerandoPDF.value = true
   try {
     const dados = await $fetch('/api/financeiro/relatorio', {
       method: 'POST',
       body: {
         meses: periodoRelatorio.value,
-        tipo: tipoRelatorio.value
+        tipos: filtrosRelatorio.value // Envia o array
       }
     })
 
@@ -753,7 +756,7 @@ async function baixarPDF() {
     doc.text(`Período de Análise: Últimos ${periodoRelatorio.value} meses`, 14, 27)
 
     doc.setDrawColor(200);
-    doc.line(14, 32, 196, 32); // Linha separadora
+    doc.line(14, 32, 196, 32);
 
     // Resumo Financeiro
     doc.setFontSize(12)
@@ -786,10 +789,10 @@ async function baixarPDF() {
       head: [colunas],
       body: linhas,
       theme: 'grid',
-      headStyles: { fillColor: [40, 40, 40] }, // Cabeçalho preto
+      headStyles: { fillColor: [40, 40, 40] },
       styles: { fontSize: 8 },
       columnStyles: {
-        3: { halign: 'right', fontStyle: 'bold' } // Coluna Valor alinhada a direita
+        3: { halign: 'right', fontStyle: 'bold' }
       },
       didParseCell: function (data) {
         if (data.section === 'body' && data.column.index === 3) {
@@ -815,7 +818,7 @@ async function baixarPDF() {
 }
 
 // ----------------------------------------------------
-// HELPERS (Mantidos Iguais)
+// HELPERS
 // ----------------------------------------------------
 function formatarDinheiro(val: number) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0) }
 
