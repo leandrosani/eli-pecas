@@ -7,6 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ⚠️ REMOVI O ENUM PARA NÃO DAR CONFLITO COM SEUS DADOS EXISTENTES
+
 model User {
   id            String                  @id @default(uuid())
   email         String                  @unique
@@ -61,7 +63,7 @@ model Peca {
   Link          String?                 @db.Text
   preco         Decimal                 @db.Decimal(10, 2)
   
-  // ✅ NOVO CAMPO: Custo da peça (para cálculo de margem)
+  // ✅ MANTIDO: Novo campo de custo para o financeiro
   custo         Decimal                 @default(0) @db.Decimal(10, 2)
   
   quantidade    Int                     @default(1)
@@ -78,18 +80,25 @@ model Peca {
 
 model HistoricoMovimentacao {
   id         String   @id @default(uuid())
+  
+  // ✅ CORRIGIDO: Voltamos para String para preservar seus dados
   tipo       String   // 'ENTRADA' ou 'SAIDA'
+  
   quantidade Int
   observacao String?
   pecaId     String
   userId     String?
   createdAt  DateTime @default(now())
   
-  // ✅ NOVO CAMPO: Custo no momento da venda (Snapshot)
+  // ✅ MANTIDO: Snapshot do custo na venda
   custo      Decimal? @db.Decimal(10, 2)
 
   peca       Peca     @relation(fields: [pecaId], references: [id])
   user       User?    @relation(fields: [userId], references: [id])
+
+  // Mantemos os índices para performance (isso não apaga dados)
+  @@index([tipo, createdAt]) 
+  @@index([pecaId])
 }
 
 model Despesa {
@@ -105,9 +114,10 @@ model Despesa {
   user           User?    @relation(fields: [userId], references: [id])
 }
 
+// ✅ MANTIDO: Tabela de configuração para a Meta Mensal
 model Configuracao {
   id        String   @id @default(uuid())
-  chave     String   @unique // Ex: 'META_MENSAL'
-  valor     String   // Ex: '15000'
+  chave     String   @unique 
+  valor     String   
   updatedAt DateTime @updatedAt
 }

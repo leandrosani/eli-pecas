@@ -1,7 +1,7 @@
 <template>
   <div class="p-4 pb-24 max-w-7xl mx-auto space-y-6">
     
-    <!-- HEADER SIMPLIFICADO -->
+    <!-- HEADER -->
     <div class="flex justify-between items-center">
       <div>
         <h1 class="text-3xl font-black text-gray-900 tracking-tight">Painel Financeiro</h1>
@@ -10,19 +10,21 @@
       <UButton icon="i-heroicons-arrow-path" color="gray" variant="soft" :loading="pending" @click="refresh">Atualizar</UButton>
     </div>
 
+    <!-- LOADING -->
     <div v-if="pending" class="py-20 text-center text-gray-400">
       <UIcon name="i-heroicons-arrow-path" class="w-10 h-10 animate-spin mb-2" />
       <p>Calculando a rota do dinheiro...</p>
     </div>
 
+    <!-- CONTEÚDO PRINCIPAL -->
     <template v-else-if="stats">
       
       <!-- 🎯 BLOCO 1: META MENSAL (EDITÁVEL) -->
       <div class="bg-gray-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group">
-        <!-- Botão de Editar Meta (Aparece no Hover ou fixo no mobile) -->
+        <!-- Botão de Editar Meta -->
         <button 
           @click="abrirModalMeta"
-          class="absolute top-4 right-4 bg-white/10 hover:bg-white/20 p-2 rounded-lg backdrop-blur-sm transition-all z-20 cursor-pointer"
+          class="absolute top-4 right-4 bg-white/10 hover:bg-white/20 p-2 rounded-lg backdrop-blur-sm transition-all z-20 cursor-pointer border border-white/10"
           title="Alterar Meta"
         >
           <UIcon name="i-heroicons-pencil-square" class="w-5 h-5 text-white" />
@@ -60,9 +62,9 @@
             </div>
           </div>
 
-          <!-- Indicadores de Ação (Ritmo e Caixa) -->
+          <!-- Indicadores de Ação -->
           <div class="flex flex-wrap gap-3 text-sm font-medium">
-            <!-- Ritmo Diário (O Pulo do Gato) -->
+            <!-- Ritmo Diário -->
             <div v-if="stats.meta.falta > 0" class="bg-orange-500/20 px-3 py-1.5 rounded-lg border border-orange-500/30 flex items-center gap-2">
               <UIcon name="i-heroicons-bolt" class="w-4 h-4 text-orange-400" />
               <span class="text-orange-100">Ritmo Necessário:</span>
@@ -73,7 +75,7 @@
               <span class="text-green-100 font-bold">Meta Batida! Parabéns!</span>
             </div>
 
-            <!-- Caixa Total (Regra de Ouro) -->
+            <!-- Caixa Total -->
             <div class="bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 ml-auto">
               <span class="text-gray-400">Caixa Total:</span>
               <span class="text-emerald-400 ml-1 font-bold">{{ formatarDinheiro(stats.saldoCaixa) }}</span>
@@ -82,10 +84,10 @@
         </div>
       </div>
 
-      <!-- GRID DE AÇÃO (OPORTUNIDADES E PROBLEMAS) -->
+      <!-- GRID DE AÇÃO -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        <!-- 🔥 BLOCO 2: OPORTUNIDADES (Com Lucro Potencial) -->
+        <!-- 🔥 BLOCO 2: OPORTUNIDADES (Vender Agora) -->
         <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
           <div class="p-5 border-b border-gray-100 bg-orange-50/50">
             <h3 class="font-bold text-gray-900 flex items-center gap-2">
@@ -164,9 +166,7 @@
               </div>
             </div>
             
-            <UButton block color="gray" variant="solid" to="/estoque">
-              Ver Estoque
-            </UButton>
+            <UButton block color="gray" variant="solid" to="/estoque">Ver Estoque</UButton>
           </div>
         </div>
 
@@ -180,34 +180,50 @@
       <UButton size="sm" color="red" variant="soft" class="mt-2" @click="refresh">Tentar novamente</UButton>
     </div>
 
-    <!-- MODAL DE EDIÇÃO DA META -->
+    <!-- ✅ MODAL DE EDIÇÃO DA META (INPUTS NATIVOS) -->
     <UModal v-model="modalMetaAberto">
-      <div class="p-6">
-        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <UIcon name="i-heroicons-adjustments-horizontal" />
-          Definir Meta de Lucro Mensal
-        </h3>
-        <p class="text-sm text-gray-500 mb-4">Qual o valor de <strong>LUCRO</strong> (não faturamento) que deseja atingir este mês?</p>
+      <div class="p-6 bg-white rounded-lg">
+        <div class="flex justify-between items-start mb-4">
+          <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <UIcon name="i-heroicons-adjustments-horizontal" class="w-5 h-5 text-gray-500" />
+            Definir Meta de Lucro
+          </h3>
+        </div>
         
-        <div class="space-y-4">
+        <p class="text-sm text-gray-500 mb-6">Qual o valor de <strong>LUCRO</strong> (líquido) que deseja atingir este mês?</p>
+        
+        <div class="space-y-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Valor Alvo (R$)</label>
+            <label class="block text-sm font-bold text-gray-700 mb-2">Valor Alvo (R$)</label>
             <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-sm">R$</span>
-              <UInput 
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">R$</span>
+              <!-- INPUT NATIVO PARA EVITAR BUGS DE FOCO -->
+              <input 
                 v-model="novaMeta" 
                 type="number" 
-                size="lg" 
                 placeholder="Ex: 15000" 
-                autofocus 
-                :ui="{ base: 'pl-10' }"
+                class="w-full pl-12 pr-4 py-3 bg-white border-2 border-gray-200 rounded-xl text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-0 outline-none transition-all"
+                autofocus
               />
             </div>
           </div>
           
           <div class="flex justify-end gap-3 pt-2">
-            <UButton color="gray" variant="ghost" @click="modalMetaAberto = false">Cancelar</UButton>
-            <UButton color="black" :loading="salvandoMeta" @click="salvarMeta">Salvar Meta</UButton>
+            <!-- BOTÕES NATIVOS -->
+            <button 
+              @click="modalMetaAberto = false" 
+              class="px-4 py-2.5 text-gray-600 font-bold hover:bg-gray-100 rounded-xl transition-colors"
+            >
+              Cancelar
+            </button>
+            <button 
+              @click="salvarMeta" 
+              :disabled="salvandoMeta"
+              class="px-6 py-2.5 bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <UIcon v-if="salvandoMeta" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
+              {{ salvandoMeta ? 'Salvando...' : 'Salvar Meta' }}
+            </button>
           </div>
         </div>
       </div>
@@ -242,7 +258,7 @@ async function salvarMeta() {
       body: { valor: novaMeta.value }
     })
     modalMetaAberto.value = false
-    refresh() // Recarrega os dados com a nova meta
+    refresh()
   } catch (e) {
     alert('Erro ao salvar meta')
   } finally {
