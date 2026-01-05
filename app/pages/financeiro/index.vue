@@ -1,204 +1,174 @@
 <template>
-  <div class="p-4 pb-20 max-w-7xl mx-auto space-y-6">
+  <div class="p-4 pb-24 max-w-7xl mx-auto space-y-6">
     
-    <!-- HEADER -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <!-- HEADER SIMPLIFICADO -->
+    <div class="flex justify-between items-center">
       <div>
-        <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-2">
-          <span class="text-3xl">💰</span> Financeiro
-        </h1>
-        <p class="text-gray-500">Visão geral do caixa e saúde do negócio.</p>
+        <h1 class="text-3xl font-black text-gray-900 tracking-tight">Painel Financeiro</h1>
+        <p class="text-sm text-gray-500 font-medium">Sua bússola para tomada de decisão.</p>
       </div>
-      <div class="flex gap-2">
-        <UButton 
-          icon="i-heroicons-arrow-path" 
-          variant="soft" 
-          color="gray" 
-          @click="refresh" 
-          :loading="pending"
-        >
-          Atualizar
-        </UButton>
-        <UButton 
-          icon="i-heroicons-document-arrow-down" 
-          color="black"
-          @click="baixarRelatorio"
-        >
-          Relatório PDF
-        </UButton>
-      </div>
+      <UButton icon="i-heroicons-arrow-path" color="gray" variant="soft" :loading="pending" @click="refresh">Atualizar</UButton>
     </div>
 
-    <!-- ESTADO DE CARREGAMENTO -->
-    <div v-if="pending" class="py-20 text-center">
-      <UIcon name="i-heroicons-arrow-path" class="w-12 h-12 animate-spin text-blue-500 mx-auto" />
-      <p class="text-gray-400 mt-2">Calculando indicadores...</p>
+    <div v-if="pending" class="py-20 text-center text-gray-400">
+      <UIcon name="i-heroicons-arrow-path" class="w-10 h-10 animate-spin mb-2" />
+      <p>Calculando a rota do dinheiro...</p>
     </div>
 
-    <!-- ESTADO DE ERRO (NOVO) -->
-    <div v-else-if="error" class="py-12 text-center bg-red-50 border border-red-200 rounded-2xl">
-      <UIcon name="i-heroicons-exclamation-triangle" class="w-12 h-12 text-red-500 mx-auto mb-2" />
-      <h3 class="text-lg font-bold text-red-700">Erro ao carregar dados financeiros</h3>
-      <p class="text-sm text-red-600 mb-4">{{ error.message || 'Verifique se rodou as migrações do banco de dados.' }}</p>
-      <UButton color="red" variant="soft" @click="refresh">Tentar Novamente</UButton>
-    </div>
-
-    <!-- CONTEÚDO (SÓ APARECE SE TIVER DADOS) -->
     <template v-else-if="stats">
       
-      <!-- 1. CARD DESTAQUE: SALDO EM CAIXA (REGRA DE OURO) -->
-      <div 
-        class="rounded-3xl p-8 shadow-xl border-2 transition-all"
-        :class="stats.saldoCaixa >= 0 ? 'bg-gradient-to-br from-emerald-50 to-white border-emerald-100' : 'bg-gradient-to-br from-red-50 to-white border-red-100'"
-      >
-        <div class="flex justify-between items-start">
-          <div>
-            <h2 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-1">Saldo Atual em Caixa</h2>
-            <div 
-              class="text-5xl md:text-6xl font-black tracking-tighter"
-              :class="stats.saldoCaixa >= 0 ? 'text-emerald-600' : 'text-red-600'"
-            >
-              {{ formatarDinheiro(stats.saldoCaixa) }}
-            </div>
-            <p class="mt-2 text-sm text-gray-500 font-medium">
-              Histórico: 
-              <span class="text-emerald-600 font-bold">+{{ formatarDinheiro(stats.receitaTotal) }}</span> (Vendas) 
-              vs 
-              <span class="text-red-600 font-bold">-{{ formatarDinheiro(stats.despesaTotal) }}</span> (Despesas)
-            </p>
-          </div>
-          <div 
-            class="hidden md:flex w-16 h-16 rounded-full items-center justify-center text-3xl"
-            :class="stats.saldoCaixa >= 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'"
-          >
-            {{ stats.saldoCaixa >= 0 ? '🤑' : '⚠️' }}
-          </div>
-        </div>
-      </div>
+      <!-- 🎯 BLOCO 1: META MENSAL (O Norte) -->
+      <div class="bg-gray-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+        <!-- Background Effect -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500 rounded-full blur-[80px] opacity-20 -mr-16 -mt-16"></div>
 
-      <!-- 2. CARDS DE INTELIGÊNCIA (MÊS ATUAL) -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        
-        <!-- Faturamento -->
-        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-          <div class="flex items-center gap-3 mb-2">
-            <div class="p-2 bg-blue-50 text-blue-600 rounded-lg"><UIcon name="i-heroicons-banknotes" class="w-5 h-5" /></div>
-            <h3 class="font-bold text-gray-700">Faturamento (Mês)</h3>
-          </div>
-          <p class="text-2xl font-bold text-gray-900">{{ formatarDinheiro(stats.mes.faturamento) }}</p>
-          <p class="text-xs text-gray-400 mt-1">Total vendido bruto</p>
-        </div>
-
-        <!-- Lucro Operacional -->
-        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-          <div class="flex items-center gap-3 mb-2">
-            <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><UIcon name="i-heroicons-chart-bar" class="w-5 h-5" /></div>
-            <h3 class="font-bold text-gray-700">Lucro Operacional</h3>
-          </div>
-          <p class="text-2xl font-bold text-indigo-600">{{ formatarDinheiro(stats.mes.lucroOperacional) }}</p>
-          <p class="text-xs text-gray-400 mt-1">Vendas - Custo das Peças</p>
-        </div>
-
-        <!-- Margem -->
-        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-          <div class="flex items-center gap-3 mb-2">
-            <div class="p-2 bg-orange-50 text-orange-600 rounded-lg"><UIcon name="i-heroicons-receipt-percent" class="w-5 h-5" /></div>
-            <h3 class="font-bold text-gray-700">Margem Média</h3>
-          </div>
-          <p class="text-2xl font-bold" :class="getCorMargem(stats.mes.margem)">
-            {{ stats.mes.margem.toFixed(1) }}%
-          </p>
-          <p class="text-xs text-gray-400 mt-1">Saúde real da venda</p>
-        </div>
-      </div>
-
-      <!-- 3. TABELAS ESTRATÉGICAS -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        <!-- Curva ABC (Top Produtos) -->
-        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-          <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-            <h3 class="font-bold text-gray-800 flex items-center gap-2">
-              <UIcon name="i-heroicons-trophy" class="text-yellow-500" />
-              Campeões de Venda (Histórico)
-            </h3>
-          </div>
-          <div class="p-4">
-            <div v-for="(prod, idx) in stats.topProdutos" :key="idx" class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
-              <div class="flex items-center gap-3">
-                <span class="w-6 h-6 flex items-center justify-center bg-gray-100 rounded text-xs font-bold text-gray-600">{{ idx + 1 }}</span>
-                <div>
-                  <p class="font-bold text-gray-800 text-sm">{{ prod.nome }}</p>
-                  <p class="text-xs text-gray-500">{{ prod.qtd }} unidades vendidas</p>
-                </div>
+        <div class="relative z-10">
+          <div class="flex justify-between items-end mb-4">
+            <div>
+              <h2 class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Meta de Lucro (Mês)</h2>
+              <div class="flex items-baseline gap-2">
+                <span class="text-4xl font-black">{{ formatarDinheiro(stats.meta.atual) }}</span>
+                <span class="text-gray-400 font-medium">/ {{ formatarDinheiro(stats.meta.alvo) }}</span>
               </div>
-              <span class="font-bold text-emerald-600 text-sm">{{ formatarDinheiro(prod.total) }}</span>
             </div>
-            <div v-if="!stats.topProdutos.length" class="text-center text-gray-400 py-4 text-sm">Sem dados suficientes.</div>
+            <div class="text-right">
+              <span class="text-3xl font-bold" :class="stats.meta.progresso >= 100 ? 'text-green-400' : 'text-blue-400'">
+                {{ stats.meta.progresso.toFixed(0) }}%
+              </span>
+            </div>
+          </div>
+
+          <!-- Barra de Progresso -->
+          <div class="w-full bg-gray-700 h-4 rounded-full overflow-hidden">
+            <div 
+              class="h-full rounded-full transition-all duration-1000 ease-out relative"
+              :class="stats.meta.progresso >= 100 ? 'bg-green-500' : 'bg-blue-500'"
+              :style="{ width: `${Math.min(stats.meta.progresso, 100)}%` }"
+            >
+              <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex gap-4 text-sm font-medium">
+            <div class="bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700">
+              <span class="text-gray-400">Falta:</span>
+              <span class="text-white ml-1 font-bold">{{ formatarDinheiro(Math.max(0, stats.meta.alvo - stats.meta.atual)) }}</span>
+            </div>
+            <div class="bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700">
+              <span class="text-gray-400">Caixa Total (Histórico):</span>
+              <span class="text-emerald-400 ml-1 font-bold">{{ formatarDinheiro(stats.saldoCaixa) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRID DE AÇÃO -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- 🔥 BLOCO 2: OPORTUNIDADES (Vender Agora) -->
+        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
+          <div class="p-5 border-b border-gray-100 bg-orange-50/50">
+            <h3 class="font-bold text-gray-900 flex items-center gap-2">
+              <span class="bg-orange-100 text-orange-600 p-1.5 rounded-lg"><UIcon name="i-heroicons-fire" class="w-5 h-5" /></span>
+              Produtos Prioritários
+            </h3>
+            <p class="text-xs text-gray-500 mt-1">Alta margem + Estoque disponível. Ofereça estes!</p>
+          </div>
+          
+          <div class="flex-1 p-0">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-gray-50 text-gray-500 font-medium">
+                <tr>
+                  <th class="p-4 py-3">Peça</th>
+                  <th class="p-4 py-3 text-right">Margem</th>
+                  <th class="p-4 py-3 text-right">Lucro Un.</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                <tr v-for="item in stats.oportunidades" :key="item.id" class="group hover:bg-orange-50/30 transition-colors">
+                  <td class="p-4 py-3">
+                    <div class="font-bold text-gray-900">{{ item.nome }}</div>
+                    <div class="text-xs text-gray-500">{{ item.modelo }} • {{ item.estoque }} un em estoque</div>
+                  </td>
+                  <td class="p-4 py-3 text-right">
+                    <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs font-bold">{{ item.margem.toFixed(0) }}%</span>
+                  </td>
+                  <td class="p-4 py-3 text-right font-bold text-gray-900">
+                    {{ formatarDinheiro(item.lucroUnit) }}
+                  </td>
+                </tr>
+                <tr v-if="!stats.oportunidades.length">
+                  <td colspan="3" class="p-8 text-center text-gray-400 text-xs">
+                    <p>Nenhuma oportunidade óbvia encontrada.</p>
+                    <p>Cadastre custos nas peças para ver as margens.</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <!-- Alerta de Prejuízo -->
-        <div class="bg-white border-2 border-red-100 rounded-2xl shadow-sm overflow-hidden">
-          <div class="p-4 border-b border-red-100 bg-red-50 flex justify-between items-center">
-            <h3 class="font-bold text-red-800 flex items-center gap-2">
-              <UIcon name="i-heroicons-exclamation-triangle" class="text-red-600" />
-              Alerta: Margem Baixa (Mês)
+        <!-- 🧊 BLOCO 3: PROBLEMAS (Estoque Parado) -->
+        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
+          <div class="p-5 border-b border-gray-100 bg-blue-50/50">
+            <h3 class="font-bold text-gray-900 flex items-center gap-2">
+              <span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg"><UIcon name="i-heroicons-archive-box" class="w-5 h-5" /></span>
+              Dinheiro Congelado
             </h3>
-            <span class="text-[10px] bg-red-200 text-red-800 px-2 py-0.5 rounded-full font-bold">Abaixo de 20%</span>
+            <p class="text-xs text-gray-500 mt-1">Itens parados há mais de 90 dias.</p>
           </div>
-          <div class="p-4">
-            <div v-for="(item, idx) in stats.alertasPrejuizo" :key="idx" class="flex items-center justify-between py-3 border-b border-red-50 last:border-0">
+
+          <div class="p-6 flex flex-col gap-6 justify-center h-full">
+            <div class="flex items-center justify-between">
               <div>
-                <p class="font-bold text-gray-800 text-sm">{{ item.peca }}</p>
-                <p class="text-xs text-gray-500">
-                  Venda: {{ formatarDinheiro(item.venda) }} | Custo: {{ formatarDinheiro(item.custo) }}
-                </p>
+                <p class="text-sm text-gray-500">Custo Travado</p>
+                <p class="text-2xl font-bold text-gray-900">{{ formatarDinheiro(stats.parados.custoTotal) }}</p>
               </div>
               <div class="text-right">
-                <span class="font-bold text-red-600 text-sm">{{ item.margem.toFixed(1) }}%</span>
+                <p class="text-sm text-gray-500">Itens Parados</p>
+                <p class="text-2xl font-bold text-gray-900">{{ stats.parados.qtd }}</p>
               </div>
             </div>
-            <div v-if="!stats.alertasPrejuizo.length" class="flex flex-col items-center justify-center py-8 text-center">
-              <UIcon name="i-heroicons-check-badge" class="w-10 h-10 text-emerald-400 mb-2" />
-              <p class="text-emerald-600 font-bold text-sm">Tudo ótimo!</p>
-              <p class="text-gray-400 text-xs">Nenhuma venda com margem baixa este mês.</p>
+
+            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+              <div class="flex gap-3 items-start">
+                <UIcon name="i-heroicons-light-bulb" class="w-6 h-6 text-blue-500 mt-0.5" />
+                <div>
+                  <p class="text-sm font-bold text-blue-900 mb-1">Sugestão de Ação:</p>
+                  <p class="text-sm text-blue-700 leading-snug">
+                    Se você liquidar esses itens com <strong>15% de desconto</strong>, poderá liberar aproximadamente 
+                    <span class="font-black bg-white px-1 rounded">{{ formatarDinheiro(stats.parados.vendaTotal * 0.85) }}</span> 
+                    em caixa imediato.
+                  </p>
+                </div>
+              </div>
             </div>
+            
+            <UButton block color="gray" variant="solid" to="/estoque">
+              Ir para Estoque
+            </UButton>
           </div>
         </div>
 
       </div>
 
     </template>
-    
-    <!-- ESTADO VAZIO (SE NÃO TIVER DADOS NEM ERRO) -->
-    <div v-else class="py-20 text-center bg-white border border-gray-200 rounded-2xl">
-        <p class="text-gray-500 font-bold">Nenhum dado financeiro disponível.</p>
+
+    <div v-else-if="error" class="py-20 text-center">
+      <p class="text-red-500 font-bold mb-2">Erro ao carregar dados.</p>
+      <p class="text-xs text-gray-400 mb-4">{{ error.message }}</p>
+      <UButton size="sm" color="red" variant="soft" class="mt-2" @click="refresh">Tentar novamente</UButton>
     </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
-// Fetch dos dados COM tratamento de erro
-const { data: stats, pending, refresh, error } = await useFetch('/api/financeiro/stats', {
-  lazy: true
-})
+const { data: stats, pending, refresh, error } = await useFetch('/api/financeiro/stats', { lazy: true })
 
-// Funções Auxiliares
 function formatarDinheiro(val: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0)
-}
-
-function getCorMargem(margem: number) {
-  if (margem >= 50) return 'text-emerald-500'
-  if (margem >= 20) return 'text-blue-500'
-  if (margem > 0) return 'text-orange-500'
-  return 'text-red-600'
-}
-
-function baixarRelatorio() {
-  alert('Funcionalidade de PDF será implementada na próxima etapa! Os dados já estão prontos aqui.')
 }
 </script>

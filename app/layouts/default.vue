@@ -170,10 +170,10 @@ const menuStructure = computed(() => [
   {
     label: 'Estoque e Vendas',
     links: [
-      { label: 'Central Financeira', icon: 'i-heroicons-currency-dollar', to: '/financeiro' }, // 🟢 NOVO (Topo)
       { label: 'Dashboard Geral', icon: 'i-heroicons-chart-bar', to: '/dashboard' },
       { label: 'Estoque Geral', icon: 'i-heroicons-archive-box', to: '/estoque' },
       { label: 'Despesas', icon: 'i-heroicons-banknotes', to: '/despesas' },
+      { label: 'Central Financeira', icon: 'i-heroicons-currency-dollar', to: '/financeiro' }, // 🟢 NOVO (Topo)
     ]
   },
 ])
