@@ -7,7 +7,7 @@
       <!-- TÍTULO -->
       <h1
         class="font-bold text-gray-900 flex items-center gap-2 whitespace-nowrap
-               text-xl md:text-3xl"
+               text-xl md:text-2xl"
       >
         <span class="text-2xl md:text-4xl">💸</span>
         Despesas

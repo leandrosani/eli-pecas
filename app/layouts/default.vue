@@ -16,38 +16,22 @@
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-gray-800 z-50 shadow-2xl pb-[env(safe-area-inset-bottom)]">
       <div class="flex items-center justify-around h-full px-2">
 
-        <!-- 🟢 NOVO: Financeiro -->
-        <NuxtLink
-          to="/financeiro"
-          class="flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-xl transition-all active:scale-95"
-          :class="rota === '/financeiro' ? 'text-white' : 'text-gray-600'"
-        >
-          <div
-            class="relative flex items-center justify-center w-12 h-8 rounded-2xl transition-all"
-            :class="rota === '/financeiro' ? 'bg-orange-400/80 shadow-lg scale-110' : 'bg-transparent'"
-          >
-            <UIcon name="i-heroicons-currency-dollar" class="w-5 h-5" />
-          </div>
-          <span class="text-[10px] font-bold uppercase tracking-wide"
-            :class="rota === '/financeiro' ? 'text-orange-400' : 'text-gray-400'"
-          >Finanças</span>
-        </NuxtLink>
-
-        <!-- Análise -->
+        <!-- Início (Dashboard Operacional) -->
         <NuxtLink
           to="/"
           class="flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-xl transition-all active:scale-95"
-          :class="rota === '/dashboard' ? 'text-white' : 'text-gray-600'"
+          :class="rota === '/' ? 'text-white' : 'text-gray-600'"
         >
           <div
             class="relative flex items-center justify-center w-12 h-8 rounded-2xl transition-all"
-            :class="rota === '/dashboard' ? 'bg-orange-400/80 shadow-lg scale-110' : 'bg-transparent'"
+            :class="rota === '/' ? 'bg-orange-400/80 shadow-lg scale-110' : 'bg-transparent'"
           >
-            <UIcon name="i-heroicons-chart-bar" class="w-5 h-5" />
+            <!-- Alterado para Home para combinar com o Desktop -->
+            <UIcon name="i-heroicons-home" class="w-5 h-5" />
           </div>
           <span class="text-[10px] font-bold uppercase tracking-wide"
-            :class="rota === '/dashboard' ? 'text-orange-400' : 'text-gray-400'"
-          >Análise</span>
+            :class="rota === '/' ? 'text-orange-400' : 'text-gray-400'"
+          >Início</span>
         </NuxtLink>
 
         <!-- Estoque -->
@@ -82,6 +66,23 @@
           <span class="text-[10px] font-bold uppercase tracking-wide"
             :class="rota === '/despesas' ? 'text-orange-400' : 'text-gray-400'"
           >Despesa</span>
+        </NuxtLink>
+
+        <!-- Financeiro -->
+        <NuxtLink
+          to="/financeiro"
+          class="flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-xl transition-all active:scale-95"
+          :class="rota === '/financeiro' ? 'text-white' : 'text-gray-600'"
+        >
+          <div
+            class="relative flex items-center justify-center w-12 h-8 rounded-2xl transition-all"
+            :class="rota === '/financeiro' ? 'bg-orange-400/80 shadow-lg scale-110' : 'bg-transparent'"
+          >
+            <UIcon name="i-heroicons-currency-dollar" class="w-5 h-5" />
+          </div>
+          <span class="text-[10px] font-bold uppercase tracking-wide"
+            :class="rota === '/financeiro' ? 'text-orange-400' : 'text-gray-400'"
+          >Finanças</span>
         </NuxtLink>
 
       </div>
@@ -120,7 +121,7 @@
           :key="link.to"
           :to="link.to"
           class="flex items-center rounded-lg px-3 py-2 mb-2 text-sm font-medium transition-all hover:bg-gray-700"
-          :class="{ '!bg-orange-500 text-white shadow-lg ring-1 scale-[1.03]': $route.path.startsWith(link.to) }"
+          :class="{ '!bg-orange-500 text-white shadow-lg ring-1 scale-[1.03]': $route.path === link.to || ($route.path === '/' && link.to === '/') }"
         >
           <UIcon :name="link.icon" class="w-6 h-6" />
           <span
@@ -158,11 +159,11 @@ function toggleSidebar() {
 
 const rota = computed(() => {
   // Ordem de especificidade: sub-rotas primeiro
-  if (route.path.startsWith('/financeiro')) return '/financeiro' // 🟢 NOVO
+  if (route.path.startsWith('/financeiro')) return '/financeiro'
   if (route.path.startsWith('/estoque/criar')) return '/estoque/criar'
   if (route.path.startsWith('/estoque')) return '/estoque'
-  if (route.path.startsWith('/dashboard')) return '/dashboard'
   if (route.path.startsWith('/despesas')) return '/despesas'
+  if (route.path === '/') return '/' 
   return route.path
 })
 
@@ -170,10 +171,10 @@ const menuStructure = computed(() => [
   {
     label: 'Estoque e Vendas',
     links: [
-      { label: 'Dashboard Geral', icon: 'i-heroicons-chart-bar', to: '/dashboard' },
+      { label: 'Início', icon: 'i-heroicons-home', to: '/' },
       { label: 'Estoque Geral', icon: 'i-heroicons-archive-box', to: '/estoque' },
       { label: 'Despesas', icon: 'i-heroicons-banknotes', to: '/despesas' },
-      { label: 'Central Financeira', icon: 'i-heroicons-currency-dollar', to: '/financeiro' }, // 🟢 NOVO (Topo)
+      { label: 'Central Financeira', icon: 'i-heroicons-currency-dollar', to: '/financeiro' },
     ]
   },
 ])

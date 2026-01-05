@@ -136,12 +136,14 @@
           </h3>
           <ul class="space-y-3">
             <li class="flex items-center gap-3 text-sm text-gray-600 bg-orange-50 p-2 rounded-lg border border-orange-100">
-              <span class="w-2 h-2 rounded-full bg-orange-500"></span>
-              Você tem {{ itensParados }} itens parados há +90 dias.
+              <span class="w-2 h-2 rounded-full bg-orange-500 flex-shrink-0"></span>
+              Você tem <strong>{{ itensParados }}</strong> itens parados há +90 dias.
             </li>
             <li class="flex items-center gap-3 text-sm text-gray-600 bg-blue-50 p-2 rounded-lg border border-blue-100">
-              <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-              {{ totalEstoque }} itens cadastrados no total.
+              <span class="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0"></span>
+              <span>
+                <strong>{{ totalEstoqueFisico }}</strong> peças em estoque.
+              </span>
             </li>
           </ul>
         </div>
@@ -153,20 +155,22 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
 definePageMeta({ layout: 'default' })
 
 // Data atual formatada
 const dataHoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })
 
-// Buscar dados resumidos (Reutilizando a API de stats para consistência)
 const hoje = new Date()
 const params = { mes: hoje.getMonth() + 1, ano: hoje.getFullYear() }
 
+// Busca a API (que já está a calcular tudo corretamente agora)
 const { data: stats } = await useFetch('/api/financeiro/stats', { query: params, lazy: true })
 
 // Computados para a View
 const resumoDia = computed(() => {
-  if (!stats.value) return { totalVendas: 0, qtdVendas: 0 }
+  if (!stats.value || !stats.value.extrato) return { totalVendas: 0, qtdVendas: 0 }
   
   // Filtra as movimentações para pegar apenas as de HOJE
   const hojeString = new Date().toDateString()
@@ -181,15 +185,16 @@ const resumoDia = computed(() => {
 })
 
 const ultimasMovimentacoes = computed(() => {
-  if (!stats.value) return []
-  // Pega as últimas 5 do mês
+  if (!stats.value || !stats.value.extrato) return []
   return stats.value.extrato.movimentacoes.slice(0, 5)
 })
 
 const progressoMeta = computed(() => stats.value?.meta.progresso || 0)
 const itensParados = computed(() => stats.value?.parados.qtd || 0)
-// Estimativa do total de estoque (soma parados + oportunidades + margem de erro)
-const totalEstoque = computed(() => (stats.value?.oportunidades.length || 0) + (stats.value?.parados.qtd || 0) + 100) 
+
+// ✅ CORREÇÃO: Usar os valores reais que vêm da API, sem somar +100
+const totalEstoqueFisico = computed(() => stats.value?.itensEstoque || 0)
+const totalCadastros = computed(() => stats.value?.totalCadastros || 0)
 
 // Helpers
 function formatarDinheiro(val: number) {

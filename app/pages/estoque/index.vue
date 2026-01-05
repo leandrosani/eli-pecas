@@ -10,7 +10,7 @@
           <div class="flex justify-between items-center">
             <!-- Título -->
             <h1 class="text-2xl md:text-4xl font-bold text-gray-900 flex items-center gap-2">
-              📦 <span class="text-xl">Estoque Total</span>
+              📦 <span class="text-2xl">Estoque Total</span>
             </h1>
           </div>
         </div>

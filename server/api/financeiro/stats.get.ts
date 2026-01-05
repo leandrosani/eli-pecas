@@ -29,32 +29,25 @@ export default defineEventHandler(async (event) => {
     // --- CARREGAMENTO OTIMIZADO ---
     const [
       todasVendas, 
-      sumDespesasGlobal, // Agora pegamos só a soma do banco
+      sumDespesasGlobal, 
       movimentacoesPeriodo, 
-      despesasPeriodo,       
+      despesasPeriodo,      
       estoqueAtivo, 
       configMeta,
-      todasPecas // <--- G. Adicionado para cálculo do Patrimônio
+      todasPecas // <--- G. Traz todas as peças ativas
     ] = await Promise.all([
-      // A. Vendas Globais (Mantido findMany pois preço está na relação, mas otimizado select)
+      // A. Vendas Globais
       prisma.historicoMovimentacao.findMany({
         where: { tipo: 'SAIDA' },
-        select: { 
-          quantidade: true, 
-          peca: { select: { preco: true } } 
-        }
+        select: { quantidade: true, peca: { select: { preco: true } } }
       }),
-      // B. Soma Despesas Globais (OTIMIZADO: O banco soma pra gente)
-      prisma.despesa.aggregate({
-        _sum: { valor: true }
-      }),
+      // B. Soma Despesas
+      prisma.despesa.aggregate({ _sum: { valor: true } }),
 
       // C. Movimentações do Período
       prisma.historicoMovimentacao.findMany({
         where: { createdAt: { gte: inicioPeriodo, lte: fimPeriodo } },
-        include: {
-          peca: { select: { id: true, nome: true, modelo: true, marca: true, preco: true, custo: true, lado: true, ano: true } }
-        },
+        include: { peca: { select: { id: true, nome: true, modelo: true, marca: true, preco: true, custo: true, lado: true, ano: true } } },
         orderBy: { createdAt: 'desc' }
       }),
 
@@ -64,50 +57,48 @@ export default defineEventHandler(async (event) => {
         orderBy: { data: 'desc' }
       }),
 
-      // E. Estoque (Itens com movimentação para cálculo de parados/oportunidades)
+      // E. Estoque para Parados/Oportunidades
       prisma.peca.findMany({
         where: { ativo: true, quantidade: { gt: 0 } },
-        include: {
-          movimentacoes: { where: { tipo: 'SAIDA' }, take: 1, orderBy: { createdAt: 'desc' } }
+        include: { 
+          // CORREÇÃO: Trazemos a última movimentação de QUALQUER tipo (Entrada ou Saída)
+          // Isso garante que se houve entrada de estoque recente, não considere parado.
+          movimentacoes: { 
+            take: 1, 
+            orderBy: { createdAt: 'desc' } 
+          } 
         }
       }),
 
       // F. Meta
       prisma.configuracao.findUnique({ where: { chave: 'META_MENSAL' } }),
 
-      // G. Todas as Peças Ativas (Novo: Para cálculo de Estoque Total e Patrimônio)
-      prisma.peca.findMany({ where: { ativo: true } })
+      // G. Todas as Peças (Para contagem total)
+      prisma.peca.findMany({ 
+        where: { ativo: true },
+        select: { preco: true, quantidade: true } 
+      })
     ])
 
-    // --- 1. SALDO EM CAIXA UNIVERSAL ---
+    // --- CÁLCULOS FINANCEIROS ---
     const receitaTotalGlobal = todasVendas.reduce((acc, mov) => acc + (Number(mov.peca?.preco || 0) * mov.quantidade), 0)
-    // Pega a soma direta do aggregate. Se for null (banco vazio), usa 0.
     const despesaTotalGlobal = Number(sumDespesasGlobal._sum.valor || 0)
-    
     const saldoCaixa = receitaTotalGlobal - despesaTotalGlobal
 
-    // --- 2. RESULTADO DO PERÍODO (LUCRO) ---
+    // --- CÁLCULOS DO PERÍODO ---
     const vendasPeriodo = movimentacoesPeriodo.filter(m => m.tipo === 'SAIDA')
-    
     const faturamentoPeriodo = vendasPeriodo.reduce((acc, mov) => acc + (Number(mov.peca?.preco || 0) * mov.quantidade), 0)
-    
-    // Lucro considera o Custo Histórico (se existir) ou o Custo Atual da peça
     const custoProdutosPeriodo = vendasPeriodo.reduce((acc, mov: any) => {
-      // Prioridade: Custo gravado no histórico > Custo atual da peça > 0
       const custoUnitario = mov.custo ? Number(mov.custo) : Number(mov.peca?.custo || 0)
       return acc + (custoUnitario * mov.quantidade)
     }, 0)
-
     const lucroOperacional = faturamentoPeriodo - custoProdutosPeriodo
     const margem = faturamentoPeriodo > 0 ? (lucroOperacional / faturamentoPeriodo) * 100 : 0
 
-    // --- 3. META ---
+    // --- META ---
     const META_BASE = configMeta?.valor ? Number(configMeta.valor) : 0
     const META_ALVO = isAnual ? META_BASE * 12 : META_BASE
-
-    const progressoMeta = META_ALVO > 0 
-      ? Math.min((lucroOperacional / META_ALVO) * 100, 100) 
-      : 0
+    const progressoMeta = META_ALVO > 0 ? Math.min((lucroOperacional / META_ALVO) * 100, 100) : 0
     
     const ehMesAtual = !isAnual && (hoje.getMonth() + 1 === mes && hoje.getFullYear() === ano)
     let ritmoDiario = 0
@@ -120,12 +111,13 @@ export default defineEventHandler(async (event) => {
       ritmoDiario = faltaParaMeta / diasRestantes
     }
 
-    // --- 4. ESTOQUE PARADO ---
+    // --- ESTOQUE PARADO ---
     let dinheiroCongeladoCusto = 0
     let qtdItensParados = 0
     let vendaTotalParados = 0
-
+    
     const itensParados = estoqueAtivo.filter(peca => {
+      // CORREÇÃO: Verifica data da última movimentação (qualquer tipo) OU data de criação
       const dataUltimaAtividade = peca.movimentacoes[0]?.createdAt || peca.createdAt
       return new Date(dataUltimaAtividade) < dataCorteParado
     })
@@ -136,12 +128,9 @@ export default defineEventHandler(async (event) => {
       qtdItensParados++
     })
 
-    // --- 5. OPORTUNIDADES ---
+    // --- OPORTUNIDADES ---
     const giroPorPeca: Record<string, number> = {}
-    vendasPeriodo.forEach(v => {
-      if (!giroPorPeca[v.pecaId]) giroPorPeca[v.pecaId] = 0
-      giroPorPeca[v.pecaId] += v.quantidade
-    })
+    vendasPeriodo.forEach(v => { if (!giroPorPeca[v.pecaId]) giroPorPeca[v.pecaId] = 0; giroPorPeca[v.pecaId] += v.quantidade })
 
     const oportunidades = estoqueAtivo
       .map(p => {
@@ -151,39 +140,28 @@ export default defineEventHandler(async (event) => {
         const lucroUnit = preco - custo
         const margemItem = preco > 0 ? (lucroUnit / preco) * 100 : 0
         const lucroPotencial = lucroUnit * p.quantidade
-
-        return {
-          id: p.id,
-          nome: p.nome,
-          modelo: p.modelo,
-          estoque: p.quantidade,
-          preco,
-          custo,
-          lucroUnit,
-          lucroPotencial, 
-          margem: margemItem,
-          vendasRecentes
-        }
+        return { id: p.id, nome: p.nome, modelo: p.modelo, estoque: p.quantidade, preco, custo, lucroUnit, lucroPotencial, margem: margemItem, vendasRecentes }
       })
-      // Filtro: Margem boa (>30%) E (teve venda recente OU a margem é excelente >50%)
       .filter(p => p.margem > 30 && (p.vendasRecentes > 0 || p.margem > 50))
-      .sort((a, b) => b.lucroPotencial - a.lucroPotencial) 
-      .slice(0, 10) // Aumentei para Top 10
+      .sort((a, b) => b.lucroPotencial - a.lucroPotencial)
+      .slice(0, 5)
 
-    // --- 6. CÁLCULOS DO PATRIMÔNIO (Adicionado) ---
-    // Usando todasPecas (que carregamos no Promise.all 'G')
-    // Nota: Estamos usando Preço * Qtd conforme sua outra API, mas para contabilidade geralmente se usa Custo.
+    // --- 6. CÁLCULOS DO PATRIMÔNIO (Correção Final) ---
+    // Valor total (Preço Venda * Qtd)
     const valorEstoque = todasPecas.reduce((acc, p) => acc + (Number(p.preco) * p.quantidade), 0)
+    // Quantidade Física (Soma das quantidades)
     const itensEstoque = todasPecas.reduce((acc, p) => acc + p.quantidade, 0)
+    // Quantidade de Cadastros (Número de SKUs/Linhas)
+    const totalCadastros = todasPecas.length
 
     return {
       saldoCaixa,
       receitaTotal: receitaTotalGlobal,
       despesaTotal: despesaTotalGlobal,
       
-      // Novos campos adicionados:
       valorEstoque,
-      itensEstoque,
+      itensEstoque,   // Qtd física total
+      totalCadastros, // Qtd de linhas cadastradas
       
       periodo: { tipo: isAnual ? 'anual' : 'mensal', mes, ano },
       meta: { alvo: META_ALVO, atual: lucroOperacional, progresso: progressoMeta, falta: faltaParaMeta, ritmo: ritmoDiario, ehMesAtual },
@@ -194,6 +172,6 @@ export default defineEventHandler(async (event) => {
 
   } catch (error: any) {
     console.error('Erro API Financeira:', error)
-    throw createError({ statusCode: 500, message: 'Erro interno no cálculo financeiro.' })
+    throw createError({ statusCode: 500, message: 'Erro interno.' })
   }
 })

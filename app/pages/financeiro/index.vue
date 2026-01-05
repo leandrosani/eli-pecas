@@ -5,7 +5,7 @@
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
           <div class="flex-1">
-            <h1 class="text-3xl font-black text-gray-900 tracking-tight mb-2 flex items-center gap-3">
+            <h1 class="text-2xl font-black text-gray-900 tracking-tight mb-2 flex items-center gap-3">
               <span class="bg-gradient-to-br from-blue-600 to-blue-700 text-white p-2.5 rounded-xl shadow-lg">
                 <UIcon name="i-heroicons-chart-bar" class="w-7 h-7" />
               </span>
