@@ -33,7 +33,8 @@ export default defineEventHandler(async (event) => {
       movimentacoesPeriodo, 
       despesasPeriodo,       
       estoqueAtivo, 
-      configMeta
+      configMeta,
+      todasPecas // <--- G. Adicionado para cálculo do Patrimônio
     ] = await Promise.all([
       // A. Vendas Globais (Mantido findMany pois preço está na relação, mas otimizado select)
       prisma.historicoMovimentacao.findMany({
@@ -63,7 +64,7 @@ export default defineEventHandler(async (event) => {
         orderBy: { data: 'desc' }
       }),
 
-      // E. Estoque
+      // E. Estoque (Itens com movimentação para cálculo de parados/oportunidades)
       prisma.peca.findMany({
         where: { ativo: true, quantidade: { gt: 0 } },
         include: {
@@ -72,7 +73,10 @@ export default defineEventHandler(async (event) => {
       }),
 
       // F. Meta
-      prisma.configuracao.findUnique({ where: { chave: 'META_MENSAL' } })
+      prisma.configuracao.findUnique({ where: { chave: 'META_MENSAL' } }),
+
+      // G. Todas as Peças Ativas (Novo: Para cálculo de Estoque Total e Patrimônio)
+      prisma.peca.findMany({ where: { ativo: true } })
     ])
 
     // --- 1. SALDO EM CAIXA UNIVERSAL ---
@@ -166,10 +170,20 @@ export default defineEventHandler(async (event) => {
       .sort((a, b) => b.lucroPotencial - a.lucroPotencial) 
       .slice(0, 10) // Aumentei para Top 10
 
+    // --- 6. CÁLCULOS DO PATRIMÔNIO (Adicionado) ---
+    // Usando todasPecas (que carregamos no Promise.all 'G')
+    // Nota: Estamos usando Preço * Qtd conforme sua outra API, mas para contabilidade geralmente se usa Custo.
+    const valorEstoque = todasPecas.reduce((acc, p) => acc + (Number(p.preco) * p.quantidade), 0)
+    const itensEstoque = todasPecas.reduce((acc, p) => acc + p.quantidade, 0)
+
     return {
       saldoCaixa,
       receitaTotal: receitaTotalGlobal,
       despesaTotal: despesaTotalGlobal,
+      
+      // Novos campos adicionados:
+      valorEstoque,
+      itensEstoque,
       
       periodo: { tipo: isAnual ? 'anual' : 'mensal', mes, ano },
       meta: { alvo: META_ALVO, atual: lucroOperacional, progresso: progressoMeta, falta: faltaParaMeta, ritmo: ritmoDiario, ehMesAtual },

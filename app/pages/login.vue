@@ -62,7 +62,7 @@ async function login() {
 
     // Sucesso! O problema de redirecionamento é resolvido.
     await refreshSession() 
-    router.push('/dashboard')
+    router.push('/')
 
   } catch (error) {
     alert('Erro de login: Chave Secreta ou Email inválidos.')

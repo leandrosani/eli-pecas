@@ -1,300 +1,495 @@
 <template>
-  <div class="p-4 pb-24 max-w-7xl mx-auto space-y-6">
-    
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-      <div>
-        <h1 class="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-2">
-          Painel Financeiro
-        </h1>
-        <p class="text-sm text-gray-500 font-medium">Sua bússola para tomada de decisão.</p>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-2">
-        <div class="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm h-9">
-          <button @click="mudarMes(-1)" class="px-2 h-full hover:bg-gray-100 rounded-l-lg text-gray-600 border-r border-gray-100">
-            <UIcon name="i-heroicons-chevron-left" class="w-4 h-4" />
-          </button>
-          <span class="px-3 text-sm font-bold text-gray-900 min-w-[110px] text-center capitalize select-none">
-            {{ nomeMesAtual }}
-          </span>
-          <button @click="mudarMes(1)" :disabled="ehMesFuturo" class="px-2 h-full hover:bg-gray-100 rounded-r-lg text-gray-600 border-l border-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
-            <UIcon name="i-heroicons-chevron-right" class="w-4 h-4" />
-          </button>
-        </div>
-
-        <UButton icon="i-heroicons-arrow-path" color="gray" variant="soft" :loading="pending" @click="refresh" square />
-        
-        <UButton icon="i-heroicons-document-arrow-down" color="black" @click="abrirModalRelatorios">
-          Baixar PDF
-        </UButton>
-      </div>
-    </div>
-
-    <div v-if="pending" class="py-20 text-center text-gray-400">
-      <UIcon name="i-heroicons-arrow-path" class="w-10 h-10 animate-spin mb-2" />
-      <p>Calculando a rota do dinheiro...</p>
-    </div>
-
-    <template v-else-if="stats">
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 pb-24">
+    <div class="max-w-7xl mx-auto p-6 space-y-8">
       
-      <div class="bg-gray-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group">
-        <button 
-          @click="abrirModalMeta"
-          class="absolute top-4 right-4 bg-white/10 hover:bg-white/20 p-2 rounded-lg backdrop-blur-sm transition-all z-20 cursor-pointer border border-white/10"
-          title="Alterar Meta"
-        >
-          <UIcon name="i-heroicons-pencil-square" class="w-5 h-5 text-white" />
-        </button>
-
-        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500 rounded-full blur-[80px] opacity-20 -mr-16 -mt-16 pointer-events-none"></div>
-
-        <div class="relative z-10">
-          <div class="flex flex-col md:flex-row justify-between items-end mb-4 gap-4">
-            <div>
-              <h2 class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1 flex items-center gap-2">
-                Meta de Lucro ({{ nomeMesAtual }})
-              </h2>
-              <div class="flex items-baseline gap-2">
-                <span class="text-3xl md:text-4xl font-black">{{ formatarDinheiro(stats.meta.atual) }}</span>
-                <span class="text-gray-400 font-medium">/ {{ formatarDinheiro(stats.meta.alvo) }}</span>
-              </div>
-            </div>
-            
-            <div class="bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-md">
-              <p class="text-[10px] text-gray-300 uppercase tracking-wider font-bold mb-0.5">Saldo Disponível (Caixa)</p>
-              <p class="text-2xl font-black text-emerald-400">{{ formatarDinheiro(stats.saldoCaixa) }}</p>
-            </div>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+          <div class="flex-1">
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight mb-2 flex items-center gap-3">
+              <span class="bg-gradient-to-br from-blue-600 to-blue-700 text-white p-2.5 rounded-xl shadow-lg">
+                <UIcon name="i-heroicons-chart-bar" class="w-7 h-7" />
+              </span>
+              Painel Financeiro
+            </h1>
           </div>
 
-          <div class="w-full bg-gray-700 h-4 rounded-full overflow-hidden mb-4 relative">
-            <div 
-              class="h-full rounded-full transition-all duration-1000 ease-out relative"
-              :class="stats.meta.progresso >= 100 ? 'bg-green-500' : 'bg-blue-500'"
-              :style="{ width: `${Math.min(stats.meta.progresso, 100)}%` }"
+          <div class="flex flex-wrap items-center gap-3">
+            <UButton 
+              icon="i-heroicons-arrow-path" 
+              color="gray" 
+              variant="soft" 
+              size="lg"
+              :loading="pendingPrincipal" 
+              @click="refresh"
             >
-              <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
-            </div>
-            <div class="absolute top-0 right-2 h-full flex items-center text-[10px] font-bold text-white drop-shadow-md">
-               {{ stats.meta.progresso.toFixed(0) }}%
-            </div>
-          </div>
-
-          <div class="flex flex-wrap gap-3 text-sm font-medium">
-            <div v-if="stats.meta.ehMesAtual && stats.meta.falta > 0" class="bg-orange-500/20 px-3 py-1.5 rounded-lg border border-orange-500/30 flex items-center gap-2">
-              <UIcon name="i-heroicons-bolt" class="w-4 h-4 text-orange-400" />
-              <span class="text-orange-100">Ritmo Necessário:</span>
-              <span class="text-white font-bold">{{ formatarDinheiro(stats.meta.ritmo) }} / dia</span>
-            </div>
-            <div v-else-if="stats.meta.falta <= 0" class="bg-green-500/20 px-3 py-1.5 rounded-lg border border-green-500/30 flex items-center gap-2">
-              <UIcon name="i-heroicons-check-badge" class="w-4 h-4 text-green-400" />
-              <span class="text-green-100 font-bold">Meta Batida! Parabéns!</span>
-            </div>
+              Atualizar Tudo
+            </UButton>
+            
+            <UButton 
+              icon="i-heroicons-document-arrow-down" 
+              color="black" 
+              size="lg"
+              @click="abrirModalRelatorios"
+            >
+              Exportar PDF
+            </UButton>
           </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div v-if="pendingPrincipal && !statsPrincipal" class="bg-white rounded-2xl shadow-sm border border-gray-100 py-32 text-center">
+        <UIcon name="i-heroicons-arrow-path" class="w-12 h-12 animate-spin text-blue-500 mb-4 mx-auto" />
+        <p class="text-gray-500 font-medium">Calculando a rota do dinheiro...</p>
+      </div>
 
-        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-          <div class="p-5 border-b border-gray-100 bg-orange-50/50">
-            <h3 class="font-bold text-gray-900 flex items-center gap-2">
-              <span class="bg-orange-100 text-orange-600 p-1.5 rounded-lg"><UIcon name="i-heroicons-fire" class="w-5 h-5" /></span>
-              Produtos Prioritários
-            </h3>
-            <p class="text-xs text-gray-500 mt-1">Foco nestes itens: Alta margem + Estoque.</p>
-          </div>
+      <template v-else-if="statsPrincipal">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
           
-          <div class="flex-1 p-0 overflow-x-auto">
-            <table class="w-full text-left text-sm">
-              <thead class="bg-gray-50 text-gray-500 font-medium border-b border-gray-100">
-                <tr>
-                  <th class="p-4 py-3">Peça</th>
-                  <th class="p-4 py-3 text-right">Margem</th>
-                  <th class="p-4 py-3 text-right">Lucro Potencial</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-100">
-                <tr v-for="item in stats.oportunidades" :key="item.id" class="group hover:bg-orange-50/30 transition-colors">
-                  <td class="p-4 py-3">
-                    <div class="font-bold text-gray-900">{{ item.nome }}</div>
-                    <div class="text-xs text-gray-500">{{ item.modelo }} • {{ item.estoque }} un</div>
-                  </td>
-                  <td class="p-4 py-3 text-right">
-                    <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-md text-xs font-bold">{{ item.margem.toFixed(0) }}%</span>
-                  </td>
-                  <td class="p-4 py-3 text-right">
-                    <div class="font-bold text-gray-900">{{ formatarDinheiro(item.lucroPotencial) }}</div>
-                    <div class="text-[10px] text-gray-400">({{ formatarDinheiro(item.lucroUnit) }}/un)</div>
-                  </td>
-                </tr>
-                <tr v-if="!stats.oportunidades.length">
-                  <td colspan="3" class="p-8 text-center text-gray-400 text-xs">
-                    Sem dados suficientes para sugerir oportunidades.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg p-4 text-white relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+            <div class="relative flex flex-col h-full justify-between">
+              <div class="flex items-center gap-2 mb-1">
+                <div class="bg-white/20 p-1.5 rounded-md backdrop-blur-sm">
+                  <UIcon name="i-heroicons-banknotes" class="w-4 h-4" />
+                </div>
+                <span class="text-emerald-100 text-[10px] font-bold uppercase tracking-wider">Saldo Disponível</span>
+              </div>
+              <div>
+                <p class="text-2xl font-black mb-0.5">{{ formatarDinheiro(statsPrincipal.saldoCaixa) }}</p>
+                <p class="text-emerald-100 text-xs font-medium">Caixa atual</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 relative group hover:shadow-md transition-shadow">
+            <button 
+              @click="abrirModalMeta"
+              class="absolute top-2 right-2 bg-gray-50 hover:bg-gray-100 p-1.5 rounded-md transition-all opacity-0 group-hover:opacity-100"
+              title="Alterar Meta"
+            >
+              <UIcon name="i-heroicons-pencil-square" class="w-3.5 h-3.5 text-gray-600" />
+            </button>
+            
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                    <div class="bg-blue-100 p-1.5 rounded-md">
+                        <UIcon name="i-heroicons-flag" class="w-4 h-4 text-blue-600" />
+                    </div>
+                    <span class="text-gray-500 text-[10px] font-bold uppercase tracking-wider">Meta de Lucro</span>
+                </div>
+                <p class="text-xs text-gray-400 font-medium">Alvo: {{ formatarDinheiro(statsPrincipal.meta.alvo) }}</p>
+            </div>
+
+            <div class="mb-2">
+              <p class="text-2xl font-black text-gray-900 leading-none">{{ formatarDinheiro(statsPrincipal.meta.atual) }}</p>
+            </div>
+
+            <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden relative mb-1">
+              <div 
+                class="h-full rounded-full transition-all duration-1000"
+                :class="statsPrincipal.meta.progresso >= 100 ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-blue-500 to-blue-600'"
+                :style="{ width: `${Math.min(statsPrincipal.meta.progresso, 100)}%` }"
+              ></div>
+            </div>
+            <p class="text-[10px] text-gray-500 font-bold text-right">{{ statsPrincipal.meta.progresso.toFixed(0) }}% alcançado</p>
+          </div>
+
+          <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg p-4 text-white relative overflow-hidden">
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-2xl -ml-6 -mb-6"></div>
+            <div class="relative flex flex-col h-full justify-between">
+              <div class="flex items-center gap-2 mb-1">
+                <div class="bg-white/20 p-1.5 rounded-md backdrop-blur-sm">
+                  <UIcon name="i-heroicons-bolt" class="w-4 h-4" />
+                </div>
+                <span class="text-orange-100 text-[10px] font-bold uppercase tracking-wider">
+                  {{ statsPrincipal.meta.falta <= 0 ? 'Meta Batida!' : 'Ritmo Necessário' }}
+                </span>
+              </div>
+              
+              <template v-if="statsPrincipal.meta.ehMesAtual && statsPrincipal.meta.falta > 0">
+                <div>
+                    <p class="text-2xl font-black mb-0.5">{{ formatarDinheiro(statsPrincipal.meta.ritmo) }}</p>
+                    <p class="text-orange-100 text-xs font-medium">por dia para atingir a meta</p>
+                </div>
+              </template>
+              
+              <template v-else-if="statsPrincipal.meta.falta <= 0">
+                <div class="flex items-center gap-2">
+                  <UIcon name="i-heroicons-check-badge" class="w-8 h-8 text-white/90" />
+                  <div>
+                    <p class="text-lg font-black leading-tight">Parabéns!</p>
+                    <p class="text-orange-100 text-[10px]">Objetivo alcançado</p>
+                  </div>
+                </div>
+              </template>
+              
+              <template v-else>
+                <p class="text-xs text-orange-100 font-medium">Meta do período encerrado</p>
+              </template>
+            </div>
           </div>
         </div>
 
-        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-          <div class="p-5 border-b border-gray-100 bg-blue-50/50">
-            <h3 class="font-bold text-gray-900 flex items-center gap-2">
-              <span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg"><UIcon name="i-heroicons-archive-box" class="w-5 h-5" /></span>
-              Dinheiro Congelado
-            </h3>
-            <p class="text-xs text-gray-500 mt-1">Itens parados há mais de 90 dias.</p>
-          </div>
-
-          <div class="p-6 flex flex-col gap-6 justify-center h-full">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-500">Custo Travado</p>
-                <p class="text-2xl font-bold text-gray-900">{{ formatarDinheiro(stats.parados.custoTotal) }}</p>
-              </div>
-              <div class="text-right">
-                <p class="text-sm text-gray-500">Itens Parados</p>
-                <p class="text-2xl font-bold text-gray-900">{{ stats.parados.qtd }}</p>
-              </div>
+        <!--PATRIMONIO ATIVO-->
+        <div class="grid grid-cols-3 gap-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-blue-100 flex flex-col justify-between hover:shadow-md transition-all">
+                <div class="flex items-center gap-2 text-gray-500 mb-2">
+                    <div class="bg-blue-50 p-1.5 rounded-md">
+                        <UIcon name="i-heroicons-cube" class="w-4 h-4 text-blue-600" />
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider">Estoque Total</span>
+                </div>
+                <div>
+                    <div class="text-2xl font-black text-gray-900 text-center">
+                        {{ statsPrincipal.itensEstoque }}
+                    </div>
+                    <p class="text-[10px] text-center text-gray-400 mt-1 font-medium">Peças cadastradas</p>
+                </div>
             </div>
 
-            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
-              <div class="flex gap-3 items-start">
-                <UIcon name="i-heroicons-light-bulb" class="w-6 h-6 text-blue-500 mt-0.5" />
+            <div class="bg-white p-4 col-span-2 rounded-xl shadow-sm border border-emerald-100 flex flex-col justify-between hover:shadow-md transition-all">
+                <div class="flex items-center gap-2 text-gray-500 mb-2">
+                    <div class="bg-emerald-50 p-1.5 rounded-md">
+                        <UIcon name="i-heroicons-banknotes" class="w-4 h-4 text-emerald-600" />
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider">Patrimônio Ativo</span>
+                </div>
                 <div>
-                  <p class="text-sm font-bold text-blue-900 mb-1">Sugestão de Ação:</p>
-                  <p class="text-sm text-blue-700 leading-snug">
-                    Se liquidar com <strong>15% de desconto</strong>, libera 
-                    <span class="font-black bg-white px-1 rounded">{{ formatarDinheiro(stats.parados.vendaTotal * 0.85) }}</span> 
-                    em caixa.
-                  </p>
+                    <div class="text-2xl font-black text-gray-900">
+                        {{ formatarDinheiro(statsPrincipal.valorEstoque) }}
+                    </div>
+                    <p class="text-[10px] text-gray-400 mt-1 font-medium">Valor de custo total em mercadoria</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
+          
+          <div v-if="pendingExtrato" class="absolute inset-0 z-50 bg-white/60 backdrop-blur-[1px] flex items-center justify-center transition-all duration-300">
+            <div class="bg-white p-4 rounded-2xl shadow-xl border border-gray-100 flex flex-col items-center gap-3">
+              <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 text-blue-600 animate-spin" />
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Atualizando dados...</span>
+            </div>
+          </div>
+
+          <div class="p-6 border-b border-gray-100">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div class="flex items-center gap-3">
+                <div class="bg-gray-900 p-2.5 rounded-xl shadow-lg">
+                  <UIcon name="i-heroicons-list-bullet" class="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 class="font-black text-gray-900 text-xl">Extrato Detalhado</h2>
+                  <p class="text-xs text-gray-500 font-medium">Todas as movimentações do período</p>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-2 items-end justify-end">
+                <div class="flex items-center bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-lg justify-center max-w-68 h-12">
+                  <button 
+                    @click="mudarMes(-1)" 
+                    :disabled="pendingExtrato"
+                    class="px-4 py-3 hover:bg-white/10 rounded-l-xl text-white transition-all disabled:opacity-50 disabled:cursor-wait"
+                  >
+                    <UIcon name="i-heroicons-chevron-left" class="w-5 h-5" />
+                  </button>
+                  <div class="px-6 py-3 min-w-[140px] text-center">
+                    <div class="text-white font-black text-sm capitalize">{{ nomeMesExtrato }}</div>
+                  </div>
+                  <button 
+                    @click="mudarMes(1)" 
+                    :disabled="ehMesFuturo || pendingExtrato" 
+                    class="px-4 py-3 hover:bg-white/10 rounded-r-xl text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <UIcon name="i-heroicons-chevron-right" class="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div class="flex gap-2 bg-gray-100 p-1.5 rounded-xl shadow-inner">
+                  <button 
+                    v-for="aba in abas" 
+                    :key="aba.value" 
+                    @click="abaAtiva = aba.value" 
+                    class="px-4 py-2 text-sm font-bold rounded-lg transition-all"
+                    :class="abaAtiva === aba.value 
+                      ? 'bg-white shadow-sm text-gray-900' 
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'"
+                  >
+                    {{ aba.label }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="statsExtrato" class="bg-gray-50 border-b border-gray-200 grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-200">
+            <div class="p-4 flex flex-col justify-center">
+              <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-0.5">Período Selecionado</span>
+              <div class="flex items-center gap-2 text-gray-700 font-bold text-sm">
+                <UIcon name="i-heroicons-calendar" class="w-4 h-4 text-gray-400" />
+                {{ textoPeriodo }}
+              </div>
+            </div>
+            <div class="p-4 flex flex-col justify-center">
+              <span class="text-[10px] uppercase font-bold text-emerald-600/70 tracking-wider mb-0.5">Vendas Brutas</span>
+              <span class="text-lg font-black text-emerald-600">+ {{ formatarDinheiro(resumoExtrato.vendas) }}</span>
+            </div>
+            <div class="p-4 flex flex-col justify-center">
+              <span class="text-[10px] uppercase font-bold text-red-600/70 tracking-wider mb-0.5">Despesas Totais</span>
+              <span class="text-lg font-black text-red-600">- {{ formatarDinheiro(resumoExtrato.despesas) }}</span>
+            </div>
+            <div class="p-4 flex flex-col justify-center bg-gray-100/50">
+              <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider mb-0.5">Resultado Líquido</span>
+              <span class="text-lg font-black" :class="resumoExtrato.lucro >= 0 ? 'text-gray-900' : 'text-red-600'">{{ formatarDinheiro(resumoExtrato.lucro) }}</span>
+            </div>
+          </div>
+
+          <div class="border-t border-gray-100">
+            <div class="max-h-[500px] overflow-y-auto overflow-x-auto custom-scrollbar">
+              <table class="w-full relative border-collapse">
+                <thead class="bg-gray-50 sticky top-0 z-10 shadow-sm">
+                  <tr>
+                    <th class="py-4 px-6 text-left text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50">Data</th>
+                    <th class="py-4 px-6 text-left text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50">Descrição</th>
+                    <th class="py-4 px-6 text-center text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50">Categoria</th>
+                    <th class="py-4 px-6 text-right text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50">Valor</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50 bg-white">
+                  <tr v-for="mov in historicoFiltrado" :key="mov.id" class="hover:bg-gray-50 transition-colors group">
+                    <td class="py-4 px-6">
+                      <span class="text-sm text-gray-500 font-medium whitespace-nowrap group-hover:text-gray-900 transition-colors">{{ new Date(mov.data).toLocaleDateString('pt-BR') }}</span>
+                    </td>
+                    <td class="py-4 px-6">
+                      <div class="font-bold text-gray-900">{{ mov.descricao || mov.peca?.nome }}</div>
+                      <div v-if="mov.peca?.modelo" class="text-xs text-gray-500 font-medium mt-0.5">{{ mov.peca.modelo }}</div>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wide border" :class="getBadgeClass(mov.tipo)">{{ getLabelTipo(mov.tipo) }}</span>
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                      <span class="text-sm font-black whitespace-nowrap" :class="getValorClass(mov.tipo)">{{ getSinal(mov.tipo) }} {{ formatarDinheiro(mov.valor) }}</span>
+                    </td>
+                  </tr>
+                  <tr v-if="!historicoFiltrado.length">
+                    <td colspan="4" class="py-16 text-center">
+                      <UIcon name="i-heroicons-inbox" class="w-16 h-16 text-gray-200 mx-auto mb-4" />
+                      <p class="text-gray-400 font-medium">Nenhum registro encontrado</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+            <div class="bg-gradient-to-r from-orange-50 to-orange-100/50 p-5 border-b border-orange-200">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-2.5 rounded-xl shadow-lg">
+                  <UIcon name="i-heroicons-fire" class="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 class="font-black text-gray-900 text-lg">Produtos Prioritários</h3>
+                  <p class="text-xs text-gray-600 font-medium">Foque nestas oportunidades</p>
                 </div>
               </div>
             </div>
             
-            <UButton block color="gray" variant="solid" to="/estoque">Ver Estoque</UButton>
+            <div class="overflow-x-auto max-h-[400px] overflow-y-auto">
+              <table class="w-full">
+                <thead class="bg-gray-50 sticky top-0 z-10">
+                  <tr class="text-left">
+                    <th class="px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Produto</th>
+                    <th class="px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Margem</th>
+                    <th class="px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Potencial</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                  <tr v-for="item in statsPrincipal.oportunidades" :key="item.id" class="hover:bg-orange-50/30 transition-colors">
+                    <td class="px-5 py-4">
+                      <div class="font-bold text-gray-900 mb-0.5">{{ item.nome }}</div>
+                      <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <span class="font-medium">{{ item.modelo }}</span>
+                        <span class="text-gray-300">•</span>
+                        <span class="bg-gray-100 px-2 py-0.5 rounded-md font-bold">{{ item.estoque }} un</span>
+                      </div>
+                    </td>
+                    <td class="px-5 py-4 text-right">
+                      <span class="inline-flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm font-black">
+                        {{ item.margem.toFixed(0) }}%
+                      </span>
+                    </td>
+                    <td class="px-5 py-4 text-right">
+                      <div class="font-black text-gray-900 text-base">{{ formatarDinheiro(item.lucroPotencial) }}</div>
+                      <div class="text-xs text-gray-400 font-medium">{{ formatarDinheiro(item.lucroUnit) }}/un</div>
+                    </td>
+                  </tr>
+                  <tr v-if="!statsPrincipal.oportunidades.length">
+                    <td colspan="3" class="px-5 py-12 text-center">
+                      <UIcon name="i-heroicons-inbox" class="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                      <p class="text-gray-400 text-sm font-medium">Sem dados suficientes no momento</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+            <div class="bg-gradient-to-r from-blue-50 to-blue-100/50 p-5 border-b border-blue-200">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-2.5 rounded-xl shadow-lg">
+                  <UIcon name="i-heroicons-archive-box" class="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 class="font-black text-gray-900 text-lg">Dinheiro Congelado</h3>
+                  <p class="text-xs text-gray-600 font-medium">Estoque parado +90 dias</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-6 space-y-6">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
+                  <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Custo Travado</p>
+                  <p class="text-2xl font-black text-gray-900">{{ formatarDinheiro(statsPrincipal.parados.custoTotal) }}</p>
+                </div>
+                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
+                  <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Itens Parados</p>
+                  <p class="text-2xl font-black text-gray-900">{{ statsPrincipal.parados.qtd }}</p>
+                </div>
+              </div>
+
+              <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-5 border-2 border-blue-200">
+                <div class="flex gap-3 items-start">
+                  <div class="bg-blue-500 p-2 rounded-lg flex-shrink-0">
+                    <UIcon name="i-heroicons-light-bulb" class="w-6 h-6 text-white" />
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-sm font-black text-blue-900 mb-2">💡 Sugestão Estratégica</p>
+                    <p class="text-sm text-blue-800 leading-relaxed">
+                      Liquidando com <span class="font-black bg-white px-2 py-0.5 rounded">15% de desconto</span>, 
+                      você libera <span class="font-black text-blue-600">{{ formatarDinheiro(statsPrincipal.parados.vendaTotal * 0.85) }}</span> 
+                      em caixa imediatamente.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <UButton 
+                block 
+                color="gray" 
+                variant="solid" 
+                size="lg"
+                to="/estoque"
+                icon="i-heroicons-arrow-right"
+                trailing
+              >
+                Gerenciar Estoque
+              </UButton>
+            </div>
           </div>
         </div>
+      </template>
 
+      <div v-else-if="errorPrincipal" class="bg-white rounded-2xl border-2 border-red-100 p-12 text-center">
+        <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          <UIcon name="i-heroicons-exclamation-triangle" class="w-8 h-8 text-red-600" />
+        </div>
+        <p class="text-red-600 font-black text-lg mb-2">Erro ao carregar dados</p>
+        <p class="text-gray-500 text-sm mb-6">{{ errorPrincipal.message }}</p>
+        <UButton color="red" variant="solid" @click="refresh" icon="i-heroicons-arrow-path">
+          Tentar novamente
+        </UButton>
       </div>
 
-      <div class="mb-3 mt-6 border border-gray-200 shadow-sm w-full"></div>
+    </div>
 
-      <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-        <div class="p-3 border-b border-gray-100 bg-gray-50 flex flex-col md:flex-row justify-between items-center gap-3">
-          <h2 class="font-bold text-gray-700 flex items-center gap-2">
-            <UIcon name="i-heroicons-list-bullet" class="text-gray-400" /> 
-            Extrato do Mês
-          </h2>
-          
-          <div class="flex gap-1 bg-gray-200/50 p-1 rounded-lg">
-            <button 
-              v-for="aba in abas" 
-              :key="aba.value" 
-              @click="abaAtiva = aba.value" 
-              class="px-3 py-1 text-xs font-bold rounded-md transition-all"
-              :class="abaAtiva === aba.value ? 'bg-white shadow text-black' : 'text-gray-500 hover:text-gray-700'"
-            >
-              {{ aba.label }}
+    <div v-if="modalMetaAberto" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+        <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6 text-white">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-2xl font-black mb-1 flex items-center gap-3">
+                <UIcon name="i-heroicons-flag" class="w-7 h-7" />
+                Definir Meta de Lucro
+              </h3>
+              <p class="text-blue-100 text-sm font-medium">Configure seu objetivo para o mês</p>
+            </div>
+            <button @click="modalMetaAberto = false" class="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-lg transition-all">
+              <UIcon name="i-heroicons-x-mark" class="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+        
+        <div class="p-8">
+          <label class="block text-sm font-black text-gray-700 mb-3 uppercase tracking-wide">Valor Alvo (Lucro Líquido)</label>
+          <div class="relative">
+            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 font-black text-xl">R$</span>
+            <input 
+              v-model="novaMeta" 
+              type="number" 
+              placeholder="15000" 
+              class="w-full pl-14 pr-6 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-2xl font-black text-gray-900 focus:border-blue-500 focus:ring-0 focus:bg-white outline-none transition-all" 
+            />
+          </div>
+          <p class="text-xs text-gray-500 mt-3 font-medium">💡 Defina uma meta realista baseada no seu histórico</p>
+        </div>
+        
+        <div class="px-8 py-6 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
+          <UButton 
+            @click="modalMetaAberto = false" 
+            color="gray" 
+            variant="soft"
+            size="lg"
+          >
+            Cancelar
+          </UButton>
+          <UButton 
+            @click="salvarMeta" 
+            :disabled="salvandoMeta || !novaMeta" 
+            color="black"
+            size="lg"
+            :loading="salvandoMeta"
+          >
+            {{ salvandoMeta ? 'Salvando...' : 'Salvar Meta' }}
+          </UButton>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="modalRelatorioAberto" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+        
+        <div class="bg-gradient-to-r from-gray-900 to-gray-800 px-8 py-6 text-white">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-2xl font-black mb-1 flex items-center gap-3">
+                <UIcon name="i-heroicons-document-arrow-down" class="w-7 h-7" />
+                Exportar Relatório PDF
+              </h3>
+              <p class="text-gray-300 text-sm font-medium">Configure os filtros do relatório</p>
+            </div>
+            <button @click="modalRelatorioAberto = false" class="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-lg transition-all">
+              <UIcon name="i-heroicons-x-mark" class="w-6 h-6" />
             </button>
           </div>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-gray-50 text-gray-400 uppercase text-xs font-bold">
-              <tr>
-                <th class="py-3 px-4">Data</th>
-                <th class="py-3 px-4">Descrição</th>
-                <th class="py-3 px-4 text-center">Tipo</th>
-                <th class="py-3 px-4 text-right">Valor</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-              <tr v-for="mov in historicoFiltrado" :key="mov.id" class="hover:bg-gray-50">
-                <td class="py-3 px-4 text-gray-500 text-xs whitespace-nowrap">
-                  {{ new Date(mov.data).toLocaleDateString('pt-BR') }}
-                </td>
-                <td class="py-3 px-4 font-medium text-gray-900">
-                  {{ mov.descricao || mov.peca?.nome }} 
-                  <span v-if="mov.peca?.modelo" class="text-gray-400 font-normal text-xs uppercase"> • {{ mov.peca.modelo }}</span>
-                </td>
-                <td class="py-3 px-4 text-center">
-                  <span class="text-[10px] px-2 py-0.5 rounded border font-bold uppercase tracking-wider" :class="getBadgeClass(mov.tipo)">
-                    {{ getLabelTipo(mov.tipo) }}
-                  </span>
-                </td>
-                <td class="py-3 px-4 text-right font-mono font-bold whitespace-nowrap" :class="getValorClass(mov.tipo)">
-                  {{ getSinal(mov.tipo) }} {{ formatarDinheiro(mov.valor) }}
-                </td>
-              </tr>
-              <tr v-if="!historicoFiltrado.length">
-                <td colspan="4" class="py-12 text-center text-gray-400 text-xs">
-                  Nenhum registro encontrado para este filtro.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </template>
-
-    <div v-else-if="error" class="py-20 text-center bg-white rounded-2xl border border-red-100">
-      <p class="text-red-500 font-bold mb-2">Erro ao carregar dados.</p>
-      <p class="text-xs text-gray-400 mb-4">{{ error.message }}</p>
-      <UButton size="sm" color="red" variant="soft" class="mt-2" @click="refresh">Tentar novamente</UButton>
-    </div>
-
-    <div v-if="modalMetaAberto" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-          <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <UIcon name="i-heroicons-adjustments-horizontal" class="w-5 h-5 text-gray-500" />
-            Definir Meta
-          </h3>
-          <button @click="modalMetaAberto = false" class="text-gray-400 hover:text-gray-600 p-1 rounded-md">
-            <UIcon name="i-heroicons-x-mark" class="w-6 h-6" />
-          </button>
-        </div>
-        <div class="p-6">
-          <p class="text-sm text-gray-500 mb-6">Qual o valor de <strong>LUCRO LÍQUIDO</strong> que deseja atingir este mês?</p>
-          <div>
-            <label class="block text-sm font-bold text-gray-700 mb-2">Valor Alvo (R$)</label>
-            <div class="relative">
-              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">R$</span>
-              <input v-model="novaMeta" type="number" placeholder="Ex: 15000" class="w-full pl-12 pr-4 py-3 bg-white border-2 border-gray-200 rounded-xl text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-0 outline-none transition-all" />
-            </div>
-          </div>
-        </div>
-        <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
-          <button @click="modalMetaAberto = false" class="px-4 py-2.5 text-gray-600 font-bold hover:bg-gray-200 rounded-xl transition-colors text-sm">Cancelar</button>
-          <button @click="salvarMeta" :disabled="salvandoMeta" class="px-6 py-2.5 bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition-all flex items-center gap-2 text-sm">
-            <UIcon v-if="salvandoMeta" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
-            {{ salvandoMeta ? 'Salvando...' : 'Salvar Meta' }}
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="modalRelatorioAberto" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-          <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <UIcon name="i-heroicons-document-arrow-down" class="w-5 h-5 text-gray-700" />
-            Gerar Relatório PDF
-          </h3>
-          <button @click="modalRelatorioAberto = false" class="text-gray-400 hover:text-gray-600">
-            <UIcon name="i-heroicons-x-mark" class="w-6 h-6" />
-          </button>
-        </div>
-
-        <div class="p-6 space-y-6">
+        <div class="p-8 space-y-6">
           
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-2">📅 Período de Análise</label>
-            <select v-model="periodoRelatorio" class="w-full p-3 border-2 border-gray-200 rounded-xl bg-white font-medium text-gray-900 focus:border-black focus:ring-0">
+            <label class="flex items-center gap-2 text-sm font-black text-gray-700 mb-3 uppercase tracking-wide">
+              <UIcon name="i-heroicons-calendar" class="w-4 h-4" />
+              Período de Análise
+            </label>
+            <select 
+              v-model="periodoRelatorio" 
+              class="w-full p-4 border-2 border-gray-200 rounded-xl bg-white font-bold text-gray-900 focus:border-gray-900 focus:ring-0 cursor-pointer transition-all hover:border-gray-300"
+            >
               <option v-for="op in opcoesPeriodo" :key="op.value" :value="op.value">
                 {{ op.label }}
               </option>
@@ -302,16 +497,29 @@
           </div>
 
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-2">Filtro por Tipo</label>
-            <div class="space-y-2">
+            <label class="flex items-center gap-2 text-sm font-black text-gray-700 mb-3 uppercase tracking-wide">
+              <UIcon name="i-heroicons-funnel" class="w-4 h-4" />
+              Filtro por Categoria
+            </label>
+            <div class="space-y-3">
               <label 
                 v-for="tipo in opcoesTipo" 
                 :key="tipo.value"
-                class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all"
-                :class="tipoRelatorio === tipo.value ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'"
+                class="flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all hover:border-gray-300"
+                :class="tipoRelatorio === tipo.value 
+                  ? 'border-gray-900 bg-gray-50' 
+                  : 'border-gray-200 bg-white'"
               >
-                <input type="radio" v-model="tipoRelatorio" :value="tipo.value" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
-                <span class="text-sm font-medium" :class="tipoRelatorio === tipo.value ? 'text-blue-900' : 'text-gray-700'">
+                <input 
+                  type="radio" 
+                  v-model="tipoRelatorio" 
+                  :value="tipo.value" 
+                  class="w-5 h-5 text-gray-900 focus:ring-gray-900 cursor-pointer"
+                >
+                <span 
+                  class="text-sm font-bold flex-1"
+                  :class="tipoRelatorio === tipo.value ? 'text-gray-900' : 'text-gray-600'"
+                >
                   {{ tipo.label }}
                 </span>
               </label>
@@ -320,20 +528,26 @@
 
         </div>
 
-        <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
-          <button @click="modalRelatorioAberto = false" class="px-4 py-2 text-gray-600 font-bold hover:bg-gray-200 rounded-xl transition-colors text-sm">
+        <div class="px-8 py-6 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
+          <UButton 
+            @click="modalRelatorioAberto = false" 
+            color="gray" 
+            variant="soft"
+            size="lg"
+          >
             Cancelar
-          </button>
+          </UButton>
           
-          <button 
+          <UButton 
             @click="baixarPDF" 
             :disabled="gerandoPDF"
-            class="px-6 py-2 bg-black text-white font-bold rounded-xl hover:bg-gray-800 transition-all flex items-center gap-2 text-sm disabled:opacity-70"
+            color="black"
+            size="lg"
+            :loading="gerandoPDF"
+            icon="i-heroicons-arrow-down-tray"
           >
-            <UIcon v-if="gerandoPDF" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
-            <UIcon v-else name="i-heroicons-arrow-down-tray" class="w-4 h-4" />
             {{ gerandoPDF ? 'Gerando...' : 'Baixar PDF' }}
-          </button>
+          </UButton>
         </div>
 
       </div>
@@ -350,34 +564,67 @@ import autoTable from 'jspdf-autotable'
 definePageMeta({ layout: 'default' })
 
 // ----------------------------------------------------
-// NAVEGAÇÃO E DATA
+// 1. DADOS DO TOPO (KPIs - SEMPRE MÊS ATUAL)
 // ----------------------------------------------------
-const dataAtual = ref(new Date())
-const nomeMesAtual = computed(() => dataAtual.value.toLocaleString('pt-BR', { month: 'long', year: 'numeric' }))
+// Data fixa de "hoje" para os cards de cima. Não muda com a navegação.
+const dataHoje = new Date()
+
+const paramsPrincipal = {
+  mes: dataHoje.getMonth() + 1,
+  ano: dataHoje.getFullYear()
+}
+
+// Fetch 1: Carrega apenas os dados do topo (Meta, Saldo, Ritmo)
+// key: 'kpi-principal' garante que não misture com o outro fetch
+const { data: statsPrincipal, pending: pendingPrincipal, refresh: refreshPrincipal, error: errorPrincipal } = await useFetch('/api/financeiro/stats', { 
+  query: paramsPrincipal,
+  key: 'kpi-principal',
+  lazy: true 
+})
+
+// ----------------------------------------------------
+// 2. NAVEGAÇÃO E DADOS DO EXTRATO (DINÂMICO)
+// ----------------------------------------------------
+// Data exclusiva para controlar a tabela de baixo
+const dataExtrato = ref(new Date()) 
+
+const nomeMesExtrato = computed(() => dataExtrato.value.toLocaleString('pt-BR', { month: 'long', year: 'numeric' }))
+
 const ehMesFuturo = computed(() => {
   const hoje = new Date()
-  return dataAtual.value > hoje
+  // Compara se o mês do extrato é maior que o mês atual real
+  return dataExtrato.value > hoje
 })
 
 function mudarMes(delta: number) {
-  const d = new Date(dataAtual.value)
+  const d = new Date(dataExtrato.value)
   d.setMonth(d.getMonth() + delta)
-  dataAtual.value = d
-  refresh()
+  dataExtrato.value = d
+  // O watch do useFetch abaixo detecta a mudança e recarrega sozinho
 }
 
-const params = computed(() => ({
-  mes: dataAtual.value.getMonth() + 1,
-  ano: dataAtual.value.getFullYear()
+const paramsExtrato = computed(() => ({
+  mes: dataExtrato.value.getMonth() + 1,
+  ano: dataExtrato.value.getFullYear()
 }))
 
-// ----------------------------------------------------
-// FETCH DE DADOS (KPIs)
-// ----------------------------------------------------
-const { data: stats, pending, refresh, error } = await useFetch('/api/financeiro/stats', { query: params, lazy: true })
+// Fetch 2: Carrega a tabela e o resumo da barra cinza
+// watch: [paramsExtrato] faz ele recarregar assim que mudar o mês
+const { data: statsExtrato, pending: pendingExtrato, refresh: refreshExtrato } = await useFetch('/api/financeiro/stats', { 
+  query: paramsExtrato,
+  key: 'extrato-dinamico',
+  lazy: true,
+  watch: [paramsExtrato]
+})
+
+// Função global para atualizar tudo manualmente se precisar
+function refresh() {
+  refreshPrincipal()
+  refreshExtrato()
+}
 
 // ----------------------------------------------------
-// TABELA DO EXTRATO (FRONTEND FILTER)
+// TABELA DO EXTRATO (Lógica baseada em statsExtrato)
 // ----------------------------------------------------
 const abas = [
   { label: 'Todos', value: 'todos' },
@@ -387,15 +634,44 @@ const abas = [
 ]
 const abaAtiva = ref('todos')
 
-const historicoFiltrado = computed(() => {
-  if (!stats.value || !stats.value.extrato) return []
+// CÁLCULOS DO RESUMO (Barra Cinza) - Olha para statsExtrato
+const resumoExtrato = computed(() => {
+  if (!statsExtrato.value || !statsExtrato.value.extrato) return { vendas: 0, despesas: 0, lucro: 0 }
+
+  const vendas = (statsExtrato.value.extrato.movimentacoes || [])
+    .filter((m: any) => m.tipo === 'SAIDA')
+    .reduce((acc: number, m: any) => acc + (Number(m.peca?.preco || 0) * m.quantidade), 0)
+
+  const despesas = (statsExtrato.value.extrato.despesas || [])
+    .reduce((acc: number, d: any) => acc + Number(d.valor), 0)
+
+  return {
+    vendas,
+    despesas,
+    lucro: vendas - despesas
+  }
+})
+
+// Texto da data (ex: 01 Jan - 31 Jan) baseado na data do extrato
+const textoPeriodo = computed(() => {
+  const dt = new Date(dataExtrato.value)
+  const primeiroDia = new Date(dt.getFullYear(), dt.getMonth(), 1)
+  const ultimoDia = new Date(dt.getFullYear(), dt.getMonth() + 1, 0)
   
-  const movs = (stats.value.extrato.movimentacoes || []).map((m: any) => ({
+  const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short' }
+  return `${primeiroDia.toLocaleDateString('pt-BR', options)} - ${ultimoDia.toLocaleDateString('pt-BR', options)}`
+})
+
+// Lista da Tabela - Olha para statsExtrato
+const historicoFiltrado = computed(() => {
+  if (!statsExtrato.value || !statsExtrato.value.extrato) return []
+  
+  const movs = (statsExtrato.value.extrato.movimentacoes || []).map((m: any) => ({
     id: m.id, data: m.createdAt, tipo: m.tipo, 
     valor: Number(m.peca?.preco || 0) * m.quantidade, peca: m.peca, descricao: ''
   }))
 
-  const desps = (stats.value.extrato.despesas || []).map((d: any) => ({
+  const desps = (statsExtrato.value.extrato.despesas || []).map((d: any) => ({
     id: d.id, data: d.data, tipo: 'DESPESA', valor: Number(d.valor), descricao: d.descricao, peca: null
   }))
 
@@ -408,25 +684,30 @@ const historicoFiltrado = computed(() => {
 })
 
 // ----------------------------------------------------
-// MODAL META
+// MODAL META (Olha para statsPrincipal - Mês Atual)
 // ----------------------------------------------------
 const modalMetaAberto = ref(false)
 const novaMeta = ref('')
 const salvandoMeta = ref(false)
 
 function abrirModalMeta() {
-  if (stats.value) novaMeta.value = String(stats.value.meta.alvo)
+  // Pega a meta do mês ATUAL, não do histórico
+  if (statsPrincipal.value) novaMeta.value = String(statsPrincipal.value.meta.alvo)
   modalMetaAberto.value = true
 }
 
 async function salvarMeta() {
   if (!novaMeta.value) return
   salvandoMeta.value = true
-  try { await $fetch('/api/financeiro/meta', { method: 'POST', body: { valor: novaMeta.value } }); modalMetaAberto.value = false; refresh() } catch {} finally { salvandoMeta.value = false }
+  try { 
+      await $fetch('/api/financeiro/meta', { method: 'POST', body: { valor: novaMeta.value } }); 
+      modalMetaAberto.value = false; 
+      refreshPrincipal() // Atualiza só o topo
+  } catch {} finally { salvandoMeta.value = false }
 }
 
 // ----------------------------------------------------
-// RELATÓRIO PDF (API + JSPDF)
+// RELATÓRIO PDF (Mantido Intacto)
 // ----------------------------------------------------
 const modalRelatorioAberto = ref(false)
 const gerandoPDF = ref(false)
@@ -452,7 +733,6 @@ function abrirModalRelatorios() {
 async function baixarPDF() {
   gerandoPDF.value = true
   try {
-    // 1. CHAMA A API QUE CRIAMOS PARA PEGAR DADOS DE X MESES
     const dados = await $fetch('/api/financeiro/relatorio', {
       method: 'POST',
       body: {
@@ -461,7 +741,6 @@ async function baixarPDF() {
       }
     })
 
-    // 2. GERA O PDF NO CLIENTE
     const doc = new jsPDF()
     
     // Cabeçalho
@@ -513,7 +792,6 @@ async function baixarPDF() {
         3: { halign: 'right', fontStyle: 'bold' } // Coluna Valor alinhada a direita
       },
       didParseCell: function (data) {
-        // Pinta valores de despesa de vermelho na tabela
         if (data.section === 'body' && data.column.index === 3) {
           const rawRow = dados.itens[data.row.index];
           if (rawRow.tipo === 'DESPESA') {
@@ -525,7 +803,6 @@ async function baixarPDF() {
       }
     })
 
-    // Download
     doc.save(`relatorio_eli_pecas_${new Date().toISOString().split('T')[0]}.pdf`)
     modalRelatorioAberto.value = false
 
@@ -538,7 +815,7 @@ async function baixarPDF() {
 }
 
 // ----------------------------------------------------
-// HELPERS
+// HELPERS (Mantidos Iguais)
 // ----------------------------------------------------
 function formatarDinheiro(val: number) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0) }
 

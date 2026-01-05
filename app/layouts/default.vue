@@ -33,9 +33,9 @@
           >Finanças</span>
         </NuxtLink>
 
-        <!-- Análise (Dashboard) -->
+        <!-- Análise -->
         <NuxtLink
-          to="/dashboard"
+          to="/"
           class="flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-xl transition-all active:scale-95"
           :class="rota === '/dashboard' ? 'text-white' : 'text-gray-600'"
         >
