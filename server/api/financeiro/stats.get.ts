@@ -34,15 +34,10 @@ export default defineEventHandler(async (event) => {
     ] = await Promise.all([
       prisma.historicoMovimentacao.findMany({
         where: { tipo: 'SAIDA' },
-        select: {
-          quantidade: true,
-          peca: { select: { preco: true } }
-        }
+        select: { quantidade: true, peca: { select: { preco: true } } }
       }),
 
-      prisma.despesa.findMany({
-        select: { valor: true }
-      }),
+      prisma.despesa.findMany({ select: { valor: true } }),
 
       prisma.historicoMovimentacao.findMany({
         where: { createdAt: { gte: inicioPeriodo, lte: fimPeriodo } },
@@ -66,14 +61,10 @@ export default defineEventHandler(async (event) => {
         }
       }),
 
-      prisma.configuracao.findUnique({
-        where: { chave: 'META_MENSAL' }
-      })
+      prisma.configuracao.findUnique({ where: { chave: 'META_MENSAL' } })
     ])
 
-    // ===============================
-    // CAIXA (Histórico total)
-    // ===============================
+    // CAIXA (fluxo financeiro real)
     const receitaTotal = vendasHistorico.reduce(
       (acc, v) => acc + Number(v.peca?.preco || 0) * v.quantidade,
       0
@@ -86,9 +77,7 @@ export default defineEventHandler(async (event) => {
 
     const saldoCaixa = receitaTotal - despesaTotal
 
-    // ===============================
-    // DRE DO PERÍODO
-    // ===============================
+    // DRE do período
     const vendasPeriodo = movimentacoesPeriodo.filter(m => m.tipo === 'SAIDA')
 
     const faturamentoPeriodo = vendasPeriodo.reduce(
@@ -96,28 +85,19 @@ export default defineEventHandler(async (event) => {
       0
     )
 
-    const custoPeriodo = vendasPeriodo.reduce(
-      (acc, v) => acc + Number(v.peca?.custo || 0) * v.quantidade,
-      0
-    )
+    const custoPeriodo = vendasPeriodo.reduce((acc, v) => {
+      const custo = Number(v.peca?.custo || 0)
+      return acc + custo * v.quantidade
+    }, 0)
 
     const lucroOperacional = faturamentoPeriodo - custoPeriodo
-    const margem =
-      faturamentoPeriodo > 0
-        ? (lucroOperacional / faturamentoPeriodo) * 100
-        : 0
+    const margem = faturamentoPeriodo > 0 ? (lucroOperacional / faturamentoPeriodo) * 100 : 0
 
-    // ===============================
-    // META
-    // ===============================
-    const META_BASE = Number(configMeta?.valor ?? 0)
+    // Meta
+    const META_BASE = Number(configMeta?.valor || 0)
     const META_ALVO = isAnual ? META_BASE * 12 : META_BASE
 
-    const progresso =
-      META_ALVO > 0
-        ? Math.min((lucroOperacional / META_ALVO) * 100, 100)
-        : 0
-
+    const progresso = META_ALVO > 0 ? Math.min((lucroOperacional / META_ALVO) * 100, 100) : 0
     const falta = Math.max(0, META_ALVO - lucroOperacional)
 
     const ehMesAtual =
@@ -133,18 +113,13 @@ export default defineEventHandler(async (event) => {
       ritmo = falta / diasRestantes
     }
 
-    // ===============================
-    // ESTOQUE PARADO
-    // ===============================
+    // Estoque parado
     let custoParado = 0
     let vendaParado = 0
     let qtdParados = 0
 
     estoqueAtivo.forEach(p => {
-      const ultimaVenda = p.movimentacoes.length
-        ? p.movimentacoes[0].createdAt
-        : hoje
-
+      const ultimaVenda = p.movimentacoes[0]?.createdAt || p.createdAt
       if (new Date(ultimaVenda) < dataCorteParado) {
         custoParado += Number(p.custo || 0) * p.quantidade
         vendaParado += Number(p.preco || 0) * p.quantidade
@@ -152,13 +127,9 @@ export default defineEventHandler(async (event) => {
       }
     })
 
-    // ===============================
-    // GIRO / OPORTUNIDADES
-    // ===============================
+    // Oportunidades
     const giro: Record<string, number> = {}
-
     vendasPeriodo.forEach(v => {
-      if (!v.pecaId) return
       giro[v.pecaId] = (giro[v.pecaId] || 0) + v.quantidade
     })
 
@@ -184,19 +155,12 @@ export default defineEventHandler(async (event) => {
       .sort((a, b) => b.lucroPotencial - a.lucroPotencial)
       .slice(0, 5)
 
-    // ===============================
-    // RESPONSE
-    // ===============================
     return {
       saldoCaixa,
       receitaTotal,
       despesaTotal,
 
-      periodo: {
-        tipo: isAnual ? 'anual' : 'mensal',
-        mes,
-        ano
-      },
+      periodo: { tipo: isAnual ? 'anual' : 'mensal', mes, ano },
 
       meta: {
         alvo: META_ALVO,
@@ -221,10 +185,7 @@ export default defineEventHandler(async (event) => {
       }
     }
   } catch (err) {
-    console.error('ERRO FINANCEIRO:', err)
-    throw createError({
-      statusCode: 500,
-      message: 'Erro interno financeiro.'
-    })
+    console.error(err)
+    throw createError({ statusCode: 500, message: 'Erro interno financeiro.' })
   }
 })
