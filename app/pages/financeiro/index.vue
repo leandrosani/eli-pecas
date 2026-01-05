@@ -352,15 +352,27 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+
 definePageMeta({ layout: 'default' })
 
-// Data e Navegação
+/* ===============================
+ * DATA / NAVEGAÇÃO DE PERÍODO
+ * =============================== */
 const dataAtual = ref(new Date())
-const nomeMesAtual = computed(() => dataAtual.value.toLocaleString('pt-BR', { month: 'long', year: 'numeric' }))
+
+const nomeMesAtual = computed(() =>
+  dataAtual.value.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
+)
+
 const anoSelecionado = computed(() => dataAtual.value.getFullYear())
+
 const ehMesFuturo = computed(() => {
   const hoje = new Date()
-  return dataAtual.value > hoje
+  return (
+    dataAtual.value.getFullYear() > hoje.getFullYear() ||
+    (dataAtual.value.getFullYear() === hoje.getFullYear() &&
+      dataAtual.value.getMonth() > hoje.getMonth())
+  )
 })
 
 function mudarMes(delta: number) {
@@ -369,92 +381,165 @@ function mudarMes(delta: number) {
   dataAtual.value = d
 }
 
-// Estado para controle de relatório
-const periodoRelatorio = ref('mensal')
-const filtroRelatorio = ref('todos')
+/* ===============================
+ * RELATÓRIOS
+ * =============================== */
+const periodoRelatorio = ref<'mensal' | 'anual'>('mensal')
+const filtroRelatorio = ref<'todos' | 'vendas' | 'despesas' | 'entradas'>('todos')
 
-// Params da API (Reativo ao filtro de relatório)
+/* ===============================
+ * PARAMS DA API
+ * =============================== */
 const params = computed(() => ({
   mes: periodoRelatorio.value === 'anual' ? 0 : dataAtual.value.getMonth() + 1,
   ano: dataAtual.value.getFullYear()
 }))
 
-// Fetch Data
-const { data: stats, pending, refresh, error } = await useFetch('/api/financeiro/stats', { query: params, lazy: true })
+const { data: stats, pending, refresh, error } = await useFetch(
+  '/api/financeiro/stats',
+  { query: params, lazy: true }
+)
 
-// Quando muda o período no modal, força o refresh dos dados (ex: busca o ano todo)
 watch(periodoRelatorio, () => refresh())
 
-// Extrato
-const abas = [{ label: 'Todos', value: 'todos' }, { label: 'Vendas', value: 'saida' }, { label: 'Entradas', value: 'entrada' }, { label: 'Despesas', value: 'despesa' }]
+/* ===============================
+ * EXTRATO
+ * =============================== */
+const abas = [
+  { label: 'Todos', value: 'todos' },
+  { label: 'Vendas', value: 'saida' },
+  { label: 'Entradas', value: 'entrada' },
+  { label: 'Despesas', value: 'despesa' }
+]
+
 const abaAtiva = ref('todos')
 
 const historicoFiltrado = computed(() => {
-  if (!stats.value || !stats.value.extrato) return []
-  
-  const movs = (stats.value.extrato.movimentacoes || []).map((m: any) => ({
-    id: m.id, data: m.createdAt, tipo: m.tipo, 
-    // AJUSTE 2: Valor 0 para entrada de estoque
-    valor: m.tipo === 'ENTRADA' ? 0 : (Number(m.peca?.preco || 0) * m.quantidade), 
-    peca: m.peca, descricao: ''
-  }))
+  if (!stats.value?.extrato) return []
 
-  const desps = (stats.value.extrato.despesas || []).map((d: any) => ({
-    id: d.id, data: d.data, tipo: 'DESPESA', valor: Number(d.valor), descricao: d.descricao, peca: null
-  }))
+  const movimentacoes =
+    stats.value.extrato.movimentacoes?.map((m: any) => ({
+      id: m.id,
+      data: m.createdAt,
+      tipo: m.tipo,
+      valor:
+        m.tipo === 'ENTRADA'
+          ? 0
+          : Number(m.peca?.preco || 0) * m.quantidade,
+      peca: m.peca,
+      descricao: ''
+    })) || []
 
-  let lista = [...movs, ...desps]
-  
-  // Filtro de aba visual (tela)
-  if (!modalRelatorioAberto.value) {
-    if (abaAtiva.value !== 'todos') lista = lista.filter(i => i.tipo.toLowerCase().includes(abaAtiva.value))
-  } 
-  // Filtro de Relatório (modal)
-  else {
-    if (filtroRelatorio.value === 'vendas') lista = lista.filter(i => i.tipo === 'SAIDA')
-    if (filtroRelatorio.value === 'despesas') lista = lista.filter(i => i.tipo === 'DESPESA')
-    if (filtroRelatorio.value === 'entradas') lista = lista.filter(i => i.tipo === 'ENTRADA')
+  const despesas =
+    stats.value.extrato.despesas?.map((d: any) => ({
+      id: d.id,
+      data: d.data,
+      tipo: 'DESPESA',
+      valor: Number(d.valor),
+      descricao: d.descricao,
+      peca: null
+    })) || []
+
+  let lista = [...movimentacoes, ...despesas]
+
+  if (!modalRelatorioAberto.value && abaAtiva.value !== 'todos') {
+    lista = lista.filter(i =>
+      i.tipo.toLowerCase().includes(abaAtiva.value)
+    )
   }
 
-  return lista.sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
+  if (modalRelatorioAberto.value) {
+    if (filtroRelatorio.value === 'vendas')
+      lista = lista.filter(i => i.tipo === 'SAIDA')
+    if (filtroRelatorio.value === 'despesas')
+      lista = lista.filter(i => i.tipo === 'DESPESA')
+    if (filtroRelatorio.value === 'entradas')
+      lista = lista.filter(i => i.tipo === 'ENTRADA')
+  }
+
+  return lista.sort(
+    (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()
+  )
 })
 
-// Metas e Modais
+/* ===============================
+ * MODAIS / META
+ * =============================== */
 const modalMetaAberto = ref(false)
 const modalRelatorioAberto = ref(false)
+
 const novaMeta = ref('')
 const salvandoMeta = ref(false)
 
-function abrirModalMeta() { if (stats.value) novaMeta.value = String(stats.value.meta.alvo); modalMetaAberto.value = true }
-function abrirModalRelatorios() { 
-  modalRelatorioAberto.value = true 
-  // Reseta para mensal ao abrir para não carregar ano todo sem querer
+function abrirModalMeta() {
+  if (stats.value) novaMeta.value = String(stats.value.meta.alvo)
+  modalMetaAberto.value = true
+}
+
+function abrirModalRelatorios() {
+  modalRelatorioAberto.value = true
   periodoRelatorio.value = 'mensal'
   filtroRelatorio.value = 'todos'
 }
 
 async function salvarMeta() {
-  if (!novaMeta.value) return; salvandoMeta.value = true
-  try { await $fetch('/api/financeiro/meta', { method: 'POST', body: { valor: novaMeta.value } }); modalMetaAberto.value = false; refresh() } catch {} finally { salvandoMeta.value = false }
+  if (!novaMeta.value) return
+  salvandoMeta.value = true
+  try {
+    await $fetch('/api/financeiro/meta', {
+      method: 'POST',
+      body: { valor: novaMeta.value }
+    })
+    modalMetaAberto.value = false
+    refresh()
+  } finally {
+    salvandoMeta.value = false
+  }
 }
 
 function imprimirRelatorio() {
-  // Delay para garantir que a tabela renderizou com os filtros certos antes de imprimir
-  setTimeout(() => { 
-    window.print(); 
-    modalRelatorioAberto.value = false;
-    // Retorna para a visualização mensal normal após imprimir
-    periodoRelatorio.value = 'mensal' 
-  }, 500)
+  setTimeout(() => {
+    window.print()
+    modalRelatorioAberto.value = false
+    periodoRelatorio.value = 'mensal'
+  }, 400)
 }
 
-// Helpers Visuais
-function formatarDinheiro(val: number) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0) }
-function getBadgeClass(tipo: string) { return tipo === 'SAIDA' ? 'bg-emerald-100 text-emerald-700' : tipo === 'ENTRADA' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700' }
-function getLabelTipo(tipo: string) { return tipo === 'SAIDA' ? 'Venda' : tipo === 'ENTRADA' ? 'Estoque' : 'Despesa' }
-function getValorClass(tipo: string) { return tipo === 'SAIDA' ? 'text-emerald-600' : tipo === 'ENTRADA' ? 'text-gray-400' : 'text-red-600' }
-function getSinal(tipo: string) { return tipo === 'DESPESA' ? '-' : tipo === 'ENTRADA' ? '' : '+' }
+/* ===============================
+ * HELPERS VISUAIS
+ * =============================== */
+function formatarDinheiro(val: number) {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(val || 0)
+}
+
+function getBadgeClass(tipo: string) {
+  if (tipo === 'SAIDA') return 'bg-emerald-100 text-emerald-700'
+  if (tipo === 'ENTRADA') return 'bg-blue-100 text-blue-700'
+  return 'bg-red-100 text-red-700'
+}
+
+function getLabelTipo(tipo: string) {
+  if (tipo === 'SAIDA') return 'Venda'
+  if (tipo === 'ENTRADA') return 'Estoque'
+  return 'Despesa'
+}
+
+function getValorClass(tipo: string) {
+  if (tipo === 'SAIDA') return 'text-emerald-600'
+  if (tipo === 'ENTRADA') return 'text-gray-400'
+  return 'text-red-600'
+}
+
+function getSinal(tipo: string) {
+  if (tipo === 'DESPESA') return '-'
+  if (tipo === 'ENTRADA') return ''
+  return '+'
+}
 </script>
+
 
 <style>
 @media print {
