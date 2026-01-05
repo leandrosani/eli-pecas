@@ -29,11 +29,21 @@
       </div>
     </div>
 
+    <!-- ESTADO DE CARREGAMENTO -->
     <div v-if="pending" class="py-20 text-center">
       <UIcon name="i-heroicons-arrow-path" class="w-12 h-12 animate-spin text-blue-500 mx-auto" />
       <p class="text-gray-400 mt-2">Calculando indicadores...</p>
     </div>
 
+    <!-- ESTADO DE ERRO (NOVO) -->
+    <div v-else-if="error" class="py-12 text-center bg-red-50 border border-red-200 rounded-2xl">
+      <UIcon name="i-heroicons-exclamation-triangle" class="w-12 h-12 text-red-500 mx-auto mb-2" />
+      <h3 class="text-lg font-bold text-red-700">Erro ao carregar dados financeiros</h3>
+      <p class="text-sm text-red-600 mb-4">{{ error.message || 'Verifique se rodou as migrações do banco de dados.' }}</p>
+      <UButton color="red" variant="soft" @click="refresh">Tentar Novamente</UButton>
+    </div>
+
+    <!-- CONTEÚDO (SÓ APARECE SE TIVER DADOS) -->
     <template v-else-if="stats">
       
       <!-- 1. CARD DESTAQUE: SALDO EM CAIXA (REGRA DE OURO) -->
@@ -160,14 +170,21 @@
       </div>
 
     </template>
+    
+    <!-- ESTADO VAZIO (SE NÃO TIVER DADOS NEM ERRO) -->
+    <div v-else class="py-20 text-center bg-white border border-gray-200 rounded-2xl">
+        <p class="text-gray-500 font-bold">Nenhum dado financeiro disponível.</p>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
-// Fetch dos dados
-const { data: stats, pending, refresh } = await useFetch('/api/financeiro/stats')
+// Fetch dos dados COM tratamento de erro
+const { data: stats, pending, refresh, error } = await useFetch('/api/financeiro/stats', {
+  lazy: true
+})
 
 // Funções Auxiliares
 function formatarDinheiro(val: number) {
