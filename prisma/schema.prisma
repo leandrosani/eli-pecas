@@ -104,3 +104,10 @@ model Despesa {
   createdAt      DateTime @default(now())
   user           User?    @relation(fields: [userId], references: [id])
 }
+
+model Configuracao {
+  id        String   @id @default(uuid())
+  chave     String   @unique // Ex: 'META_MENSAL'
+  valor     String   // Ex: '15000'
+  updatedAt DateTime @updatedAt
+}
