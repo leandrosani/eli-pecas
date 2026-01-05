@@ -56,15 +56,18 @@
         </div>
       </div>
 
-      <div class="border-t border-gray-100 my-4"></div>
+      <div v-if="internalFilters.marca" class="border-t border-gray-100 my-4 animate-fade-in"></div>
 
       <!-- 2. MODELO (DEPENDENTE DA MARCA) -->
       <div 
-        class="flex flex-col mb-4 transition-opacity duration-300"
-        :class="{ 'opacity-40 pointer-events-none grayscale': !internalFilters.marca }"
+        v-if="internalFilters.marca"
+        class="flex flex-col mb-4 animate-slide-in-right"
       >
-        <p class="text-xs font-black text-gray-900 mb-2 uppercase tracking-wide">2. Modelo</p>
-        <div v-if="!internalFilters.marca" class="text-xs text-gray-400 italic mb-2">Selecione uma montadora primeiro...</div>
+        <div class="flex justify-between items-center mb-2">
+           <p class="text-xs font-black text-gray-900 uppercase tracking-wide">2. Modelo</p>
+           <button @click="setMarca(internalFilters.marca)" class="text-[10px] text-red-500 font-bold hover:underline">Alterar Montadora</button>
+        </div>
+        
         <div class="flex flex-wrap gap-2">
           <button
             v-for="m in modelosDisponiveis"
@@ -82,15 +85,18 @@
         </div>
       </div>
 
-      <div class="border-t border-gray-100 my-4"></div>
+      <div v-if="internalFilters.modelo" class="border-t border-gray-100 my-4 animate-fade-in"></div>
 
       <!-- 3. PEÇA (DEPENDENTE DO MODELO) -->
       <div 
-        class="flex flex-col mb-4 transition-opacity duration-300"
-        :class="{ 'opacity-40 pointer-events-none grayscale': !internalFilters.modelo }"
+        v-if="internalFilters.modelo"
+        class="flex flex-col mb-4 animate-slide-in-right"
       >
-        <p class="text-xs font-black text-gray-900 mb-2 uppercase tracking-wide">3. Peça</p>
-        <div v-if="!internalFilters.modelo" class="text-xs text-gray-400 italic mb-2">Selecione um modelo...</div>
+        <div class="flex justify-between items-center mb-2">
+           <p class="text-xs font-black text-gray-900 uppercase tracking-wide">3. Peça</p>
+           <button @click="setModelo(internalFilters.modelo)" class="text-[10px] text-red-500 font-bold hover:underline">Alterar Modelo</button>
+        </div>
+
         <div class="flex flex-wrap gap-2">
           <button
             v-for="p in pecasDisponiveis"
@@ -108,14 +114,18 @@
         </div>
       </div>
 
-      <div class="border-t border-gray-100 my-4"></div>
+      <div v-if="internalFilters.peca" class="border-t border-gray-100 my-4 animate-fade-in"></div>
 
       <!-- 4. LADO -->
       <div 
-        class="flex flex-col mb-4 transition-opacity duration-300"
-        :class="{ 'opacity-40 pointer-events-none grayscale': !internalFilters.peca }"
+        v-if="internalFilters.peca"
+        class="flex flex-col mb-4 animate-slide-in-right"
       >
-        <p class="text-xs font-black text-gray-900 mb-2 uppercase tracking-wide">4. Lado</p>
+        <div class="flex justify-between items-center mb-2">
+           <p class="text-xs font-black text-gray-900 uppercase tracking-wide">4. Lado</p>
+           <button @click="setPeca(internalFilters.peca)" class="text-[10px] text-red-500 font-bold hover:underline">Alterar Peça</button>
+        </div>
+
         <div class="flex flex-wrap gap-2">
           <button
             v-for="lado in ladosDisponiveis"
@@ -325,3 +335,23 @@ onMounted(() => {
   }
 });
 </script>
+
+<style scoped>
+/* Animações simples para entrada suave */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+</style>
