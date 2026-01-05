@@ -110,14 +110,16 @@ export default defineEventHandler(async (event) => {
     
     const ehMesAtual = hoje.getMonth() + 1 === mes && hoje.getFullYear() === ano
     let ritmoDiario = 0
-    let faltaParaMeta = 0
     
-    if (ehMesAtual && META_LUCRO > 0) {
+    // CORREÇÃO: Calcula falta sempre, independente se é mês atual ou passado
+    const faltaParaMeta = META_LUCRO > 0 ? Math.max(0, META_LUCRO - lucroOperacional) : 0
+    
+    // O Ritmo só faz sentido se for mês atual e ainda faltar algo
+    if (ehMesAtual && META_LUCRO > 0 && faltaParaMeta > 0) {
       const ultimoDiaMes = fimMes.getDate()
       const diaHoje = hoje.getDate()
       const diasRestantes = Math.max(1, ultimoDiaMes - diaHoje)
       
-      faltaParaMeta = Math.max(0, META_LUCRO - lucroOperacional)
       ritmoDiario = faltaParaMeta / diasRestantes
     }
 
