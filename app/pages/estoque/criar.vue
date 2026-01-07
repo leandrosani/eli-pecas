@@ -310,7 +310,8 @@ const listaMontadorasCompleta = [
   { nome: 'NISSAN', modelos: ['KICKS', 'VERSA', 'SENTRA', 'MARCH', 'FRONTIER', 'ALTIMA'] },
   { nome: 'PEUGEOT', modelos: ['208', '207', '206', '2008', '3008', '307', '308', '407'] },
   { nome: 'CITROËN', modelos: ['C3', 'C4 CACTUS', 'C4', 'AIRCROSS', 'XSARA', 'PICASSO'] },
-  { nome: 'KIA', modelos: ['SPORTAGE', 'CERATO', 'SORENTO', 'PICANTO'] }
+  { nome: 'KIA', modelos: ['SPORTAGE', 'CERATO', 'SORENTO', 'PICANTO'] },
+  { nome: 'MERCEDES-BENZ', modelos: ['CLASSE A', 'A200', 'CLASSE C', 'C180', 'C200', 'C250', 'CLASSE E', 'E250', 'GLA', 'GLB', 'GLC', 'GLE', 'CLA', 'CLS'] },
 ];
 
 const listaMontadorasNomes = listaMontadorasCompleta.map(m => m.nome);
