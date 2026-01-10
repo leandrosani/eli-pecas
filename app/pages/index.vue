@@ -123,7 +123,7 @@
               <div class="bg-green-500 h-full rounded-full transition-all duration-1000" :style="{ width: `${Math.min(progressoMeta, 100)}%` }"></div>
             </div>
             <div class="mt-4">
-               <UButton to="/financeiro" size="xs" color="white" variant="solid" block class="text-gray-900 font-bold">Ver Detalhes</UButton>
+               <UButton to="/financeiro" size="xs" color="white" variant="solid" block class="text-gray-200 font-bold">Ver Detalhes</UButton>
             </div>
           </div>
         </div>

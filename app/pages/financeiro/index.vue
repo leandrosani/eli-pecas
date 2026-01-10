@@ -52,30 +52,68 @@
 
       <template v-else-if="statsPrincipal">
         
-        <!-- 🎯 CARD PRINCIPAL: SALDO + META + RITMO UNIFICADO -->
-        <div class="bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 rounded-2xl shadow-xl shadow-emerald-500/20 p-5 md:p-6 text-white relative overflow-hidden">
+        <!-- 🎯 CARD PRINCIPAL: SALDO + META + RITMO + ESTOQUE UNIFICADO -->
+        <div class="bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 rounded-2xl shadow-xl shadow-emerald-500/20 p-4 md:p-6 text-white relative overflow-hidden">
           <!-- Decoração -->
           <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
           <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-black/10 rounded-full blur-3xl"></div>
           
-          <div class="relative space-y-5">
-            <!-- Saldo Principal -->
-            <div>
-              <div class="flex items-center gap-2 mb-2">
-                <div class="bg-white/20 backdrop-blur-sm p-2 rounded-lg">
-                  <UIcon name="i-heroicons-banknotes" class="w-5 h-5" />
+          <div class="relative space-y-4 md:space-y-5">
+            
+            <!-- Linha 1: Saldo + Estoque -->
+            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+              
+              <!-- Saldo Principal -->
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="bg-white/20 backdrop-blur-sm p-1.5 md:p-2 rounded-lg">
+                    <UIcon name="i-heroicons-banknotes" class="w-4 h-4 md:w-5 md:h-5" />
+                  </div>
+                  <span class="text-emerald-50 text-[10px] md:text-xs font-bold uppercase tracking-wider">Saldo Disponível</span>
                 </div>
-                <span class="text-emerald-50 text-xs font-bold uppercase tracking-wider">Saldo Disponível</span>
+                <p class="text-3xl md:text-4xl lg:text-5xl font-black mb-1">{{ formatarDinheiro(statsPrincipal.saldoCaixa) }}</p>
+                <p class="text-emerald-100 text-xs md:text-sm font-medium">Disponível em caixa agora</p>
               </div>
-              <p class="text-4xl md:text-5xl font-black mb-1">{{ formatarDinheiro(statsPrincipal.saldoCaixa) }}</p>
-              <p class="text-emerald-100 text-sm font-medium">Disponível em caixa agora</p>
+
+              <!-- Estoque (Compacto integrado) -->
+              <div class="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg p-3 md:p-4 lg:min-w-[400px] hover:bg-white transition-all">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  
+                  <!-- Título do Estoque -->
+                  <div class="flex items-center gap-2">
+                    <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-1.5 rounded-lg shadow-md flex-shrink-0">
+                      <UIcon name="i-heroicons-cube" class="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                      <h3 class="font-black text-gray-900 text-sm md:text-base leading-tight">Patrimônio em Estoque</h3>
+                      <p class="text-[9px] md:text-[10px] text-gray-500 font-medium">Investimento ativo</p>
+                    </div>
+                  </div>
+
+                  <!-- Stats do Estoque -->
+                  <div class="flex items-center gap-3 sm:gap-4">
+                    <div class="text-left sm:text-right flex-1 sm:flex-none">
+                      <p class="text-[9px] md:text-[10px] text-blue-600 font-bold uppercase tracking-wider mb-0.5">Valor Total</p>
+                      <p class="text-lg md:text-xl lg:text-2xl font-black text-blue-900 leading-none">{{ formatarDinheiro(statsPrincipal.valorEstoque) }}</p>
+                    </div>
+                    
+                    <div class="h-8 w-px bg-gray-300"></div>
+                    
+                    <div class="text-left sm:text-right flex-1 sm:flex-none">
+                      <p class="text-[9px] md:text-[10px] text-gray-600 font-bold uppercase tracking-wider mb-0.5">Itens</p>
+                      <p class="text-lg md:text-xl lg:text-2xl font-black text-gray-900 leading-none">{{ statsPrincipal.itensEstoque }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
 
-            <!-- Mini Cards: Meta + Ritmo (lado a lado) -->
+            <!-- Linha 2: Meta + Ritmo -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               
               <!-- Meta de Lucro (compacto) -->
-              <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 relative group hover:bg-white/15 transition-all">
+              <div class="bg-white/10 backdrop-blur-md rounded-xl p-3 md:p-4 border border-white/20 relative group hover:bg-white/15 transition-all">
                 <button 
                   @click="abrirModalMeta"
                   class="absolute top-2 right-2 bg-white/20 hover:bg-white/30 p-1.5 rounded-lg transition-all opacity-0 group-hover:opacity-100"
@@ -84,51 +122,51 @@
                   <UIcon name="i-heroicons-pencil-square" class="w-3.5 h-3.5 text-white" />
                 </button>
                 
-                <div class="flex items-center gap-2 mb-3">
-                  <UIcon name="i-heroicons-flag" class="w-4 h-4 text-emerald-100" />
-                  <span class="text-emerald-100 text-[10px] font-bold uppercase tracking-wider">Meta do Mês</span>
+                <div class="flex items-center gap-2 mb-2 md:mb-3">
+                  <UIcon name="i-heroicons-flag" class="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-100" />
+                  <span class="text-emerald-100 text-[9px] md:text-[10px] font-bold uppercase tracking-wider">Meta do Mês</span>
                 </div>
 
-                <div class="flex items-baseline gap-2 mb-2">
-                  <p class="text-2xl font-black">{{ formatarDinheiro(statsPrincipal.meta.atual) }}</p>
-                  <span class="text-xs text-emerald-100 font-medium">de {{ formatarDinheiro(statsPrincipal.meta.alvo) }}</span>
+                <div class="flex flex-wrap items-baseline gap-2 mb-2">
+                  <p class="text-xl md:text-2xl font-black">{{ formatarDinheiro(statsPrincipal.meta.atual) }}</p>
+                  <span class="text-[10px] md:text-xs text-emerald-100 font-medium">de {{ formatarDinheiro(statsPrincipal.meta.alvo) }}</span>
                 </div>
 
-                <div class="w-full bg-black/20 h-2 rounded-full overflow-hidden mb-1">
+                <div class="w-full bg-black/20 h-1.5 md:h-2 rounded-full overflow-hidden mb-1">
                   <div 
                     class="h-full rounded-full transition-all duration-1000 bg-gradient-to-r from-white to-emerald-200"
                     :style="{ width: `${Math.min(statsPrincipal.meta.progresso, 100)}%` }"
                   ></div>
                 </div>
-                <p class="text-[10px] text-emerald-100 font-bold text-right">{{ statsPrincipal.meta.progresso.toFixed(0) }}% completo</p>
+                <p class="text-[9px] md:text-[10px] text-emerald-100 font-bold text-right">{{ statsPrincipal.meta.progresso.toFixed(0) }}% completo</p>
               </div>
 
               <!-- Ritmo Necessário (compacto) -->
-              <div class="bg-gradient-to-br from-orange-500/90 to-orange-600/90 backdrop-blur-md rounded-xl p-4 border border-orange-400/30 shadow-lg">
-                <div class="flex items-center gap-2 mb-3">
-                  <UIcon name="i-heroicons-bolt" class="w-4 h-4 text-orange-100" />
-                  <span class="text-orange-100 text-[10px] font-bold uppercase tracking-wider">
+              <div class="bg-gradient-to-br from-orange-500/90 to-orange-600/90 backdrop-blur-md rounded-xl p-3 md:p-4 border border-orange-400/30 shadow-lg">
+                <div class="flex items-center gap-2 mb-2 md:mb-3">
+                  <UIcon name="i-heroicons-bolt" class="w-3.5 h-3.5 md:w-4 md:h-4 text-orange-100" />
+                  <span class="text-orange-100 text-[9px] md:text-[10px] font-bold uppercase tracking-wider">
                     {{ statsPrincipal.meta.falta <= 0 ? '✓ Meta Batida!' : 'Ritmo Necessário' }}
                   </span>
                 </div>
                 
                 <template v-if="statsPrincipal.meta.ehMesAtual && statsPrincipal.meta.falta > 0">
-                  <p class="text-2xl font-black mb-1">{{ formatarDinheiro(statsPrincipal.meta.ritmo) }}</p>
-                  <p class="text-orange-100 text-xs font-medium">por dia para bater a meta</p>
+                  <p class="text-xl md:text-2xl font-black mb-1">{{ formatarDinheiro(statsPrincipal.meta.ritmo) }}</p>
+                  <p class="text-orange-100 text-[10px] md:text-xs font-medium">por dia para bater a meta</p>
                 </template>
                 
                 <template v-else-if="statsPrincipal.meta.falta <= 0">
                   <div class="flex items-center gap-2">
-                    <UIcon name="i-heroicons-check-badge" class="w-8 h-8 text-white/90" />
+                    <UIcon name="i-heroicons-check-badge" class="w-7 h-7 md:w-8 md:h-8 text-white/90 flex-shrink-0" />
                     <div>
-                      <p class="text-lg font-black">Objetivo alcançado!</p>
-                      <p class="text-orange-100 text-xs">Continue assim 🎉</p>
+                      <p class="text-base md:text-lg font-black">Objetivo alcançado!</p>
+                      <p class="text-orange-100 text-[10px] md:text-xs">Continue assim 🎉</p>
                     </div>
                   </div>
                 </template>
                 
                 <template v-else>
-                  <p class="text-sm text-orange-100 font-medium">Meta do período encerrado</p>
+                  <p class="text-xs md:text-sm text-orange-100 font-medium">Meta do período encerrado</p>
                 </template>
               </div>
 
@@ -136,32 +174,6 @@
           </div>
         </div>
 
-        <!-- Estoque (Card Único Compacto) -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-5 hover:shadow-md transition-all">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 rounded-xl shadow-lg">
-              <UIcon name="i-heroicons-cube" class="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h3 class="font-black text-gray-900 text-lg">Patrimônio em Estoque</h3>
-              <p class="text-xs text-gray-500 font-medium">Investimento ativo</p>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
-              <p class="text-xs text-blue-600 font-bold uppercase tracking-wider mb-2">Valor Total</p>
-              <p class="text-2xl md:text-3xl font-black text-blue-900">{{ formatarDinheiro(statsPrincipal.valorEstoque) }}</p>
-              <p class="text-xs text-blue-600 font-medium mt-1">em mercadoria</p>
-            </div>
-            
-            <div class="bg-gradient-to-br from-gray-50 to-slate-100 rounded-xl p-4 border border-gray-200">
-              <p class="text-xs text-gray-600 font-bold uppercase tracking-wider mb-2">Itens Ativos</p>
-              <p class="text-2xl md:text-3xl font-black text-gray-900">{{ statsPrincipal.itensEstoque }}</p>
-              <p class="text-xs text-gray-600 font-medium mt-1">peças cadastradas</p>
-            </div>
-          </div>
-        </div>
 
         <!-- Extrato Detalhado (mantém destaque) -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
@@ -239,13 +251,6 @@
 
           <!-- Stats (3 colunas) -->
           <div v-if="statsExtrato" class="bg-gradient-to-r from-gray-50 to-slate-50">
-            
-            <!-- Período (desktop) -->
-            <div class="hidden md:flex items-center justify-center gap-2 p-3 border-b border-gray-200">
-              <UIcon name="i-heroicons-calendar" class="w-4 h-4 text-gray-400" />
-              <span class="text-sm font-bold text-gray-700">{{ textoPeriodo }}</span>
-            </div>
-
             <!-- Grid 3 colunas -->
             <div class="grid grid-cols-3 divide-x divide-gray-200 border-b border-gray-200">
               <div class="p-4 text-center">
