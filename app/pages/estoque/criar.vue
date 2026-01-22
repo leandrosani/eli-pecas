@@ -138,23 +138,67 @@
           <!-- Linha 2: Montadora, Modelo, Condição -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
             <div class="space-y-2">
-              <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-truck" class="w-4 h-4 text-gray-600" /> Montadora
+              <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <UIcon name="i-heroicons-truck" class="w-4 h-4 text-gray-600" /> Montadora
+                </div>
+                <button 
+                  type="button"
+                  @click="toggleNovaMarca"
+                  class="text-[10px] bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 py-0.5 rounded-md font-bold transition-all border border-blue-100"
+                >
+                  {{ isNovaMarca ? 'Selecionar da Lista' : '+ Nova Montadora' }}
+                </button>
               </label>
-              <select v-model="form.marca" class="w-full h-12 border-2 border-gray-300 rounded-xl px-4 focus:ring-2 focus:ring-gray-600 uppercase font-medium">
-                <option value="">SELECIONE</option>
-                <option v-for="m in listaMontadorasNomes" :key="m" :value="m">{{ m }}</option>
-              </select>
+              
+              <div v-if="!isNovaMarca">
+                <select v-model="form.marca" class="w-full h-12 border-2 border-gray-300 rounded-xl px-4 focus:ring-2 focus:ring-gray-600 uppercase font-medium">
+                  <option value="">SELECIONE</option>
+                  <option v-for="m in listaMontadorasNomes" :key="m" :value="m">{{ m }}</option>
+                </select>
+              </div>
+              <div v-else>
+                <UInput 
+                  v-model="form.marca" 
+                  @input="form.marca = form.marca.toUpperCase()"
+                  placeholder="DIGITE O NOME DA MONTADORA"
+                  size="lg" 
+                  :ui="{ base: 'h-12 border-2 border-blue-300 rounded-xl uppercase font-bold text-blue-800' }" 
+                  autofocus
+                />
+              </div>
             </div>
 
             <div class="space-y-2">
-              <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                <UIcon name="i-heroicons-wrench-screwdriver" class="w-4 h-4 text-gray-600" /> Modelo
+              <label class="text-xs md:text-sm font-bold text-gray-700 flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <UIcon name="i-heroicons-wrench-screwdriver" class="w-4 h-4 text-gray-600" /> Modelo
+                </div>
+                 <button 
+                  type="button"
+                  @click="toggleNovoModelo"
+                  class="text-[10px] bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 py-0.5 rounded-md font-bold transition-all border border-blue-100"
+                >
+                  {{ isNovoModelo ? 'Selecionar da Lista' : '+ Novo Modelo' }}
+                </button>
               </label>
-              <select v-model="form.modelo" :disabled="!form.marca" class="w-full h-12 border-2 border-gray-300 rounded-xl px-4 focus:ring-2 focus:ring-gray-600 disabled:bg-gray-100 uppercase font-medium">
-                <option value="">SELECIONE O MODELO</option>
-                <option v-for="m in modelosFiltrados" :key="m" :value="m">{{ m }}</option>
-              </select>
+
+              <div v-if="!isNovoModelo">
+                <select v-model="form.modelo" :disabled="!form.marca && !isNovaMarca" class="w-full h-12 border-2 border-gray-300 rounded-xl px-4 focus:ring-2 focus:ring-gray-600 disabled:bg-gray-100 uppercase font-medium">
+                  <option value="">{{ !form.marca && !isNovaMarca ? 'SELECIONE A MONTADORA' : 'SELECIONE O MODELO' }}</option>
+                  <option v-for="m in modelosFiltrados" :key="m" :value="m">{{ m }}</option>
+                </select>
+              </div>
+              <div v-else>
+                <UInput 
+                  v-model="form.modelo" 
+                  @input="form.modelo = form.modelo.toUpperCase()"
+                  placeholder="DIGITE O NOME DO MODELO"
+                  size="lg" 
+                  :ui="{ base: 'h-12 border-2 border-blue-300 rounded-xl uppercase font-bold text-blue-800' }" 
+                  autofocus
+                />
+              </div>
             </div>
 
             <div class="space-y-2">
@@ -281,6 +325,10 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const arquivosParaUpload = ref<File[]>([]) // Guarda os arquivos reais
 const previews = ref<string[]>([]) // Guarda os URLs locais (blob:) para exibir na tela
 
+// NOVOS ESTADOS PARA CONTROLE DE INPUT MANUAL
+const isNovaMarca = ref(false)
+const isNovoModelo = ref(false)
+
 // ✅ CONFIGURAÇÕES CLOUDINARY
 const CLOUD_NAME = 'dhlllqld0'; 
 const UPLOAD_PRESET = 'Eli pecas'; 
@@ -373,7 +421,24 @@ const modelosFiltrados = computed(() => {
   return m ? m.modelos : []
 })
 
-watch(() => form.marca, () => { form.modelo = '' })
+watch(() => form.marca, () => { 
+  // Só limpa o modelo se a marca mudou e NÃO ESTAMOS no modo de nova marca/modelo manual
+  if (!isNovaMarca.value && !isNovoModelo.value) {
+     form.modelo = '' 
+  }
+})
+
+function toggleNovaMarca() {
+  isNovaMarca.value = !isNovaMarca.value
+  form.marca = '' // Limpa para digitar do zero ou selecionar
+  form.modelo = ''
+  isNovoModelo.value = false // Reseta o modelo tb
+}
+
+function toggleNovoModelo() {
+  isNovoModelo.value = !isNovoModelo.value
+  form.modelo = ''
+}
 
 // ✅ HANDLERS DRAG & DROP (MODIFICADO PARA PREVIEW LOCAL)
 function handleDragOver(e: DragEvent) { e.preventDefault(); isDragging.value = true }
