@@ -576,12 +576,14 @@ const linhasFiltradas = computed(() => {
       const lado = (row.lado || '').toLowerCase()
       const observacoes = (row.observacoes || '').toLowerCase()
       const detalhes = (row.detalhes || '').toLowerCase()
+      const modelo = (row.modelo || '').toLowerCase()
       
       return nome.includes(buscaLower) || 
              marca.includes(buscaLower) || 
              observacoes.includes(buscaLower) ||
              lado.includes(buscaLower) ||
-             detalhes.includes(buscaLower)
+             detalhes.includes(buscaLower) ||
+             modelo.includes(buscaLower)
     })
   }
 

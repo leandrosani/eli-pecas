@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   try {
     const query = getQuery(event)
     const hoje = new Date()
-    
+
     // Tratamento de Data
     let ano = Number(query.ano) || hoje.getFullYear()
     let mes = query.mes !== undefined ? Number(query.mes) : (hoje.getMonth() + 1)
@@ -28,18 +28,18 @@ export default defineEventHandler(async (event) => {
 
     // --- CARREGAMENTO OTIMIZADO ---
     const [
-      todasVendas, 
-      sumDespesasGlobal, 
-      movimentacoesPeriodo, 
-      despesasPeriodo,      
-      estoqueAtivo, 
+      todasVendas,
+      sumDespesasGlobal,
+      movimentacoesPeriodo,
+      despesasPeriodo,
+      estoqueAtivo,
       configMeta,
       todasPecas // <--- G. Traz todas as peças ativas
     ] = await Promise.all([
       // A. Vendas Globais
       prisma.historicoMovimentacao.findMany({
         where: { tipo: 'SAIDA' },
-        select: { quantidade: true, peca: { select: { preco: true } } }
+        select: { quantidade: true, precoVenda: true, peca: { select: { preco: true } } } // ✅ Select precoVenda
       }),
       // B. Soma Despesas
       prisma.despesa.aggregate({ _sum: { valor: true } }),
@@ -60,13 +60,13 @@ export default defineEventHandler(async (event) => {
       // E. Estoque para Parados/Oportunidades
       prisma.peca.findMany({
         where: { ativo: true, quantidade: { gt: 0 } },
-        include: { 
+        include: {
           // CORREÇÃO: Trazemos a última movimentação de QUALQUER tipo (Entrada ou Saída)
           // Isso garante que se houve entrada de estoque recente, não considere parado.
-          movimentacoes: { 
-            take: 1, 
-            orderBy: { createdAt: 'desc' } 
-          } 
+          movimentacoes: {
+            take: 1,
+            orderBy: { createdAt: 'desc' }
+          }
         }
       }),
 
@@ -74,20 +74,28 @@ export default defineEventHandler(async (event) => {
       prisma.configuracao.findUnique({ where: { chave: 'META_MENSAL' } }),
 
       // G. Todas as Peças (Para contagem total)
-      prisma.peca.findMany({ 
+      prisma.peca.findMany({
         where: { ativo: true },
-        select: { preco: true, quantidade: true } 
+        select: { preco: true, quantidade: true }
       })
     ])
 
     // --- CÁLCULOS FINANCEIROS ---
-    const receitaTotalGlobal = todasVendas.reduce((acc, mov) => acc + (Number(mov.peca?.preco || 0) * mov.quantidade), 0)
+    const receitaTotalGlobal = todasVendas.reduce((acc, mov: any) => {
+      // ✅ SNAPSHOT FIX
+      const precoReal = mov.precoVenda ? Number(mov.precoVenda) : Number(mov.peca?.preco || 0)
+      return acc + (precoReal * mov.quantidade)
+    }, 0)
     const despesaTotalGlobal = Number(sumDespesasGlobal._sum.valor || 0)
     const saldoCaixa = receitaTotalGlobal - despesaTotalGlobal
 
     // --- CÁLCULOS DO PERÍODO ---
     const vendasPeriodo = movimentacoesPeriodo.filter(m => m.tipo === 'SAIDA')
-    const faturamentoPeriodo = vendasPeriodo.reduce((acc, mov) => acc + (Number(mov.peca?.preco || 0) * mov.quantidade), 0)
+    const faturamentoPeriodo = vendasPeriodo.reduce((acc, mov) => {
+      // ✅ SNAPSHOT FIX
+      const precoReal = mov.precoVenda ? Number(mov.precoVenda) : Number(mov.peca?.preco || 0)
+      return acc + (precoReal * mov.quantidade)
+    }, 0)
     const custoProdutosPeriodo = vendasPeriodo.reduce((acc, mov: any) => {
       const custoUnitario = mov.custo ? Number(mov.custo) : Number(mov.peca?.custo || 0)
       return acc + (custoUnitario * mov.quantidade)
@@ -99,11 +107,11 @@ export default defineEventHandler(async (event) => {
     const META_BASE = configMeta?.valor ? Number(configMeta.valor) : 0
     const META_ALVO = isAnual ? META_BASE * 12 : META_BASE
     const progressoMeta = META_ALVO > 0 ? Math.min((lucroOperacional / META_ALVO) * 100, 100) : 0
-    
+
     const ehMesAtual = !isAnual && (hoje.getMonth() + 1 === mes && hoje.getFullYear() === ano)
     let ritmoDiario = 0
     const faltaParaMeta = META_ALVO > 0 ? Math.max(0, META_ALVO - lucroOperacional) : 0
-    
+
     if (ehMesAtual && META_ALVO > 0 && faltaParaMeta > 0) {
       const ultimoDiaMes = fimPeriodo.getDate()
       const diaHoje = hoje.getDate()
@@ -115,7 +123,7 @@ export default defineEventHandler(async (event) => {
     let dinheiroCongeladoCusto = 0
     let qtdItensParados = 0
     let vendaTotalParados = 0
-    
+
     const itensParados = estoqueAtivo.filter(peca => {
       // CORREÇÃO: Verifica data da última movimentação (qualquer tipo) OU data de criação
       const dataUltimaAtividade = peca.movimentacoes[0]?.createdAt || peca.createdAt
@@ -158,11 +166,11 @@ export default defineEventHandler(async (event) => {
       saldoCaixa,
       receitaTotal: receitaTotalGlobal,
       despesaTotal: despesaTotalGlobal,
-      
+
       valorEstoque,
       itensEstoque,   // Qtd física total
       totalCadastros, // Qtd de linhas cadastradas
-      
+
       periodo: { tipo: isAnual ? 'anual' : 'mensal', mes, ano },
       meta: { alvo: META_ALVO, atual: lucroOperacional, progresso: progressoMeta, falta: faltaParaMeta, ritmo: ritmoDiario, ehMesAtual },
       parados: { qtd: qtdItensParados, custoTotal: dinheiroCongeladoCusto, vendaTotal: vendaTotalParados },

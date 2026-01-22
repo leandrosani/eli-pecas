@@ -4,10 +4,10 @@ import { prisma } from '../../utils/prisma'
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const mesesAtras = Number(body.meses) || 1
-  
+
   // Se não vier nada, assumimos tudo por padrão
-  const tiposFiltro: string[] = Array.isArray(body.tipos) && body.tipos.length > 0 
-    ? body.tipos 
+  const tiposFiltro: string[] = Array.isArray(body.tipos) && body.tipos.length > 0
+    ? body.tipos
     : ['SAIDA', 'ENTRADA', 'DESPESA']
 
   // 1. Calcular datas
@@ -20,10 +20,10 @@ export default defineEventHandler(async (event) => {
   try {
     // 2. Buscar Movimentações (Vendas e Entradas)
     let movimentacoes: any[] = []
-    
+
     // Filtra apenas se SAIDA ou ENTRADA estiverem na lista solicitada
     const tiposMovimentacao = tiposFiltro.filter(t => t === 'SAIDA' || t === 'ENTRADA')
-    
+
     if (tiposMovimentacao.length > 0) {
       movimentacoes = await prisma.historicoMovimentacao.findMany({
         where: {
@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
 
     // 3. Buscar Despesas
     let despesas: any[] = []
-    
+
     if (tiposFiltro.includes('DESPESA')) {
       despesas = await prisma.despesa.findMany({
         where: {
@@ -50,14 +50,21 @@ export default defineEventHandler(async (event) => {
     }
 
     // 4. Unificar e formatar
-    const listaMovs = movimentacoes.map(m => ({
-      data: m.createdAt,
-      descricao: `${m.peca?.nome || 'Item'} (${m.peca?.modelo || ''})`,
-      tipo: m.tipo,
-      // ✅ CORREÇÃO: Agora calcula o valor da peça independente se é SAIDA ou ENTRADA
-      valor: (Number(m.peca?.preco || 0) * m.quantidade),
-      qtd: m.quantidade
-    }))
+    const listaMovs = movimentacoes.map(m => {
+      // ✅ LÓGICA DE SNAPSHOT
+      // Se tiver snapshot (novo), usa ele. Se não (velho), usa o dado atual da peça.
+      const nomeReal = m.nomeSnapshot || m.peca?.nome || 'Item Desconhecido'
+      const modeloReal = m.modeloSnapshot || m.peca?.modelo || ''
+      const precoReal = m.precoVenda ? Number(m.precoVenda) : Number(m.peca?.preco || 0)
+
+      return {
+        data: m.createdAt,
+        descricao: `${nomeReal} (${modeloReal})`,
+        tipo: m.tipo,
+        valor: (precoReal * m.quantidade),
+        qtd: m.quantidade
+      }
+    })
 
     const listaDesps = despesas.map(d => ({
       data: d.data,
@@ -67,17 +74,17 @@ export default defineEventHandler(async (event) => {
       qtd: 1
     }))
 
-    const resultadoFinal = [...listaMovs, ...listaDesps].sort((a, b) => 
+    const resultadoFinal = [...listaMovs, ...listaDesps].sort((a, b) =>
       new Date(b.data).getTime() - new Date(a.data).getTime()
     )
 
     // ✅ CORREÇÃO DOS TOTAIS (Para não somar estoque como dinheiro)
-    
+
     // Receita: Soma apenas o que foi VENDIDO ('SAIDA')
     const totalReceita = resultadoFinal
       .filter(i => i.tipo === 'SAIDA')
       .reduce((acc, i) => acc + i.valor, 0)
-      
+
     // Despesa: Soma apenas 'DESPESA'
     const totalDespesas = resultadoFinal
       .filter(i => i.tipo === 'DESPESA')

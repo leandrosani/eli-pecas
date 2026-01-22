@@ -2,7 +2,7 @@ import { prisma } from '../../utils/prisma'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
-  
+
   const hoje = new Date()
   const mes = query.mes ? parseInt(query.mes as string) : (hoje.getMonth() + 1)
   const ano = query.ano ? parseInt(query.ano as string) : hoje.getFullYear()
@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const todasPecas = await prisma.peca.findMany({ where: { ativo: true } })
   const valorEstoque = todasPecas.reduce((acc, p) => acc + (Number(p.preco) * p.quantidade), 0)
   const itensEstoque = todasPecas.reduce((acc, p) => acc + p.quantidade, 0)
-  
+
   const estoqueBaixo = todasPecas
     .filter(p => p.quantidade <= 3)
     .sort((a, b) => a.quantidade - b.quantidade)
@@ -36,7 +36,12 @@ export default defineEventHandler(async (event) => {
 
   // 4. Cálculos
   const vendas = historicoMes.filter(h => h.tipo === 'SAIDA')
-  const faturamentoMes = vendas.reduce((acc, h) => acc + (Number(h.peca.preco) * h.quantidade), 0)
+  const faturamentoMes = vendas.reduce((acc, h) => {
+    // ✅ SNAPSHOT FIX
+    const precoReal = h.precoVenda ? Number(h.precoVenda) : Number(h.peca.preco)
+    return acc + (precoReal * h.quantidade)
+  }, 0)
+
   const totalDespesas = despesasMes.reduce((acc, d) => acc + Number(d.valor), 0)
   const balancoLiquido = faturamentoMes - totalDespesas
   const vendasCount = vendas.length
@@ -46,22 +51,25 @@ export default defineEventHandler(async (event) => {
   // 5. Ranking de Vendas (ATUALIZADO COM ANO E MARCA/LADO)
   // Adicionei 'ano' e 'marca' na tipagem e no objeto
   const rankingVendas: Record<string, { nome: string, marca: string, ano: string, modelo: string, lado: string | null, qtd: number, total: number }> = {}
-  
+
   vendas.forEach(venda => {
     const id = venda.pecaId
     if (!rankingVendas[id]) {
-      rankingVendas[id] = { 
-        nome: venda.peca.nome,
-        modelo: venda.peca.modelo,
+      rankingVendas[id] = {
+        nome: venda.nomeSnapshot || venda.peca.nome, // ✅ Snapshot
+        modelo: venda.modeloSnapshot || venda.peca.modelo, // ✅ Snapshot
         lado: venda.peca.lado,
-        marca: venda.peca.marca, // No seu sistema, isso é o Lado
-        ano: venda.peca.ano,     // Ano do carro
-        qtd: 0, 
-        total: 0 
+        marca: venda.peca.marca,
+        ano: venda.peca.ano,
+        qtd: 0,
+        total: 0
       }
     }
     rankingVendas[id].qtd += venda.quantidade
-    rankingVendas[id].total += Number(venda.peca.preco) * venda.quantidade
+
+    // ✅ SNAPSHOT FIX
+    const precoReal = venda.precoVenda ? Number(venda.precoVenda) : Number(venda.peca.preco)
+    rankingVendas[id].total += precoReal * venda.quantidade
   })
 
   const topProdutos = Object.values(rankingVendas)
@@ -80,6 +88,6 @@ export default defineEventHandler(async (event) => {
     despesasCount,
     topProdutos,
     historicoMes,
-    despesasMes 
+    despesasMes
   }
 })

@@ -93,6 +93,11 @@ model HistoricoMovimentacao {
   // ✅ MANTIDO: Snapshot do custo na venda
   custo      Decimal? @db.Decimal(10, 2)
 
+  // ✅ NOVO: Campos de Snapshot para congelar o histórico
+  precoVenda     Decimal? @db.Decimal(10, 2)
+  nomeSnapshot   String?
+  modeloSnapshot String?
+
   peca       Peca     @relation(fields: [pecaId], references: [id])
   user       User?    @relation(fields: [userId], references: [id])
 

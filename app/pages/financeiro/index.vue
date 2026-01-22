@@ -612,7 +612,11 @@ const resumoExtrato = computed(() => {
 
   const vendas = (statsExtrato.value.extrato.movimentacoes || [])
     .filter((m: any) => m.tipo === 'SAIDA')
-    .reduce((acc: number, m: any) => acc + (Number(m.peca?.preco || 0) * m.quantidade), 0)
+    .reduce((acc: number, m: any) => {
+        // ✅ SNAPSHOT FIX
+        const precoReal = m.precoVenda ? Number(m.precoVenda) : Number(m.peca?.preco || 0)
+        return acc + (precoReal * m.quantidade)
+    }, 0)
 
   const despesas = (statsExtrato.value.extrato.despesas || [])
     .reduce((acc: number, d: any) => acc + Number(d.valor), 0)
@@ -636,11 +640,19 @@ const textoPeriodo = computed(() => {
 const historicoFiltradoTela = computed(() => {
   if (!statsExtrato.value || !statsExtrato.value.extrato) return []
   
-  const movs = (statsExtrato.value.extrato.movimentacoes || []).map((m: any) => ({
-    id: m.id, data: m.createdAt, tipo: m.tipo, 
-    valor: m.tipo === 'ENTRADA' ? 0 : (Number(m.peca?.preco || 0) * m.quantidade), 
-    peca: m.peca, descricao: m.peca ? `${m.peca.nome} ${m.peca.modelo || ''}` : 'Item'
-  }))
+  const movs = (statsExtrato.value.extrato.movimentacoes || []).map((m: any) => {
+    // ✅ SNAPSHOT FIX
+    const nomeReal = m.nomeSnapshot || m.peca?.nome || 'Item'
+    const modeloReal = m.modeloSnapshot || m.peca?.modelo || ''
+    const precoReal = m.precoVenda ? Number(m.precoVenda) : Number(m.peca?.preco || 0)
+
+    return {
+      id: m.id, data: m.createdAt, tipo: m.tipo, 
+      valor: m.tipo === 'ENTRADA' ? 0 : (precoReal * m.quantidade), 
+      peca: m.peca, 
+      descricao: `${nomeReal} ${modeloReal}`
+    }
+  })
 
   const desps = (statsExtrato.value.extrato.despesas || []).map((d: any) => ({
     id: d.id, data: d.data, tipo: 'DESPESA', valor: Number(d.valor), descricao: d.descricao, peca: null

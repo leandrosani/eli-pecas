@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   // Pega o ID da pasta [id]
   const id = getRouterParam(event, 'id')
   const body = await readBody(event)
-  
+
   // Garante que é número inteiro
   const quantidadeVendida = parseInt(body.quantidade)
 
@@ -21,16 +21,16 @@ export default defineEventHandler(async (event) => {
 
   // 2. Transação (Tudo ou Nada)
   return await prisma.$transaction(async (tx) => {
-    
+
     // A. Busca a peça para checar saldo
     const peca = await tx.peca.findUnique({ where: { id } })
-    
+
     if (!peca) throw createError({ statusCode: 404, message: 'Peça não encontrada' })
-    
+
     if (peca.quantidade < quantidadeVendida) {
-      throw createError({ 
-        statusCode: 400, 
-        statusMessage: `Estoque insuficiente. Tem apenas ${peca.quantidade}.` 
+      throw createError({
+        statusCode: 400,
+        statusMessage: `Estoque insuficiente. Tem apenas ${peca.quantidade}.`
       })
     }
 
@@ -43,14 +43,22 @@ export default defineEventHandler(async (event) => {
     // C. Cria o Histórico (Registra a Venda/Saída)
     await tx.historicoMovimentacao.create({
       data: {
-        tipo: 'SAIDA', // Importante: Marca como saída
+        tipo: 'SAIDA',
         quantidade: quantidadeVendida,
         observacao: 'Venda realizada no balcão',
         pecaId: id,
-        userId: session.data.user?.id
+        userId: session.data.user?.id,
+
+        // ✅ NOVO: Salvando o Snapshot (Retraço)
+        precoVenda: peca.preco,
+        nomeSnapshot: peca.nome,
+        modeloSnapshot: peca.modelo,
+
+        // ✅ CUSTO TAMBÉM (Para lucro correto)
+        custo: peca.custo
       }
     })
 
-    
+
   })
 })
