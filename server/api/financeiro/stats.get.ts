@@ -47,7 +47,7 @@ export default defineEventHandler(async (event) => {
       // C. Movimentações do Período
       prisma.historicoMovimentacao.findMany({
         where: { createdAt: { gte: inicioPeriodo, lte: fimPeriodo } },
-        include: { peca: { select: { id: true, nome: true, modelo: true, marca: true, preco: true, custo: true, lado: true, ano: true } } },
+        include: { peca: { select: { id: true, nome: true, modelo: true, marca: true, preco: true, custo: true, lado: true, localizacao: true, ano: true } } },
         orderBy: { createdAt: 'desc' }
       }),
 

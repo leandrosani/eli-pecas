@@ -307,7 +307,21 @@
                         <UIcon name="i-heroicons-information-circle" class="w-4 h-4 text-gray-300 group-hover:text-blue-500" />
                       </div>
                       <div v-else class="font-bold text-gray-900 text-sm md:text-base">{{ mov.descricao }}</div>
-                      <div v-if="mov.peca?.modelo" class="text-xs text-gray-500 font-medium mt-0.5">{{ mov.peca.modelo }}</div>
+                      <div v-if="mov.peca" class="mt-1 space-y-1">
+                        <div v-if="mov.peca.modelo" class="text-xs text-gray-500 font-medium">
+                          {{ mov.peca.modelo }}
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                          <span v-if="mov.peca.localizacao" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px] font-bold font-mono border border-purple-100 shadow-sm">
+                            <UIcon name="i-heroicons-map-pin" class="w-3 h-3" />
+                            {{ mov.peca.localizacao }}
+                          </span>
+                          <span v-if="mov.peca.lado" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold uppercase border border-slate-200 shadow-sm">
+                            <UIcon name="i-heroicons-arrows-right-left" class="w-3 h-3" />
+                            {{ mov.peca.lado }}
+                          </span>
+                        </div>
+                      </div>
                     </td>
                     <td class="py-3 md:py-4 px-4 md:px-6 text-center">
                       <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide" :class="getBadgeClass(mov.tipo)">
