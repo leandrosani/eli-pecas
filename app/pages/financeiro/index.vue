@@ -252,20 +252,21 @@
           <!-- Stats (3 colunas) -->
           <div v-if="statsExtrato" class="bg-gradient-to-r from-gray-50 to-slate-50">
             <!-- Grid 3 colunas -->
+            <!-- Grid Stats (Responsivo) -->
             <div class="grid grid-cols-3 divide-x divide-gray-200 border-b border-gray-200">
-              <div class="p-4 text-center">
-                <p class="text-[9px] md:text-[10px] uppercase font-black text-emerald-600/70 tracking-wider mb-1">Vendas</p>
-                <p class="text-lg md:text-2xl font-black text-emerald-600">+{{ formatarDinheiro(resumoExtrato.vendas) }}</p>
+              <div class="p-2 md:p-4 text-center">
+                <p class="text-[9px] md:text-[10px] uppercase font-black text-emerald-600/70 tracking-wider mb-0.5 md:mb-1">Vendas</p>
+                <p class="text-xs sm:text-sm md:text-2xl font-black text-emerald-600 truncate">+{{ formatarDinheiro(resumoExtrato.vendas) }}</p>
               </div>
 
-              <div class="p-4 text-center">
-                <p class="text-[9px] md:text-[10px] uppercase font-black text-red-600/70 tracking-wider mb-1">Despesas</p>
-                <p class="text-lg md:text-2xl font-black text-red-600">-{{ formatarDinheiro(resumoExtrato.despesas) }}</p>
+              <div class="p-2 md:p-4 text-center">
+                <p class="text-[9px] md:text-[10px] uppercase font-black text-red-600/70 tracking-wider mb-0.5 md:mb-1">Despesas</p>
+                <p class="text-xs sm:text-sm md:text-2xl font-black text-red-600 truncate">-{{ formatarDinheiro(resumoExtrato.despesas) }}</p>
               </div>
 
-              <div class="p-4 text-center bg-gray-100/50">
-                <p class="text-[9px] md:text-[10px] uppercase font-black text-gray-500 tracking-wider mb-1">Resultado</p>
-                <p class="text-lg md:text-2xl font-black" :class="resumoExtrato.lucro >= 0 ? 'text-gray-900' : 'text-red-600'">
+              <div class="p-2 md:p-4 text-center bg-gray-100/50">
+                <p class="text-[9px] md:text-[10px] uppercase font-black text-gray-500 tracking-wider mb-0.5 md:mb-1">Resultado</p>
+                <p class="text-xs sm:text-sm md:text-2xl font-black truncate" :class="resumoExtrato.lucro >= 0 ? 'text-gray-900' : 'text-red-600'">
                   {{ formatarDinheiro(resumoExtrato.lucro) }}
                 </p>
               </div>
@@ -278,16 +279,95 @@
             </div>
           </div>
 
-          <!-- Tabela -->
+          <!-- Tabela (Desktop) + Cards (Mobile) -->
           <div class="border-t border-gray-100">
-            <div class="max-h-[400px] md:max-h-[500px] overflow-y-auto overflow-x-auto custom-scrollbar">
-              <table class="w-full relative border-collapse min-w-[600px]">
+            
+            <!-- VIEW MOBILE: CARDS -->
+            <div class="md:hidden">
+              <div v-if="!historicoFiltradoTela.length" class="p-8 text-center bg-gray-50/50">
+                <UIcon name="i-heroicons-inbox" class="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p class="text-gray-400 font-semibold text-sm">Nenhum registro encontrado</p>
+              </div>
+
+              <div class="divide-y divide-gray-100">
+                <div 
+                  v-for="mov in historicoFiltradoTela" 
+                  :key="mov.id"
+                  class="p-4 bg-white active:bg-gray-50 transition-colors"
+                  @click="mov.peca ? verDetalhesPeca(mov.peca.id) : null"
+                >
+                  <!-- Linha 1: Cabeçalho do Card (Icone Tipo + Data + Valor) -->
+                  <div class="flex justify-between items-start mb-2">
+                    <div class="flex items-center gap-2">
+                      <span 
+                        class="w-8 h-8 flex items-center justify-center rounded-full text-xs"
+                        :class="mov.tipo === 'SAIDA' ? 'bg-emerald-100 text-emerald-600' : (mov.tipo === 'ENTRADA' ? 'bg-blue-100 text-blue-600' : 'bg-red-100 text-red-600')"
+                      >
+                         <UIcon :name="mov.tipo === 'SAIDA' ? 'i-heroicons-arrow-trending-up' : (mov.tipo === 'ENTRADA' ? 'i-heroicons-archive-box-arrow-down' : 'i-heroicons-arrow-trending-down')" class="w-4 h-4" />
+                      </span>
+                      <div>
+                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">
+                           {{ new Date(mov.data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) }}
+                         </p>
+                         <p class="text-[10px] font-black uppercase" :class="getBadgeClass(mov.tipo, true)">
+                           {{ getLabelTipo(mov.tipo) }}
+                         </p>
+                      </div>
+                    </div>
+
+                    <div class="text-right">
+                       <p class="text-sm font-black whitespace-nowrap" :class="getValorClass(mov.tipo)">
+                        <span v-if="mov.tipo === 'ENTRADA'" class="text-gray-400 font-normal text-xs">Estoque</span>
+                        <span v-else>{{ getSinal(mov.tipo) }} {{ formatarDinheiro(mov.valor) }}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Linha 2: Descrição Principal -->
+                  <div class="mb-2">
+                    <div class="font-bold text-gray-900 text-sm leading-tight">
+                        {{ mov.peca ? mov.peca.nome : mov.descricao }}
+                    </div>
+                    <div v-if="mov.peca && mov.peca.modelo" class="text-xs text-gray-500 font-medium mt-0.5">
+                       {{ mov.peca.modelo }}
+                    </div>
+                  </div>
+
+                  <!-- Linha 3: Badges e Ações -->
+                  <div v-if="mov.peca" class="flex items-center justify-between mt-2 pt-2 border-t border-gray-50">
+                    <div class="flex flex-wrap items-center gap-2">
+                       <span v-if="mov.peca.localizacao" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px] font-bold font-mono border border-purple-100">
+                          <UIcon name="i-heroicons-map-pin" class="w-3 h-3" />
+                          {{ mov.peca.localizacao }}
+                        </span>
+                        <span v-if="mov.peca.lado" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold uppercase border border-slate-200">
+                          <UIcon name="i-heroicons-arrows-right-left" class="w-3 h-3" />
+                          {{ mov.peca.lado }}
+                        </span>
+                    </div>
+
+                    <button
+                      v-if="mov.peca.Link"
+                      @click.stop="openLink(mov.peca.Link)"
+                      class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors border border-blue-100 shadow-sm ml-auto"
+                    >
+                      <UIcon name="i-heroicons-arrow-top-right-on-square" class="w-4 h-4" />
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- VIEW DESKTOP: TABELA OTIMIZADA -->
+            <div class="hidden md:block max-h-[500px] overflow-y-auto custom-scrollbar">
+              <table class="w-full relative border-collapse text-left">
                 <thead class="bg-gray-50 sticky top-0 z-10 shadow-sm">
                   <tr>
-                    <th class="py-3 md:py-4 px-4 md:px-6 text-left text-[10px] md:text-xs font-black text-gray-500 uppercase tracking-wider">Data</th>
-                    <th class="py-3 md:py-4 px-4 md:px-6 text-left text-[10px] md:text-xs font-black text-gray-500 uppercase tracking-wider">Descrição</th>
-                    <th class="py-3 md:py-4 px-4 md:px-6 text-center text-[10px] md:text-xs font-black text-gray-500 uppercase tracking-wider">Tipo</th>
-                    <th class="py-3 md:py-4 px-4 md:px-6 text-right text-[10px] md:text-xs font-black text-gray-500 uppercase tracking-wider">Valor</th>
+                    <th class="py-3 px-4 text-[11px] font-black text-gray-500 uppercase tracking-wider w-24">Data</th>
+                    <th class="py-3 px-4 text-[11px] font-black text-gray-500 uppercase tracking-wider w-auto">Descrição</th> <!-- w-auto para ocupar espaço -->
+                    <th class="py-3 px-4 text-center text-[11px] font-black text-gray-500 uppercase tracking-wider w-24">Tipo</th>
+                    <th class="py-3 px-4 text-right text-[11px] font-black text-gray-500 uppercase tracking-wider w-32">Valor</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 bg-white">
@@ -296,47 +376,68 @@
                     :key="mov.id"
                     class="hover:bg-blue-50/30 active:bg-blue-50/50 transition-colors group cursor-pointer"
                   >
-                    <td class="py-3 md:py-4 px-4 md:px-6">
-                      <span class="text-xs md:text-sm text-gray-500 font-semibold whitespace-nowrap group-hover:text-gray-900">
+                    <!-- Data -->
+                    <td class="py-3 px-4 whitespace-nowrap">
+                      <span class="text-xs text-gray-500 font-semibold">
                         {{ new Date(mov.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) }}
                       </span>
                     </td>
-                    <td class="py-3 md:py-4 px-4 md:px-6">
-                      <div v-if="mov.peca" @click="verDetalhesPeca(mov.peca.id)" class="font-bold text-gray-900 text-sm md:text-base leading-tight cursor-pointer hover:text-blue-600 flex items-center gap-2 transition-colors">
-                        {{ mov.peca.nome }}
-                        <UIcon name="i-heroicons-information-circle" class="w-4 h-4 text-gray-300 group-hover:text-blue-500" />
-                      </div>
-                      <div v-else class="font-bold text-gray-900 text-sm md:text-base">{{ mov.descricao }}</div>
-                      <div v-if="mov.peca" class="mt-1 space-y-1">
-                        <div v-if="mov.peca.modelo" class="text-xs text-gray-500 font-medium">
-                          {{ mov.peca.modelo }}
+
+                    <!-- Descrição (Auto Width) -->
+                    <td class="py-3 px-4">
+                      <div class="flex items-start justify-between gap-2">
+                        <div v-if="mov.peca" @click="verDetalhesPeca(mov.peca.id)" class="group/item flex-1 min-w-0">
+                          <div class="font-bold text-gray-900 text-sm leading-tight cursor-pointer group-hover/item:text-blue-600 flex items-center gap-1.5 transition-colors">
+                            <span class="truncate block">{{ mov.peca.nome }}</span>
+                            <UIcon name="i-heroicons-information-circle" class="w-4 h-4 text-gray-300 group-hover/item:text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                          </div>
+                          
+                          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                            <span v-if="mov.peca.modelo" class="text-xs text-gray-500 font-medium">{{ mov.peca.modelo }}</span>
+                            
+                            <!-- Badges Inline para economizar altura -->
+                            <div class="flex items-center gap-2">
+                              <span v-if="mov.peca.localizacao" class="inline-flex items-center gap-0.5 text-[10px] font-bold text-purple-700 bg-purple-50 px-1.5 rounded border border-purple-100">
+                                  <UIcon name="i-heroicons-map-pin" class="w-3 h-3" /> {{ mov.peca.localizacao }}
+                              </span>
+                              <span v-if="mov.peca.lado" class="inline-flex items-center gap-0.5 text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 rounded border border-slate-200">
+                                  {{ mov.peca.lado }}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                        <div class="flex flex-wrap items-center gap-2">
-                          <span v-if="mov.peca.localizacao" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px] font-bold font-mono border border-purple-100 shadow-sm">
-                            <UIcon name="i-heroicons-map-pin" class="w-3 h-3" />
-                            {{ mov.peca.localizacao }}
-                          </span>
-                          <span v-if="mov.peca.lado" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold uppercase border border-slate-200 shadow-sm">
-                            <UIcon name="i-heroicons-arrows-right-left" class="w-3 h-3" />
-                            {{ mov.peca.lado }}
-                          </span>
-                        </div>
+                        <div v-else class="font-bold text-gray-900 text-sm flex-1">{{ mov.descricao }}</div>
+
+                        <!-- Link Integrado na Direita da Coluna Descrição -->
+                         <button
+                          v-if="mov.peca && mov.peca.Link"
+                          @click.stop="openLink(mov.peca.Link)"
+                          class="flex-shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gray-50 hover:bg-white text-gray-400 hover:text-blue-600 border border-transparent hover:border-blue-200 hover:shadow-sm transition-all"
+                          title="Abrir Link"
+                        >
+                          <UIcon name="i-heroicons-arrow-top-right-on-square" class="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
-                    <td class="py-3 md:py-4 px-4 md:px-6 text-center">
-                      <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide" :class="getBadgeClass(mov.tipo)">
+
+                    <!-- Tipo -->
+                    <td class="py-3 px-4 text-center whitespace-nowrap">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wide border" :class="getBadgeClass(mov.tipo)">
                         {{ getLabelTipo(mov.tipo) }}
                       </span>
                     </td>
-                    <td class="py-3 md:py-4 px-4 md:px-6 text-right">
-                      <span class="text-sm md:text-base font-black whitespace-nowrap" :class="getValorClass(mov.tipo)">
+
+                    <!-- Valor -->
+                    <td class="py-3 px-4 text-right whitespace-nowrap">
+                      <span class="text-sm font-black" :class="getValorClass(mov.tipo)">
                         <span v-if="mov.tipo === 'ENTRADA'" class="text-gray-400 font-normal text-xs">Estoque</span>
                         <span v-else>{{ getSinal(mov.tipo) }} {{ formatarDinheiro(mov.valor) }}</span>
                       </span>
                     </td>
+
                   </tr>
                   <tr v-if="!historicoFiltradoTela.length">
-                    <td colspan="4" class="py-16 text-center">
+                    <td colspan="5" class="py-16 text-center">
                       <UIcon name="i-heroicons-inbox" class="w-16 h-16 text-gray-200 mx-auto mb-4" />
                       <p class="text-gray-400 font-semibold">Nenhum registro encontrado</p>
                     </td>
@@ -663,7 +764,7 @@ const historicoFiltradoTela = computed(() => {
     return {
       id: m.id, data: m.createdAt, tipo: m.tipo, 
       valor: m.tipo === 'ENTRADA' ? 0 : (precoReal * m.quantidade), 
-      peca: m.peca, 
+      peca: m.peca ? { ...m.peca, Link: m.peca.Link } : null, 
       descricao: `${nomeReal} ${modeloReal}`
     }
   })
@@ -679,6 +780,10 @@ const historicoFiltradoTela = computed(() => {
 
   return lista.sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
 })
+
+function openLink(link: string) {
+  if (link) window.open(link, '_blank')
+}
 
 // Modal Meta
 const modalMetaAberto = ref(false)
@@ -796,7 +901,12 @@ function formatarDinheiro(val: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0) 
 }
 
-function getBadgeClass(tipo: string) {
+function getBadgeClass(tipo: string, simple = false) {
+  if (simple) {
+    if (tipo === 'SAIDA') return 'text-emerald-600'
+    if (tipo === 'ENTRADA') return 'text-blue-600'
+    return 'text-red-600'
+  }
   if (tipo === 'SAIDA') return 'bg-emerald-50 text-emerald-700 border border-emerald-200'
   if (tipo === 'ENTRADA') return 'bg-blue-50 text-blue-700 border border-blue-200'
   return 'bg-red-50 text-red-700 border border-red-200'
