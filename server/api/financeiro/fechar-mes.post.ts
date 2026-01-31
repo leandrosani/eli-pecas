@@ -20,7 +20,12 @@ export default defineEventHandler(async (event) => {
                 where: { tipo: 'SAIDA' },
                 select: { quantidade: true, precoVenda: true, peca: { select: { preco: true } } }
             }),
-            prisma.despesa.aggregate({ _sum: { valor: true } })
+            prisma.despesa.aggregate({
+                where: {
+                    categoria: { not: 'INVESTIMENTO_CAPITAL' }
+                },
+                _sum: { valor: true }
+            })
         ])
 
         const receitaTotal = todasVendas.reduce((acc, mov: any) => {
