@@ -35,48 +35,24 @@ export default defineEventHandler(async (event) => {
             throw createError({ statusCode: 400, message: 'Não há saldo positivo para distribuir.' })
         }
 
-        // 3. Cálculos da Distribuição
-        const distLeandro = saldoDisponivel * 0.47
-        const distElias = saldoDisponivel * 0.28
-        const distLoja = saldoDisponivel * 0.25
+        // 3. Alocação 100% para Capital da Loja
+        const valorCapitalLoja = saldoDisponivel
 
         // Data de referência (hoje)
         const dataHoje = new Date()
         const mesAno = dataHoje.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
 
         // 4. Executar transação (Distribuir = Criar Despesas de Saída)
+        // Cria apenas UMA despesa de distribuição que joga tudo para a Loja
         await prisma.$transaction([
-            // Leandro
             prisma.despesa.create({
                 data: {
-                    descricao: `Distr. Lucro - LEANDRO (47%) - ${mesAno}`,
-                    categoria: 'DISTRIBUICAO', // Categoria especial
-                    valor: distLeandro,
-                    formaPagamento: 'TRANSFERENCIA',
-                    data: dataHoje,
-                    observacao: 'Fechamento de Caixa Mensal'
-                }
-            }),
-            // Elias
-            prisma.despesa.create({
-                data: {
-                    descricao: `Distr. Lucro - ELIAS (28%) - ${mesAno}`,
+                    descricao: `Fechamento Mensal - Retido para Capital da Loja (100%) - ${mesAno}`,
                     categoria: 'DISTRIBUICAO',
-                    valor: distElias,
-                    formaPagamento: 'TRANSFERENCIA',
-                    data: dataHoje,
-                    observacao: 'Fechamento de Caixa Mensal'
-                }
-            }),
-            // Loja
-            prisma.despesa.create({
-                data: {
-                    descricao: `Distr. Lucro - LOJA (25%) - ${mesAno}`,
-                    categoria: 'DISTRIBUICAO',
-                    valor: distLoja,
+                    valor: valorCapitalLoja,
                     formaPagamento: 'RESERVA',
                     data: dataHoje,
-                    observacao: 'Fechamento de Caixa Mensal - Reserva de Capital'
+                    observacao: 'Lucro líquido do mês transferido integralmente para Reserva/Capital de Giro da Loja.'
                 }
             })
         ])
@@ -86,9 +62,7 @@ export default defineEventHandler(async (event) => {
             message: 'Fechamento realizado com sucesso!',
             distribuicao: {
                 total: saldoDisponivel,
-                leandro: distLeandro,
-                elias: distElias,
-                loja: distLoja
+                capitalLoja: valorCapitalLoja
             }
         }
 
