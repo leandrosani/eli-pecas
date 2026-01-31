@@ -766,6 +766,74 @@
        </div>
     </div>
 
+
+    <!-- Modal Novo Investimento -->
+    <div v-if="modalInvestimentoAberto" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+       <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95">
+          <div class="bg-gradient-to-r from-violet-900 to-purple-800 p-6">
+             <h3 class="text-xl font-black text-white flex items-center gap-2">
+                <UIcon name="i-heroicons-banknotes" class="w-6 h-6" />
+                Usar Reserva
+             </h3>
+             <p class="text-purple-200 text-sm mt-1">Lançar despesa do Fundo de Reserva</p>
+          </div>
+          
+          <div class="p-6 space-y-4">
+             <p class="text-xs text-gray-500 font-bold uppercase text-center bg-gray-50 p-2 rounded-lg">
+               Saldo Disponível: <span class="text-purple-700 font-black text-lg ml-1">{{ formatarDinheiro(statsPrincipal?.capitalLoja?.saldo || 0) }}</span>
+             </p>
+
+             <div>
+                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Descrição</label>
+                <input 
+                   v-model="formInvestimento.descricao" 
+                   type="text" 
+                   placeholder="Ex: Reforma, Ar Condicionado..." 
+                   class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
+                />
+             </div>
+
+             <div>
+                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Valor (R$)</label>
+                <input 
+                   v-model="formInvestimento.valor" 
+                   type="number" 
+                   placeholder="0,00" 
+                   class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl font-black text-xl text-gray-900 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
+                />
+             </div>
+
+             <div>
+                <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Observação (Opcional)</label>
+                <textarea 
+                   v-model="formInvestimento.observacao" 
+                   rows="2"
+                   class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
+                ></textarea>
+             </div>
+
+             <div class="bg-yellow-50 border border-yellow-100 p-3 rounded-lg flex gap-3">
+               <UIcon name="i-heroicons-information-circle" class="w-5 h-5 text-yellow-600 flex-shrink-0" />
+               <p class="text-xs text-yellow-700 leading-tight">
+                 Esta despesa será descontada do <strong>Capital Acumulado</strong> e não afetará o saldo operacional do mês atual.
+               </p>
+             </div>
+
+             <div class="flex gap-3 pt-2">
+               <button @click="modalInvestimentoAberto = false" class="flex-1 p-3 rounded-xl border border-gray-200 font-bold text-gray-600 hover:bg-gray-50">Cancelar</button>
+               <button 
+                  @click="salvarInvestimento" 
+                  :disabled="salvandoInvestimento || !formInvestimento.valor || !formInvestimento.descricao"
+                  class="flex-1 p-3 rounded-xl bg-purple-600 text-white font-bold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <UIcon v-if="salvandoInvestimento" name="i-heroicons-arrow-path" class="animate-spin w-5 h-5" />
+                  <span v-else>Confirmar</span>
+               </button>
+             </div>
+          </div>
+       </div>
+    </div>
+
   </div>
 </template>
 
