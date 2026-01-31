@@ -19,13 +19,12 @@
 
           <div class="flex items-center gap-2 w-full lg:w-auto">
             <UButton 
-              icon="i-heroicons-arrow-path" 
+              icon="i-heroicons-printer" 
               color="gray" 
               variant="soft" 
               size="md"
               class="flex-1 lg:flex-none"
-              :loading="pendingPrincipal" 
-              @click="refresh"
+              @click="abrirModalRelatorios"
             >
               <span class="hidden sm:inline">Exportar PDF</span>
               <span class="sm:hidden">PDF</span>
