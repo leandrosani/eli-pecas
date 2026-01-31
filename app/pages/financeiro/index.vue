@@ -213,8 +213,20 @@
 
             </div>
 
-
-
+             <!-- Linha 3: Estimativa de Pagamento (Visualização Apenas) -->
+            <div v-if="statsPrincipal.saldoCaixa > 0" class="border-t border-white/10 pt-4 mt-2">
+               <p class="text-[10px] text-emerald-100 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                <UIcon name="i-heroicons-calculator" class="w-3 h-3" />
+                Estimativa para Pagamento Mensal
+               </p>
+               <div class="grid grid-cols-3 gap-2">
+                  <div v-for="socio in distribuicaoSocios" :key="socio.nome" class="bg-black/20 rounded-lg p-2 text-center">
+                     <p class="text-[9px] text-emerald-200 font-black uppercase">{{ socio.nome }} ({{ socio.porcentagem }}%)</p>
+                     <p class="text-xs md:text-sm font-bold text-white">{{ formatarDinheiro(socio.valor) }}</p>
+                  </div>
+               </div>
+               <p class="text-[9px] text-emerald-200/50 text-center mt-2 italic">Valores calculados apenas para referência de pagamento.</p>
+            </div>
         </div>
 
 
@@ -903,6 +915,20 @@ async function salvarMeta() {
 }
 
 // Fechar Mês e Distribuição
+const distribuicaoSocios = computed(() => {
+  const saldo = statsPrincipal.value?.saldoCaixa || 0
+  if (saldo <= 0) return [
+    { nome: 'Leandro', porcentagem: 47, valor: 0 },
+    { nome: 'Elias', porcentagem: 28, valor: 0 },
+    { nome: 'Loja', porcentagem: 25, valor: 0 }
+  ]
+  
+  return [
+    { nome: 'Leandro', porcentagem: 47, valor: saldo * 0.47 },
+    { nome: 'Elias', porcentagem: 28, valor: saldo * 0.28 },
+    { nome: 'Loja', porcentagem: 25, valor: saldo * 0.25 }
+  ]
+})
 
 
 const modalFecharMesAberto = ref(false)

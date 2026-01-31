@@ -1,7 +1,9 @@
 import { defineEventHandler, readBody, createError } from 'h3'
 import { prisma } from '../../utils/prisma'
 
+
 export default defineEventHandler(async (event) => {
+    // Logic updated to 100% Store Capital allocation
     try {
         const body = await readBody(event)
         const { senha } = body
