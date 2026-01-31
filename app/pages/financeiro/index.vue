@@ -214,7 +214,8 @@
             </div>
 
              <!-- Linha 3: Estimativa de Pagamento (Visualização Apenas) -->
-            <div v-if="statsPrincipal.saldoCaixa > 0" class="border-t border-white/10 pt-4 mt-2">
+             <!-- Linha 3: Estimativa de Pagamento (Visualização Apenas) -->
+            <div class="border-t border-white/10 pt-4 mt-2">
                <p class="text-[10px] text-emerald-100 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
                 <UIcon name="i-heroicons-calculator" class="w-3 h-3" />
                 Estimativa para Pagamento Mensal
