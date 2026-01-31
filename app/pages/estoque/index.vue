@@ -9,7 +9,7 @@
         <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 flex flex-col mb-2">
           <div class="flex justify-between items-center">
             <!-- Título -->
-            <h1 class="text-2xl md:text-4xl font-bold text-gray-900 flex items-center gap-2">
+            <h1 class="text-2xl lg:text-4xl font-bold text-gray-900 flex items-center gap-2">
               📦 <span class="text-2xl">Estoque Total</span>
             </h1>
           </div>
@@ -20,7 +20,7 @@
         <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-3 mb-2 flex flex-col gap-4">
 
           <div class="flex justify-between items-center">
-            <h2 class="text-lg md:text-xl font-bold text-gray-700">
+            <h2 class="text-lg lg:text-xl font-bold text-gray-700">
               Total de itens:
               <strong class="text-gray-900">{{ linhasFiltradas.length }}</strong>
             </h2>
@@ -28,42 +28,41 @@
             <!-- Botões de Ação (Exportar + Adicionar) -->
             <div class="flex items-center gap-3">
               
-              <!-- BOTÃO EXPORTAR SHOPPING (Desktop) -->
-              <UButton
-                icon="i-heroicons-arrow-down-tray"
-                size="lg"
-                @click="exportarParaPlanilha"
-                :disabled="status === 'pending' || linhasFiltradas.length === 0"
-                class="hidden md:flex px-4 py-3 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 active:scale-95 font-bold transition-all"
-              >
-                Exportar Shopping ({{ linhasFiltradas.length }})
-              </UButton>
-              
-              <!-- BOTÃO EXPORTAR SHOPPING (Mobile) -->
-              <UButton
-                icon="i-heroicons-arrow-down-tray"
-                size="xl"
-                @click="exportarParaPlanilha"
-                :disabled="status === 'pending' || linhasFiltradas.length === 0"
-                class="md:hidden w-12 h-12 rounded-full bg-blue-600 text-white shadow-2xl hover:bg-blue-700 active:scale-95 flex items-center justify-center flex-shrink-0"
-              />
-
-              <!-- Botão Mobile Adicionar -->
-              <div class="flex items-center md:hidden">
                 <UButton
-                  to="/estoque/criar"
-                  icon="i-heroicons-plus"
+                  icon="i-heroicons-arrow-down-tray"
+                  size="lg"
+                  @click="exportarParaPlanilha"
+                  :disabled="status === 'pending' || linhasFiltradas.length === 0"
+                  class="hidden lg:flex px-4 py-3 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 active:scale-95 font-bold transition-all"
+                >
+                  Exportar Shopping ({{ linhasFiltradas.length }})
+                </UButton>
+                
+                <!-- BOTÃO EXPORTAR SHOPPING (Mobile) -->
+                <UButton
+                  icon="i-heroicons-arrow-down-tray"
                   size="xl"
-                  class="w-12 h-12 rounded-full bg-gray-800 text-white shadow-2xl hover:bg-gray-800 active:scale-95 flex items-center justify-center flex-shrink-0"
+                  @click="exportarParaPlanilha"
+                  :disabled="status === 'pending' || linhasFiltradas.length === 0"
+                  class="lg:hidden w-12 h-12 rounded-full bg-blue-600 text-white shadow-2xl hover:bg-blue-700 active:scale-95 flex items-center justify-center flex-shrink-0"
                 />
-              </div>
+
+                <!-- Botão Mobile Adicionar -->
+                <div class="flex items-center lg:hidden">
+                  <UButton
+                    to="/estoque/criar"
+                    icon="i-heroicons-plus"
+                    size="xl"
+                    class="w-12 h-12 rounded-full bg-gray-800 text-white shadow-2xl hover:bg-gray-800 active:scale-95 flex items-center justify-center flex-shrink-0"
+                  />
+                </div>
 
               <!-- Botão Desktop Adicionar -->
               <UButton
                 to="/estoque/criar"
                 icon="i-heroicons-plus"
                 size="lg"
-                class="hidden md:flex px-4 py-3 bg-gray-700 text-white rounded-xl shadow hover:bg-gray-800 active:scale-95 font-bold"
+                class="hidden lg:flex px-4 py-3 bg-gray-700 text-white rounded-xl shadow hover:bg-gray-800 active:scale-95 font-bold"
               >
                 Adicionar Peça
               </UButton>
@@ -71,8 +70,8 @@
           </div>
         </div>
         
-        <!-- PAINEL DE FILTROS MOBILE -->
-        <div class="block md:hidden mb-6">
+        <!-- PAINEL DE FILTROS MOBILE (Agora visível até lg, some em xl) -->
+        <div class="block xl:hidden mb-4">
           <FiltroEstoqueMobille 
             v-model="filtrosAtivos"
             :options="opcoesUnicas"
@@ -90,18 +89,18 @@
         </div>
 
         <template v-else>
-          <!-- TABELA DESKTOP -->
-          <div class="hidden md:block bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <!-- TABELA DESKTOP (Visível em lg+) -->
+          <div class="hidden lg:block bg-white border border-gray-200 rounded-xl shadow-sm overflow-x-auto">
             <table class="w-full text-left border-collapse">
 
               <thead class="bg-gray-600">
                 <tr>
-                  <th class="py-4 px-3 text-xs uppercase font-bold text-white w-[50px] text-center">Foto</th>
-                  <th class="py-4 px-4 text-xs uppercase font-bold text-white w-3/12">Peça</th>
-                  <th class="py-4 px-3 text-xs text-center uppercase font-bold text-white w-2/12">Aplicação</th>
-                  <th class="py-4 px-3 text-xs text-center uppercase font-bold text-white w-2/12">Localização</th>
-                  <th class="py-4 px-3 text-xs uppercase font-bold text-white text-center w-2/12">Preço</th>
-                  <th class="py-4 px-3 text-xs uppercase font-bold text-white text-center w-1/12">Ações</th>
+                  <th class="py-3 px-2 text-xs uppercase font-bold text-white w-[50px] text-center">Foto</th>
+                  <th class="py-3 px-2 text-xs uppercase font-bold text-white w-3/12 min-w-[180px]">Peça</th>
+                  <th class="py-3 px-2 text-xs text-center uppercase font-bold text-white w-2/12 min-w-[130px]">Aplicação</th>
+                  <th class="py-3 px-2 text-xs text-center uppercase font-bold text-white w-2/12 min-w-[110px]">Localização</th>
+                  <th class="py-3 px-2 text-xs uppercase font-bold text-white text-center w-2/12 min-w-[90px]">Preço</th>
+                  <th class="py-3 px-2 text-xs uppercase font-bold text-white text-center w-1/12 min-w-[90px]">Ações</th>
                 </tr>
               </thead>
 
@@ -110,7 +109,7 @@
                 <tr v-for="row in linhasFiltradas" :key="row.id" class="hover:bg-gray-50 transition-all">
                   
                   <!-- FOTO -->
-                  <td class="py-3 px-3">
+                  <td class="py-1.5 px-2">
                     <div class="flex flex-col gap-2">
                       <div 
                         v-if="row.fotoUrl"
@@ -139,7 +138,7 @@
                   </td>
 
                   <!-- NOME + MARCA + ESTADO -->
-                  <td class="py-3 px-4">
+                  <td class="py-1.5 px-2">
                     <div class="flex items-center gap-3">
                       <!-- Texto -->
                       <div class="min-w-0 flex-1">
@@ -161,7 +160,7 @@
                   </td>
 
                   <!-- APLICAÇÃO -->
-                  <td class="py-3 px-3">
+                  <td class="py-1.5 px-2">
                     <div class="flex flex-col">
                       <span class="text-xs font-bold uppercase text-gray-500 truncate text-center">{{ row.marca || 'Universal' }}</span>
                       <span v-if="row.ano" class="text-sm font-bold mt-0.5 text-gray-900 text-center">{{ row.ano }}</span>
@@ -169,7 +168,7 @@
                   </td>
 
                   <!-- LOCALIZAÇÃO -->
-                  <td class="py-3 px-3 text-center">
+                  <td class="py-1.5 px-2 text-center">
                     <div 
                       v-if="row.localizacao" 
                       class="inline-flex items-center gap-1.5 bg-purple-200/20 px-2.5 py-1 rounded-md shadow-sm border border-purple-200 max-w-full"
@@ -188,7 +187,7 @@
                   </td>
 
                   <!-- PREÇO -->
-                  <td class="py-3 px-3 text-center align-middle">
+                  <td class="py-1.5 px-2 text-center align-middle">
                     <div class="flex flex-col items-center justify-center h-full gap-1">
                       
                       <!-- QUANTIDADE -->
@@ -205,7 +204,7 @@
                   </td>
 
                   <!-- AÇÕES -->
-                  <td class="py-3 px-3">
+                  <td class="py-1.5 px-2">
                     <div class="flex flex-col items-center justify-center gap-1.5">
 
                       <UButton 
@@ -260,7 +259,7 @@
           </div>
           
           <!-- CARDS MOBILE -->
-          <div class="block md:hidden space-y-4">
+          <div class="block lg:hidden space-y-4">
             
             <!-- Card Individual -->
             <div v-for="row in linhasFiltradas" :key="row.id" class="bg-white border-2 border-gray-200 rounded-xl shadow-sm overflow-hidden">
@@ -412,8 +411,8 @@
       </div>
     </div>
 
-    <!-- SIDEBAR LATERAL DIREITA - DESKTOP APENAS -->
-    <aside class="ml-3.5 hidden md:block mt-4 w-65 h-[87vh] border-l border-gray-200 rounded-2xl bg-white shadow-xl overflow-hidden">
+    <!-- SIDEBAR LATERAL DIREITA - APENAS EM TELAS EXTRA GRANDES (XL) -->
+    <aside class="ml-3 hidden xl:block mt-4 w-72 h-[87vh] border-l border-gray-200 rounded-2xl bg-white shadow-xl overflow-hidden shrink-0">
       <FiltroEstoqueDesktop 
         v-model="filtrosAtivos"
         :options="opcoesUnicas"
