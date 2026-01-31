@@ -36,7 +36,7 @@
               color="white" 
               variant="solid" 
               size="md"
-              class="hidden md:flex shadow-sm hover:bg-gray-50"
+              class="flex shadow-sm hover:bg-gray-50"
               @click="abrirModalFecharMes"
             >
               Fechar Mês
