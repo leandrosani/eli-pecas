@@ -86,7 +86,37 @@ export default defineEventHandler(async (event) => {
       const precoReal = mov.precoVenda ? Number(mov.precoVenda) : Number(mov.peca?.preco || 0)
       return acc + (precoReal * mov.quantidade)
     }, 0)
-    const despesaTotalGlobal = Number(sumDespesasGlobal._sum.valor || 0)
+
+    // --- LÓGICA CAPITAL LOJA vs OPERACIONAL ---
+    // 1. Calcular Entradas do Capital (Distribuições para Loja)
+    const distribuicoesLoja = await prisma.despesa.aggregate({
+      where: {
+        categoria: 'DISTRIBUICAO',
+        descricao: { contains: 'LOJA' }
+      },
+      _sum: { valor: true }
+    })
+    const totalReservadoLoja = Number(distribuicoesLoja._sum.valor || 0)
+
+    // 2. Calcular Saídas do Capital (Investimentos)
+    const investimentosCapital = await prisma.despesa.aggregate({
+      where: { categoria: 'INVESTIMENTO_CAPITAL' },
+      _sum: { valor: true }
+    })
+    const totalGastoCapital = Number(investimentosCapital._sum.valor || 0)
+    const saldoCapitalLoja = totalReservadoLoja - totalGastoCapital
+
+    // 3. Saldo Operacional (Disponível)
+    // O Disponível é: Receita Global - Despesas Operacionais (exclui Investimentos de Capital)
+    // IMPORTANTE: Distribuições (saídas de lucro) contam como despesa operacional para ZERAR o caixa.
+    const despesasOperacionais = await prisma.despesa.aggregate({
+      where: {
+        categoria: { not: 'INVESTIMENTO_CAPITAL' }
+      },
+      _sum: { valor: true }
+    })
+
+    const despesaTotalGlobal = Number(despesasOperacionais._sum.valor || 0)
     const saldoCaixa = receitaTotalGlobal - despesaTotalGlobal
 
     // --- CÁLCULOS DO PERÍODO ---
@@ -166,6 +196,12 @@ export default defineEventHandler(async (event) => {
       saldoCaixa,
       receitaTotal: receitaTotalGlobal,
       despesaTotal: despesaTotalGlobal,
+
+      capitalLoja: {
+        saldo: saldoCapitalLoja,
+        totalReservado: totalReservadoLoja,
+        totalGasto: totalGastoCapital
+      },
 
       valorEstoque,
       itensEstoque,   // Qtd física total

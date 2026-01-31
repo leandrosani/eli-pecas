@@ -27,18 +27,19 @@
               :loading="pendingPrincipal" 
               @click="refresh"
             >
-              <span class="hidden sm:inline">Atualizar</span>
-            </UButton>
-            
-            <UButton 
-              icon="i-heroicons-document-arrow-down" 
-              color="black" 
-              size="md"
-              class="flex-1 lg:flex-none"
-              @click="abrirModalRelatorios"
-            >
               <span class="hidden sm:inline">Exportar PDF</span>
               <span class="sm:hidden">PDF</span>
+            </UButton>
+
+            <UButton 
+              icon="i-heroicons-lock-closed" 
+              color="white" 
+              variant="solid" 
+              size="md"
+              class="hidden md:flex shadow-sm hover:bg-gray-50"
+              @click="abrirModalFecharMes"
+            >
+              Fechar Mês
             </UButton>
           </div>
         </div>
@@ -109,8 +110,48 @@
 
             </div>
 
+            </div>
+
+            <!-- CARD CAPITAL LOJA (NOVO) -->
+            <div class="mt-4 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 rounded-2xl shadow-xl shadow-purple-500/20 p-4 md:p-6 text-white relative overflow-hidden">
+               <div class="absolute -top-20 -right-20 w-60 h-60 bg-white/10 rounded-full blur-3xl"></div>
+               
+               <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div>
+                    <div class="flex items-center gap-2 mb-2">
+                       <div class="bg-white/20 backdrop-blur-sm p-1.5 rounded-lg">
+                          <UIcon name="i-heroicons-building-storefront" class="w-4 h-4 md:w-5 md:h-5" />
+                       </div>
+                       <span class="text-purple-100 text-[10px] md:text-xs font-bold uppercase tracking-wider">Capital de Giro & Reserva</span>
+                    </div>
+                    
+                    <div class="flex items-baseline gap-3">
+                       <p class="text-3xl md:text-4xl font-black">{{ formatarDinheiro(statsPrincipal.capitalLoja?.saldo || 0) }}</p>
+                       <p class="text-xs text-purple-200 font-medium hidden md:block">Acumulado para investimentos</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 w-full md:w-auto">
+                     <div class="hidden md:block text-right mr-4">
+                        <p class="text-[10px] text-purple-200 uppercase font-bold">Total Gasto</p>
+                        <p class="text-lg font-black">{{ formatarDinheiro(statsPrincipal.capitalLoja?.totalGasto || 0) }}</p>
+                     </div>
+                     
+                     <UButton 
+                        @click="abrirModalInvestimento"
+                        icon="i-heroicons-banknotes" 
+                        color="white" 
+                        variant="solid" 
+                        size="lg"
+                        class="flex-1 md:flex-none text-purple-700 font-bold shadow-lg hover:bg-purple-50"
+                      >
+                        Usar Reserva
+                      </UButton>
+                  </div>
+               </div>
+            </div>
             <!-- Linha 2: Meta + Ritmo -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
               
               <!-- Meta de Lucro (compacto) -->
               <div class="bg-white/10 backdrop-blur-md rounded-xl p-3 md:p-4 border border-white/20 relative group hover:bg-white/15 transition-all">
@@ -171,7 +212,9 @@
               </div>
 
             </div>
-          </div>
+
+
+
         </div>
 
 
@@ -656,6 +699,60 @@
       </div>
     </div>
 
+    <!-- Modal Fechar Mês -->
+    <div v-if="modalFecharMesAberto" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+       <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95">
+          <div class="bg-gradient-to-r from-gray-900 to-gray-800 p-6">
+             <h3 class="text-xl font-black text-white flex items-center gap-2">
+                <UIcon name="i-heroicons-lock-closed" class="w-6 h-6" />
+                Fechar Caixa Mensal
+             </h3>
+             <p class="text-gray-400 text-sm mt-1">Confirme a distribuição de lucros</p>
+          </div>
+          
+          <div class="p-6 space-y-4">
+             <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-center">
+                <p class="text-xs font-bold text-gray-500 uppercase">Saldo Disponível para Distribuição</p>
+                <p class="text-3xl font-black text-emerald-600 mt-1">{{ formatarDinheiro(statsPrincipal?.saldoCaixa || 0) }}</p>
+             </div>
+
+             <div class="space-y-2">
+                <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg border border-purple-100">
+                   <span class="text-sm font-bold text-purple-900">Capital da Loja <span class="text-xs text-purple-600">(100%)</span></span>
+                   <span class="text-sm font-black text-purple-900">{{ formatarDinheiro(statsPrincipal?.saldoCaixa || 0) }}</span>
+                </div>
+                <p class="text-[10px] text-gray-400 text-center mt-2">O valor será transferido integralmente para o fundo de reserva.</p>
+             </div>
+             
+             <div class="pt-2">
+                <label class="block text-xs font-bold text-gray-900 uppercase mb-2">Senha de Gerente</label>
+                <input 
+                   v-model="senhaFechamento" 
+                   type="password" 
+                   placeholder="12345678" 
+                   class="w-full p-4 bg-white border-2 border-gray-200 rounded-xl text-center text-2xl font-black tracking-widest focus:border-black focus:ring-0 outline-none"
+                />
+             </div>
+
+             <UButton 
+                @click="confirmarFechamento" 
+                :loading="fechandoMes"
+                :disabled="!senhaFechamento"
+                color="black" 
+                size="xl" 
+                block
+                class="mt-2"
+              >
+                Confirmar Fechamento
+             </UButton>
+             
+             <button @click="modalFecharMesAberto = false" class="w-full text-center text-sm text-gray-500 hover:text-gray-900 font-medium py-2">
+               Cancelar
+             </button>
+          </div>
+       </div>
+    </div>
+
   </div>
 </template>
 
@@ -803,6 +900,75 @@ async function salvarMeta() {
     modalMetaAberto.value = false; 
     refreshPrincipal()
   } catch {} finally { salvandoMeta.value = false }
+}
+
+// Fechar Mês e Distribuição
+
+
+const modalFecharMesAberto = ref(false)
+const senhaFechamento = ref('')
+const fechandoMes = ref(false)
+const toast = useToast()
+
+function abrirModalFecharMes() {
+  if ((statsPrincipal.value?.saldoCaixa || 0) <= 0) {
+    alert('Não há saldo disponível para fechar.')
+    return
+  }
+  senhaFechamento.value = ''
+  modalFecharMesAberto.value = true
+}
+
+async function confirmarFechamento() {
+  if (senhaFechamento.value !== '12345678') {
+    alert('Senha incorreta! Acesso negado.')
+    return
+  }
+  
+  fechandoMes.value = true
+  try {
+    const res = await $fetch('/api/financeiro/fechar-mes', {
+      method: 'POST',
+      body: { senha: senhaFechamento.value }
+    })
+    
+    modalFecharMesAberto.value = false
+    alert('✅ Mês fechado com sucesso!\n\nValores distribuídos e saldo zerado.')
+    refresh()
+  } catch (e: any) {
+    alert(e.data?.message || 'Erro ao fechar mês.')
+  } finally {
+    fechandoMes.value = false
+  }
+}
+
+// Investimento Capital
+const modalInvestimentoAberto = ref(false)
+const salvandoInvestimento = ref(false)
+const formInvestimento = ref({ descricao: '', valor: '', observacao: '' })
+
+function abrirModalInvestimento() {
+  formInvestimento.value = { descricao: '', valor: '', observacao: '' }
+  modalInvestimentoAberto.value = true
+}
+
+async function salvarInvestimento() {
+  if (!formInvestimento.value.valor || Number(formInvestimento.value.valor) <= 0) return
+  
+  salvandoInvestimento.value = true
+  try {
+    await $fetch('/api/financeiro/gasto-capital', {
+      method: 'POST',
+      body: formInvestimento.value
+    })
+    modalInvestimentoAberto.value = false
+    alert('✅ Investimento registrado com sucesso!')
+    refresh()
+  } catch (e: any) {
+    alert(e.data?.message || 'Erro ao registrar investimento.')
+  } finally {
+    salvandoInvestimento.value = false
+  }
 }
 
 // Relatório PDF
