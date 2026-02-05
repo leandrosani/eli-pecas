@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
             prisma.despesa.aggregate({
                 where: {
                     categoria: 'DISTRIBUICAO',
-                    descricao: { contains: 'LOJA' }
+                    descricao: { contains: 'Loja', mode: 'insensitive' }
                 },
                 _sum: { valor: true }
             }),
