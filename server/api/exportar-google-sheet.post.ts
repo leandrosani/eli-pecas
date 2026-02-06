@@ -198,13 +198,9 @@ export default defineEventHandler(async (event) => {
 
 
     // === OUTROS CAMPOS ===
-    // Link Principal (Prioridade: Link cadastrado > Link WhatsApp)
+    // Link Principal (Link cadastrado ou vazio)
+    // Solicitado alteração: Caso não tenha link, deixar em branco.
     let linkFinal = (row.Link || row.link || '').trim()
-
-    if (!linkFinal) {
-      const textoZap = `Tenho interesse no item: ${titulo}`
-      linkFinal = `https://wa.me/5527998814214?text=${encodeURIComponent(textoZap)}`
-    }
 
     // Imagem
     const fixImage = (url: string) => url ? url.replace(/\.webp$/i, '.jpg') : ''
