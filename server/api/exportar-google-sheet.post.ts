@@ -51,30 +51,42 @@ export default defineEventHandler(async (event) => {
     }
     const titulo = tituloBase.toUpperCase()
 
-    // REGRA 2: HIGIENIZAÇÃO DA DESCRIÇÃO
-    let descricao = row.descricao || ''
+    // REGRA 2: HIGIENIZAÇÃO PROFUNDA (V2)
+    // Estratégia: Quebrar o texto em frases/segmentos e eliminar qualquer um que contenha contatos
+    let descricaoRaw = (row.descricao || '').replace(/\n/g, '. ')
 
-    // Regex para telefones
-    descricao = descricao.replace(/(\(?\d{2}\)?\s?)?9\d{4}[-\s]?\d{4}/g, '')
+    // Lista de palavras proibidas (gatilhos)
+    const blockList = ['instagram', 'facebook', 'telefone', 'contato', 'ligue', 'zap', 'whats', 'fone', 'celular', 'tratar', 'chama no']
 
-    // Remove @instagram e links
-    descricao = descricao.replace(/@[\w\d_.]+/g, '')
-    descricao = descricao.replace(/(https?:\/\/[^\s]+)/g, '')
-    descricao = descricao.replace(/(www\.[^\s]+)/g, '')
+    // Split por pontuação que define fim de frase [. ! ?]
+    const segments = descricaoRaw.split(/[.!?;]+/)
 
-    // Palavras proibidas
-    const proibidex = /\b(contato|whatsapp|ligue|zap|fone|tel|celular|tratar)\b[:\s]*/gi
-    descricao = descricao.replace(proibidex, '')
+    const filteredSegments = segments.filter((seg: string) => {
+      const lower = seg.toLowerCase()
+      // Se tiver numero de telefone (mesmo sem a palavra "telefone") - Regex simplificada e abrangente
+      const hasPhone = /(\(?\d{2}\)?\s?)?9?\d{4}[-\s]?\d{4}/.test(seg)
+      if (hasPhone) return false
 
-    // Limpeza de pontuação residual
-    descricao = descricao.replace(/[\s.:,-]{2,}/g, '. ')
-    descricao = descricao.replace(/^[\s.:,-]+/, '')
-    descricao = descricao.replace(/\s+/g, ' ').trim()
+      // Se tiver palavra proibida
+      return !blockList.some(badWord => lower.includes(badWord))
+    })
 
-    // Fallback
-    if (descricao.length < 5) {
-      descricao = `PEÇA ORIGINAL ${marca} ${modelo} ${ano}. Em ótimo estado.`
+    // Reconstrói usando o separador " - " visual
+    let descricao = filteredSegments
+      .map((s: string) => s.trim())
+      .filter((s: string) => s.length > 2) // Remove fragmentos muito curtos
+      .join(' - ')
+
+    // Adiciona dados técnicos caso a descrição fique muito vazia
+    if (descricao.length < 10) {
+      descricao = `Peça para ${marca} ${modelo} ${ano} ${lado}`
     }
+
+    // Regra 4 da solicitação: Finalizar com chamada simples
+    descricao += ' - Peça Original com Garantia.'
+
+    // Limpeza final de duplicidade de traços
+    descricao = descricao.replace(/\s+-\s+/g, ' - ')
 
     // REGRA 3: LINK DO WHATSAPP
     const textoZap = `Tenho interesse no item: ${titulo}`
