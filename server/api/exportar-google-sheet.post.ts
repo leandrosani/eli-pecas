@@ -170,8 +170,18 @@ export default defineEventHandler(async (event) => {
     const estadoStr = (row.estado || '').toLowerCase()
     const temEstadoNaObs = bloco2.some(l => l.toLowerCase().includes('estado') || l.toLowerCase().includes('novo'))
     if (!temEstadoNaObs) {
-      if (estadoStr.includes('novo')) bloco2.push('Produto Novo')
-      else bloco2.push('Ótimo estado')
+      // Se tiver "novo" Mas também tiver "usado", é "Estado de Novo" -> "Excelente Estado"
+      // Ou se for "seminovo"
+      if ((estadoStr.includes('novo') && estadoStr.includes('usado')) || estadoStr.includes('semi')) {
+        bloco2.push('Excelente Estado')
+      }
+      else if (estadoStr.includes('novo')) {
+        // Apenas se for estritamente novo e não usado
+        bloco2.push('Produto Novo')
+      }
+      else {
+        bloco2.push('Ótimo estado')
+      }
     }
 
     // Bloco 3: Rodapé Fixo
