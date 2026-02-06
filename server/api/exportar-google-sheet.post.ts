@@ -220,38 +220,37 @@ export default defineEventHandler(async (event) => {
     if (estadoStr.includes('usado')) condicaoFeed = 'used'
     if (estadoStr.includes('recondicionado')) condicaoFeed = 'used' // Solicitado: Recondicionado = Used
 
-    // Categorias Google
-    // 3501: Faróis
-    // 3504: Lanternas Traseiras
-    // 5601: Lataria/Carroceria (Capô, Paralama, Grade, Parachoque)
-    // 3650: Retrovisores
-    // 5613: Default (Peças e acessórios para veículos)
+    // Categorias Google/Facebook (Texto Completo)
 
-    let googleCategory = '5613'
+    // Default
+    let categoria = 'Veículos e peças > Peças e acessórios para veículos'
     const nomeLower = nome.toLowerCase()
 
+    // 1. Iluminação Dianteira (Farol)
     if (nomeLower.includes('farol')) {
-      googleCategory = '3501'
+      categoria = 'Veículos e peças > Peças e acessórios para veículos > Peças de iluminação > Conjuntos de faróis para veículos'
     }
+    // 2. Iluminação Traseira (Lanterna)
     else if (nomeLower.includes('lanterna')) {
-      googleCategory = '3504'
+      categoria = 'Veículos e peças > Peças e acessórios para veículos > Peças de iluminação > Conjuntos de luzes traseiras para veículos'
     }
+    // 3. Retrovisores
+    else if (nomeLower.includes('retrovisor')) {
+      categoria = 'Veículos e peças > Peças e acessórios para veículos > Espelhos para veículos'
+    }
+    // 4. Carroceria (Lataria em geral)
     else if (
       nomeLower.includes('parachoque') ||
       nomeLower.includes('para-choque') ||
       nomeLower.includes('capo') ||
       nomeLower.includes('capô') ||
+      nomeLower.includes('grade') ||
       nomeLower.includes('paralama') ||
-      nomeLower.includes('grade')
+      nomeLower.includes('porta')
     ) {
-      googleCategory = '5601'
+      categoria = 'Veículos e peças > Peças e acessórios para veículos > Carroceria e acessórios para veículos'
     }
-    else if (nomeLower.includes('retrovisor')) {
-      googleCategory = '3650'
-    }
-
-    // FB Category deve ficar vazio para evitar conflito (o ID do Google já resolve)
-    const fbCategory = ''
+    // 5. Outros (Painel, etc) -> Cai no Default
 
     return [
       row.id,
@@ -264,8 +263,8 @@ export default defineEventHandler(async (event) => {
       imagemPrincipal,
       imagensExtras,
       montadora || 'Genérico',
-      googleCategory, // google_product_category
-      fbCategory,     // fb_product_category
+      categoria, // google_product_category
+      categoria, // fb_product_category (Igual ao Google)
       row.quantidade
     ]
   })
