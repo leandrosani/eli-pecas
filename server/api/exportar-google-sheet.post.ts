@@ -220,15 +220,38 @@ export default defineEventHandler(async (event) => {
     if (estadoStr.includes('usado')) condicaoFeed = 'used'
     if (estadoStr.includes('recondicionado')) condicaoFeed = 'used' // Solicitado: Recondicionado = Used
 
-    // Categorias Google/Facebook
-    let categoria = 'Veículos e peças > Peças e acessórios para veículos'
+    // Categorias Google
+    // 3501: Faróis
+    // 3504: Lanternas Traseiras
+    // 5601: Lataria/Carroceria (Capô, Paralama, Grade, Parachoque)
+    // 3650: Retrovisores
+    // Default: Veículos e peças > Peças e acessórios para veículos
+
+    let googleCategory = 'Veículos e peças > Peças e acessórios para veículos'
     const nomeLower = nome.toLowerCase()
 
     if (nomeLower.includes('farol')) {
-      categoria = 'Veículos e peças > Peças e acessórios para veículos > Peças de iluminação > Conjuntos de faróis para veículos'
-    } else if (nomeLower.includes('lanterna')) {
-      categoria = 'Veículos e peças > Peças e acessórios para veículos > Peças de iluminação > Conjuntos de luzes traseiras para veículos'
+      googleCategory = '3501'
     }
+    else if (nomeLower.includes('lanterna')) {
+      googleCategory = '3504'
+    }
+    else if (
+      nomeLower.includes('parachoque') ||
+      nomeLower.includes('para-choque') ||
+      nomeLower.includes('capo') ||
+      nomeLower.includes('capô') ||
+      nomeLower.includes('paralama') ||
+      nomeLower.includes('grade')
+    ) {
+      googleCategory = '5601'
+    }
+    else if (nomeLower.includes('retrovisor')) {
+      googleCategory = '3650'
+    }
+
+    // FB Category deve ficar vazio para evitar conflito (o ID do Google já resolve)
+    const fbCategory = ''
 
     return [
       row.id,
@@ -241,8 +264,8 @@ export default defineEventHandler(async (event) => {
       imagemPrincipal,
       imagensExtras,
       montadora || 'Genérico',
-      categoria, // google_product_category
-      categoria, // fb_product_category
+      googleCategory, // google_product_category
+      fbCategory,     // fb_product_category
       row.quantidade
     ]
   })
