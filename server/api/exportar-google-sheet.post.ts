@@ -31,68 +31,131 @@ export default defineEventHandler(async (event) => {
   // Monta linhas do feed
   const rows = linhasFiltradas.map((row: any) => {
 
-    // REGRA 1: OTIMIZAÇÃO DO TÍTULO
-    let partes = [row.nome || '']
-    const modelo = row.modelo || ''
-    const ano = row.ano || ''
-    const lado = row.lado || ''
+    // === REGRA 1: TÍTULO ESTRITO ===
+    // Ordem: Nome da Peça, Montadora, Modelo, Ano do Carro, Lado.
+    const nome = (row.nome || '').trim()
+    const montadora = (row.marca || '').trim() // Usando 'marca' como Montadora
+    const modelo = (row.modelo || '').trim()
+    const ano = (row.ano || '').trim()
+    const lado = (row.lado || '').trim()
 
-    // Evita duplicar Modelo, Ano ou Lado se já estiverem no Nome
-    if (modelo && !partes[0].toLowerCase().includes(modelo.toLowerCase())) partes.push(modelo)
-    if (ano && !partes[0].includes(ano)) partes.push(ano)
-    if (lado && !partes[0].toLowerCase().includes(lado.toLowerCase())) partes.push(lado)
+    // Base do Título: Inicia com o Nome da Peça
+    let tituloParts = [nome]
 
-    let tituloBase = partes.join(' ').replace(/\s+/g, ' ').trim()
-    const marca = row.marca || ''
-
-    // Se a marca não estiver no início (case insensitive), adiciona
-    if (marca && !tituloBase.toLowerCase().startsWith(marca.toLowerCase())) {
-      tituloBase = `${marca} ${tituloBase}`
+    // 1. Montadora: Adiciona se não estiver no nome (case insensitive)
+    if (montadora && !nome.toLowerCase().includes(montadora.toLowerCase())) {
+      tituloParts.push(montadora)
     }
-    const titulo = tituloBase.toUpperCase()
 
-    // REGRA 2: HIGIENIZAÇÃO PROFUNDA (V2)
-    // Estratégia: Quebrar o texto em frases/segmentos e eliminar qualquer um que contenha contatos
-    let descricaoRaw = (row.descricao || '').replace(/\n/g, '. ')
+    // 2. Modelo: Adiciona se não presente
+    // Verificamos contra todo o acumulado para evitar redundância
+    if (modelo && !tituloParts.join(' ').toLowerCase().includes(modelo.toLowerCase())) {
+      tituloParts.push(modelo)
+    }
 
-    // Lista de palavras proibidas (gatilhos)
-    const blockList = ['instagram', 'facebook', 'telefone', 'contato', 'ligue', 'zap', 'whats', 'fone', 'celular', 'tratar', 'chama no']
+    // 3. Ano: Adiciona se não presente
+    if (ano && !tituloParts.join(' ').includes(ano)) {
+      tituloParts.push(ano)
+    }
 
-    // Split por pontuação que define fim de frase [. ! ?]
-    const segments = descricaoRaw.split(/[.!?;]+/)
+    // 4. Lado: Adiciona se não presente
+    if (lado && !tituloParts.join(' ').toLowerCase().includes(lado.toLowerCase())) {
+      tituloParts.push(lado)
+    }
 
-    const filteredSegments = segments.filter((seg: string) => {
-      const lower = seg.toLowerCase()
-      // Se tiver numero de telefone (mesmo sem a palavra "telefone") - Regex simplificada e abrangente
-      const hasPhone = /(\(?\d{2}\)?\s?)?9?\d{4}[-\s]?\d{4}/.test(seg)
-      if (hasPhone) return false
+    let titulo = tituloParts.join(' ').replace(/\s+/g, ' ').trim()
 
-      // Se tiver palavra proibida
-      return !blockList.some(badWord => lower.includes(badWord))
+    // Verifica 'Original' nos dados
+    const isOriginal = (row.descricao || '').toLowerCase().includes('original') ||
+      (row.nome || '').toLowerCase().includes('original') ||
+      (row.observacoes || '').toLowerCase().includes('original')
+
+    // 5. OBS/Original: Adiciona 'Original' ao final do título se aplicável e não presente
+    if (isOriginal && !titulo.toLowerCase().includes('original')) {
+      titulo += ' Original'
+    }
+
+    // Capitalização simples / Manter como está vindo do banco, apenas garantindo espaços
+
+
+    // === REGRA 2: DESCRIÇÃO ESTRUTURADA (3 BLOCOS) ===
+
+    // Bloco 1: Dados Técnicos
+    // Marca: Honda / Stanley
+    // Modelo: Fit (Geração 3 – Facelift) -> Aqui só temos 'modelo' cru.
+    // O user deu exemplo formatado, mas usaremos os dados que temos.
+    const codigo = row.codigo || row.sku || '' // Tenta pegar código se existir
+
+    let bloco1 = [
+      `Marca: ${montadora || 'N/A'}`,
+      `Modelo: ${modelo || 'N/A'}`,
+      `Ano: ${ano || 'N/A'}`,
+      `Lado: ${lado || 'N/A'}`
+    ]
+    if (codigo) bloco1.push(`Código: ${codigo}`)
+
+
+    // Bloco 2: Observações
+    // Deve conter "Original", "Ótimo estado", e outras observações limpas.
+    // Removemos o boilerplate antigo primeiro.
+    const boilerplateToRemove = '(Elipeças: Peças Usadas de Excelência - Qualidade e Economia Garantidas - )'
+    let rawDesc = (row.descricao || '')
+      .replace(boilerplateToRemove, '')
+      .replace(/\(ref\.?\s*aprox\)?/gi, '')
+      .trim()
+
+    let bloco2 = []
+
+    // Adiciona "Original" explicitamente no topo do bloco 2 se for original
+    if (isOriginal) bloco2.push('Original')
+
+    // Processa a descrição original para extrair informações relevantes (que não sejam lixo/contato)
+    // Divide por quebras de linha ou hífens para tentar separar tópicos
+    let descLines = rawDesc.split(/[\n]/) // Split por linhas primeiro
+
+    descLines.forEach((line: string) => {
+      let cleanLine = line.trim()
+      if (!cleanLine) return
+
+      const lower = cleanLine.toLowerCase()
+      // Filtros de exclusão
+      if (lower === 'original') return // Já adicionado
+      if (lower.includes('elipeças')) return
+      if (lower.includes('garantia')) return
+
+      // Se a linha for muito longa e contiver separadores, pode tentar quebrar mais?
+      // Por enquanto, assume que o usuário digitou algo razoável.
+      if (cleanLine.length > 2) bloco2.push(cleanLine)
     })
 
-    // Reconstrói usando o separador " - " visual
-    let descricao = filteredSegments
-      .map((s: string) => s.trim())
-      .filter((s: string) => s.length > 2) // Remove fragmentos muito curtos
-      .join(' - ')
-
-    // Adiciona dados técnicos caso a descrição fique muito vazia
-    if (descricao.length < 10) {
-      descricao = `Peça para ${marca} ${modelo} ${ano} ${lado}`
+    // Adiciona "Ótimo estado" se não houver menção específica de estado nas observações
+    const estadoStr = (row.estado || '').toLowerCase()
+    const temEstadoNaObs = bloco2.some(l => l.toLowerCase().includes('estado') || l.toLowerCase().includes('novo'))
+    if (!temEstadoNaObs) {
+      if (estadoStr.includes('novo')) bloco2.push('Produto Novo')
+      else bloco2.push('Ótimo estado')
     }
 
-    // Regra 4 da solicitação: Finalizar com chamada simples
-    descricao += ' - Peça Original com Garantia.'
+    // Bloco 3: Rodapé Fixo
+    let bloco3 = [
+      'Elipeças – Especialistas em peças usadas para carros nacionais e importados',
+      'Produto com garantia'
+    ]
 
-    // Limpeza final de duplicidade de traços
-    descricao = descricao.replace(/\s+-\s+/g, ' - ')
+    // Junta tudo com quebras de linha duplas entre blocos
+    const descricao = [
+      bloco1.join('\n'),
+      bloco2.join('\n'),
+      bloco3.join('\n')
+    ].filter(b => b.length > 0).join('\n\n')
 
-    // REGRA 3: LINK DO WHATSAPP
+
+    // === OUTROS CAMPOS ===
+    // Zap Link
     const textoZap = `Tenho interesse no item: ${titulo}`
     const linkFinal = `https://wa.me/5527998814214?text=${encodeURIComponent(textoZap)}`
 
-    // REGRA 4: CORREÇÃO DE IMAGEM
+    // Imagem
     const fixImage = (url: string) => url ? url.replace(/\.webp$/i, '.jpg') : ''
     const imagemPrincipal = fixImage(row.fotoUrl)
 
@@ -105,11 +168,9 @@ export default defineEventHandler(async (event) => {
 
     const precoFormatado = `${Number(row.preco || 0).toFixed(2)} BRL`
 
-    // Condição
     let condicaoFeed = 'new'
-    const est = (row.estado || '').toLowerCase()
-    if (est.includes('usado')) condicaoFeed = 'used'
-    if (est.includes('recondicionado')) condicaoFeed = 'refurbished'
+    if (estadoStr.includes('usado')) condicaoFeed = 'used'
+    if (estadoStr.includes('recondicionado')) condicaoFeed = 'refurbished'
 
     return [
       row.id,
@@ -121,9 +182,9 @@ export default defineEventHandler(async (event) => {
       linkFinal,
       imagemPrincipal,
       imagensExtras,
-      marca || 'Genérico', // REGRA 5
-      'Peças e acessórios para automóveis > Autopeças e acessórios',
-      'Peças e acessórios para automóveis > Autopeças e acessórios',
+      montadora || 'Genérico',
+      'Peças e acessórios para automóveis > Autopeças e acessórios', // google_product_category
+      'Peças e acessórios para automóveis > Autopeças e acessórios', // fb_product_category
       row.quantidade
     ]
   })
