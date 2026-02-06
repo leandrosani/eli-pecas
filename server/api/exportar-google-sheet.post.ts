@@ -225,9 +225,9 @@ export default defineEventHandler(async (event) => {
     // 3504: Lanternas Traseiras
     // 5601: Lataria/Carroceria (Capô, Paralama, Grade, Parachoque)
     // 3650: Retrovisores
-    // Default: Veículos e peças > Peças e acessórios para veículos
+    // 5613: Default (Peças e acessórios para veículos)
 
-    let googleCategory = 'Veículos e peças > Peças e acessórios para veículos'
+    let googleCategory = '5613'
     const nomeLower = nome.toLowerCase()
 
     if (nomeLower.includes('farol')) {
