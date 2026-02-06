@@ -86,11 +86,28 @@ export default defineEventHandler(async (event) => {
     // O user deu exemplo formatado, mas usaremos os dados que temos.
     const codigo = row.codigo || row.sku || '' // Tenta pegar código se existir
 
+    // Helper para Title Case
+    const toTitleCase = (str: string) => {
+      // Pequena função para capitalizar (Fit, Honda, Esquerdo)
+      return str.toLowerCase().replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
+    }
+
+    // Tratamento do Lado com contexto
+    let ladoRaw = (lado || '').trim()
+    let ladoFmt = toTitleCase(ladoRaw || 'N/A')
+
+    // Adiciona contexto
+    if (ladoRaw.toLowerCase() === 'esquerdo' || ladoRaw.toLowerCase() === 'lado esquerdo') {
+      ladoFmt = 'Esquerdo (Motorista)'
+    } else if (ladoRaw.toLowerCase() === 'direito' || ladoRaw.toLowerCase() === 'lado direito') {
+      ladoFmt = 'Direito (Passageiro)'
+    }
+
     let bloco1 = [
-      `Marca: ${montadora || 'N/A'}`,
-      `Modelo: ${modelo || 'N/A'}`,
+      `Marca: ${toTitleCase(montadora || 'N/A')}`,
+      `Modelo: ${toTitleCase(modelo || 'N/A')}`,
       `Ano: ${ano || 'N/A'}`,
-      `Lado: ${lado || 'N/A'}`
+      `Lado: ${ladoFmt}`
     ]
     if (codigo) bloco1.push(`Código: ${codigo}`)
 
@@ -136,6 +153,14 @@ export default defineEventHandler(async (event) => {
 
       if (blacklist.some(term => lower.includes(term))) return
 
+      // Filtra campos técnicos repetidos (Se a descrição original já tiver "Marca: ...")
+      if (lower.startsWith('marca:') ||
+        lower.startsWith('modelo:') ||
+        lower.startsWith('ano:') ||
+        lower.startsWith('lado:') ||
+        lower.startsWith('código:') ||
+        lower.startsWith('codigo:')) return
+
       // Se a linha for muito longa e contiver separadores, pode tentar quebrar mais?
       // Por enquanto, assume que o usuário digitou algo razoável.
       if (cleanLine.length > 2) bloco2.push(cleanLine)
@@ -151,7 +176,6 @@ export default defineEventHandler(async (event) => {
 
     // Bloco 3: Rodapé Fixo
     let bloco3 = [
-      'Elipeças – Especialistas em peças usadas para carros nacionais e importados',
       'Produto com garantia'
     ]
 
