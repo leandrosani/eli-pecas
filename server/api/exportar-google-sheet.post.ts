@@ -118,10 +118,23 @@ export default defineEventHandler(async (event) => {
       if (!cleanLine) return
 
       const lower = cleanLine.toLowerCase()
-      // Filtros de exclusão
-      if (lower === 'original') return // Já adicionado
-      if (lower.includes('elipeças')) return
-      if (lower.includes('garantia')) return
+      // Filtros de exclusão (Blacklist de termos proibidos na descrição)
+      const blacklist = [
+        'original', // Já adicionado no inicio
+        'elipeças',
+        'garantia',
+        'somos especialistas',
+        'faça seu pedido',
+        'contato',
+        'telefone',
+        'qualidade e economia',
+        'instagram',
+        '@elipecas',
+        '99881-4214',
+        '998814214'
+      ]
+
+      if (blacklist.some(term => lower.includes(term))) return
 
       // Se a linha for muito longa e contiver separadores, pode tentar quebrar mais?
       // Por enquanto, assume que o usuário digitou algo razoável.
