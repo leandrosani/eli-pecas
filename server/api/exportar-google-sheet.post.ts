@@ -215,9 +215,20 @@ export default defineEventHandler(async (event) => {
 
     const precoFormatado = `${Number(row.preco || 0).toFixed(2)} BRL`
 
+    // Condição Feed
     let condicaoFeed = 'new'
     if (estadoStr.includes('usado')) condicaoFeed = 'used'
-    if (estadoStr.includes('recondicionado')) condicaoFeed = 'refurbished'
+    if (estadoStr.includes('recondicionado')) condicaoFeed = 'used' // Solicitado: Recondicionado = Used
+
+    // Categorias Google/Facebook
+    let categoria = 'Veículos e peças > Peças e acessórios para veículos'
+    const nomeLower = nome.toLowerCase()
+
+    if (nomeLower.includes('farol')) {
+      categoria = 'Veículos e peças > Peças e acessórios para veículos > Peças de iluminação > Conjuntos de faróis para veículos'
+    } else if (nomeLower.includes('lanterna')) {
+      categoria = 'Veículos e peças > Peças e acessórios para veículos > Peças de iluminação > Conjuntos de luzes traseiras para veículos'
+    }
 
     return [
       row.id,
@@ -230,8 +241,8 @@ export default defineEventHandler(async (event) => {
       imagemPrincipal,
       imagensExtras,
       montadora || 'Genérico',
-      'Peças e acessórios para automóveis > Autopeças e acessórios', // google_product_category
-      'Peças e acessórios para automóveis > Autopeças e acessórios', // fb_product_category
+      categoria, // google_product_category
+      categoria, // fb_product_category
       row.quantidade
     ]
   })
